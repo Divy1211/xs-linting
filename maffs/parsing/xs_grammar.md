@@ -185,12 +185,12 @@ $\color{gray}\text{DEFAULT} := \text{default statement}$
 
 $\text{FN} \rightarrow \texttt{extern}\text{ FN | }\texttt{mutable}\text{ FN}$
 
-$\text{FN} \rightarrow \text{RTYPE ID ( ARGS ) } \text{B}$
+$\text{FN} \rightarrow \text{RTYPE ID ( ARGS}_\text{formal}{ ) } \text{B}$
 
 $\text{RTYPE} \rightarrow \texttt{void}\text{ | DTYPE}$
 
 <!-- use the interleave trick, this is still LL(1) -->
-$\text{ARGS} \rightarrow \text{ARG | ARG, ARGS}$
+$\text{ARGS}_\text{formal} \rightarrow \text{ARG | ARG, ARGS}_\text{formal}$
 
 $\text{ARG} \rightarrow\text{DTYPE ID = LIT | } \epsilon$
 
@@ -198,7 +198,7 @@ where
 
 $\color{gray}\text{RTYPE} := \text{Return type}$
 
-$\color{gray}\text{ARGS} := \text{Arguments}$
+$\color{gray}\text{ARGS}_\text{formal} := \text{Formal Arguments}$
 
 $\color{gray}\text{ARG} := \text{Argument}$
 
@@ -273,91 +273,91 @@ $\text{DE} \rightarrow \text{E}\texttt{;}$
 
 ## 3. Expression
 
+$\text{E} \rightarrow \text{P | LIT | ID}$
+
+$\text{E} \rightarrow \text{FNC}$
+
+
 ### 3.1. Parenthesis
 
-$\text{E} \rightarrow \text{(E)}$
+$\text{P} \rightarrow \text{(E)}$
 
-### 3.2. Literal
+### 3.2. Function Call
 
-$\text{E} \rightarrow \text{LIT}$
+$\text{FNC} \rightarrow \text{ID(ARGS}_\text{actual}\text{)}$
 
-### 3.3. Identifier
+$\text{ARGS}_\text{actual} \rightarrow \text{ARGS}' \text{ | } \epsilon$
 
-$\text{E} \rightarrow \text{ID}$
+$\text{ARGS}' \rightarrow \text{E | E, ARGS}'$
 
-### 3.4. Function Call
+where
 
-$\text{E} \rightarrow \text{ID(EL)}$
+$\color{gray}\text{ARGS}_\text{actual} := \text{Actual Arguments}$
 
-$\text{EL} \rightarrow \text{EL}' \text{ | } \epsilon$
+### 3.3. Operators
 
-$\text{EL}' \rightarrow \text{E | E, EL}'$
-
-
-### 3.4. Operators
-
-#### 3.4.1. Postfix Double Plus
+#### 3.3.1. Postfix Double Plus
 
 $\text{E} \rightarrow \text{ID}\texttt{++}$
 
-#### 3.4.2. Postfix Double Minus
+#### 3.3.2. Postfix Double Minus
 
 $\text{E} \rightarrow \text{ID}\texttt{--}$
 
 
-#### 3.4.3. Plus
+#### 3.3.3. Plus
 
-$\text{E} \rightarrow \text{ID }\texttt{+}\text{ ID}$
+$\text{E} \rightarrow \text{E }\texttt{+}\text{ E}$
 
-#### 3.4.4. Minus
+#### 3.3.4. Minus
 
-$\text{E} \rightarrow \text{ID }\texttt{-}\text{ ID}$
+$\text{E} \rightarrow \text{E }\texttt{-}\text{ E}$
 
-#### 3.4.5. Asterisk
+#### 3.3.5. Asterisk
 
-$\text{E} \rightarrow \text{ID }\texttt{*}\text{ ID}$
+$\text{E} \rightarrow \text{E }\texttt{*}\text{ E}$
 
-#### 3.4.6. Forward Slash
+#### 3.3.6. Forward Slash
 
-$\text{E} \rightarrow \text{ID }\texttt{/}\text{ ID}$
+$\text{E} \rightarrow \text{E }\texttt{/}\text{ E}$
 
-#### 3.4.7. Percent
+#### 3.3.7. Percent
 
-$\text{E} \rightarrow \text{ID }\texttt{\%}\text{ ID}$
-
-
-#### 3.4.8. Less Than
-
-$\text{E} \rightarrow \text{ID }\texttt{<}\text{ ID}$
-
-#### 3.4.9. Greater Than
-
-$\text{E} \rightarrow \text{ID }\texttt{>}\text{ ID}$
-
-#### 3.4.10. Less Than or Equal
-
-$\text{E} \rightarrow \text{ID }\texttt{<=}\text{ ID}$
-
-#### 3.4.11. Greater Than or Equal
-
-$\text{E} \rightarrow \text{ID }\texttt{>=}\text{ ID}$
-
-#### 3.4.12. Double Equals
-
-$\text{E} \rightarrow \text{ID }\texttt{==}\text{ ID}$
-
-#### 3.4.13. Not Equals
-
-$\text{E} \rightarrow \text{ID }\texttt{!=}\text{ ID}$
+$\text{E} \rightarrow \text{E }\texttt{\%}\text{ E}$
 
 
-#### 3.4.14 And
+#### 3.3.8. Less Than
 
-$\text{E} \rightarrow \text{ID }\texttt{\&\&}\text{ ID}$
+$\text{E} \rightarrow \text{E }\texttt{<}\text{ E}$
 
-#### 3.4.15 Or
+#### 3.3.9. Greater Than
 
-$\text{E} \rightarrow \text{ID }\texttt{||}\text{ ID}$
+$\text{E} \rightarrow \text{E }\texttt{>}\text{ E}$
+
+#### 3.3.10. Less Than or Equal
+
+$\text{E} \rightarrow \text{E }\texttt{<=}\text{ E}$
+
+#### 3.3.11. Greater Than or Equal
+
+$\text{E} \rightarrow \text{E }\texttt{>=}\text{ E}$
+
+#### 3.3.12. Double Equals
+
+$\text{E} \rightarrow \text{E }\texttt{==}\text{ E}$
+
+#### 3.3.13. Not Equals
+
+$\text{E} \rightarrow \text{E }\texttt{!=}\text{ E}$
+
+
+#### 3.3.14 And
+
+$\text{E} \rightarrow \text{E }\texttt{\&\&}\text{ E}$
+
+#### 3.3.15 Or
+
+$\text{E} \rightarrow \text{E }\texttt{||}\text{ E}$
 
 
 ## 4. The Full Grammar
