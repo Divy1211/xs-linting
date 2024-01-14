@@ -76,8 +76,17 @@ $\text{BOOL} :=\ \texttt{false} \text{ or } \texttt{true}$
 
 $\text{ID} :=\ \texttt{[a-zA-Z\_][a-zA-Z\_0-9]*}$
 
-
 Note: Vectors are part of the grammar and are not treated as literals
+
+## 4. Comments
+
+### 4.1. Single Comment
+
+$\text{CMT} \rightarrow \texttt{//[\^ \textbackslash n]*}$
+
+### 4.2. Multiple Line Comment
+
+$\text{CMT} \rightarrow /* .* */$
 
 ## XS Keywords
 

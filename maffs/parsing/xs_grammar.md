@@ -211,11 +211,13 @@ $\text{R} \rightarrow\texttt{return;}$
 
 $\text{RL} \rightarrow \texttt{rule}\text{ ID RPS B}$
 
-$\text{RPS} \rightarrow \text{ | } \epsilon$
+$\text{RPS} \rightarrow \text{RP RPS | } \epsilon$
+
+$\text{RP} \rightarrow \text{RP}_\text{act} \text{ | } \text{RP}_\text{grp} \text{ | } \text{RP}_\text{sfq} \text{ | } \text{RP}_\text{xfq} \text{ | } \text{RP}_\text{rim} \text{ | } \text{RP}_\text{pty}$
 
 $\text{RP}_\text{act} \rightarrow \texttt{active | inactive}$
 
-$\text{RP}_\text{grp} \rightarrow \texttt{group \textbackslash w+}$
+$\text{RP}_\text{grp} \rightarrow \texttt{group} \text{ ID}$
 
 $\text{RP}_\text{sfq} \rightarrow \texttt{minInterval} \text{ INT | }\texttt{highFrequency}$
 
@@ -224,6 +226,24 @@ $\text{RP}_\text{xfq} \rightarrow \texttt{maxInterval} \text{ INT}$
 $\text{RP}_\text{rim} \rightarrow \texttt{runImmediately}$
 
 $\text{RP}_\text{pty} \rightarrow \texttt{priority} \text{ INT}$
+
+Note: only one of each parameter can be present in a rule def, this needs to be a linting time check, unfortunately its not possible to bake it into the grammar
+
+$\color{gray}\text{RPS} := \text{Rule parameters}$
+
+$\color{gray}\text{RP} := \text{Rule parameter}$
+
+$\color{gray}\text{RP}_\text{act} := \text{Active state}$
+
+$\color{gray}\text{RP}_\text{grp} := \text{Group}$
+
+$\color{gray}\text{RP}_\text{sfq} := \text{Min frequency}$
+
+$\color{gray}\text{RP}_\text{xfq} := \text{Max frequency}$
+
+$\color{gray}\text{RP}_\text{rim} := \text{Run Immediately}$
+
+$\color{gray}\text{RP}_\text{pty} := \text{Priority}$
 
 ### 2.12. Include
 
@@ -241,9 +261,9 @@ $\text{Co} \rightarrow \texttt{continue;}$
 
 $\text{Brpt} \rightarrow \texttt{breakpoint;}$
 
-### 2.15. Single Comment
-### 2.16. Multiple Line Comment
 ### 2.17. Docstring
+
+<!-- todo -->
 
 ## 3. Expression
 
