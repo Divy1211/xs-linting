@@ -17,6 +17,7 @@ The following represent terminal symbols:
 ### 1.1. Literals
 
 $\text{NUM} \rightarrow \text{INT | FLT}$
+
 $\text{VCT} \rightarrow \texttt{vector(}\text{NUM}\texttt{, }\text{NUM}\texttt{, }\text{NUM}\texttt{);}$
 
 ### 1.2. Top Level Statements
@@ -28,10 +29,15 @@ $\text{P} \rightarrow \text{RL P | FN P | V}_\text{top}\text{ P | }\epsilon$
 where
 
 $\color{gray} \text{X} := \text{XS script}$
+
 $\color{gray} \text{I} := \text{Include statement}$
+
 $\color{gray} \text{P} := \text{Program}$
+
 $\color{gray} \text{RL} := \text{Rule def}$
+
 $\color{gray} \text{FN} := \text{Function def}$
+
 $\color{gray} \text{V}_\text{top} := \text{Top level variable definition}$
 
 ### 1.3. Prelude
@@ -43,35 +49,53 @@ This consists of all the constants and functions described in
 
 ## 2. Statement
 $\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | Br | Co}$
+
 $\bar{\text{S}} \rightarrow \text{S }\bar{\text{S}}\text{ | }\epsilon$
+
 $\text{B} \rightarrow \texttt{\{}\bar{\text{ S }}\texttt{\}}$
+
 $\text{BS} \rightarrow \text{B | S}$
 
 where
 
 $\color{gray} \text{S} := \text{Statement}$
+
 $\color{gray} \text{V}_\text{decl} := \text{Variable declaration}$
+
 $\color{gray} \text{V}_\text{def} := \text{Variable definition}$
+
 $\color{gray} \text{V}_\text{asgn} := \text{Variable Assignment}$
+
 $\color{gray} \text{IE} := \text{If (Else) statement}$
+
 $\color{gray} \text{W} := \text{While loop}$
+
 $\color{gray} \text{F} := \text{For loop}$
+
 $\color{gray} \text{SC} := \text{Switch case}$
+
 $\color{gray} \text{R} := \text{Return statement}$
+
 $\color{gray} \text{Br} := \text{Break statement}$
+
 $\color{gray} \text{Co} := \text{Continue statement}$
+
 $\color{gray} \bar{\text{S}} := \text{Statements}$
+
 $\color{gray} \text{B} := \text{Body}$
+
 $\color{gray} \text{BS} := \text{Body or statement}$
 
 ### 2.1. Top Level Var Def
 
 $\text{V}_\text{top} \rightarrow \texttt{extern } \text{V}_\text{top}\text{ | }\texttt{const }\text{V}_\text{top}\text{ | }\texttt{static }\text{V}_\text{top}$
+
 $\text{V}_\text{top} \rightarrow \text{DTYPE ID}\texttt{ = }\text{LIT}\texttt{;}$
 
 <!-- todo: double check if top level var defs can have exprs -->
 
 $\text{DTYPE} \rightarrow \texttt{int | float | bool | string | vect}$
+
 $\text{LIT} \rightarrow \text{INT | FLT | STR | VCT | BOOL}$
 
 Note: XS currently has bugs with defining top level strings and vectors
@@ -79,17 +103,21 @@ Note: XS currently has bugs with defining top level strings and vectors
 where
 
 $\color{gray}\text{DTYPE} := \text{Datatype}$
+
 $\color{gray}\text{ID} := \text{Identifier}$
+
 $\color{gray}\text{LIT} := \text{Literal}$
 
 ### 2.2. Var Decl
 
 $\text{V}_\text{decl} \rightarrow \texttt{static }\text{V}_\text{decl}$
+
 $\text{V}_\text{decl} \rightarrow \text{DTYPE ID}\texttt{;}$
 
 ### 2.3. Var Def
 
 $\text{V}_\text{def} \rightarrow \texttt{const }\text{V}_\text{def}$
+
 $\text{V}_\text{def} \rightarrow \text{DTYPE ID}\texttt{ = }\text{E}\texttt{;}$
 
 ### 2.4. Var Assign
@@ -103,6 +131,7 @@ $\color{gray}\text{E} := \text{Expression}$
 ### 2.5. If Else
 
 $\text{IE} \rightarrow \texttt{if ( }\text{E}\texttt{ ) }\text{BS ELSE}$
+
 $\text{ELSE} \rightarrow \texttt{else }\text{BS | } \epsilon$
 
 where
@@ -119,29 +148,56 @@ $\text{F} \rightarrow \texttt{for ( }\text{V}_\text{asgn} \text{ OP}_\text{rel} 
 
 where
 
-$\color{gray}\text{OP}_\text{rel} := \text{Relational Operators}$
+$\color{gray}\text{OP}_\text{rel} := \text{Relational operators}$
 
 <!-- todo: check for all rel op use -->
 <!-- todo: check for exp in for asgn -->
 
 ### 2.8. Switch
 
-$\text{SC} \rightarrow \texttt{switch ( E ) \{} \text{ CASES } \texttt{\}}$
-$\text{CASES} \rightarrow \text{CASE CASES | } \epsilon$
-$\text{CASE} \rightarrow \text{CASE CASES | } \epsilon$
+$\text{SC} \rightarrow \texttt{switch ( E ) \{ } \text{CASES} \texttt{ \}}$
+
+$\text{CASES} \rightarrow \text{CASE CASES | DEFAULT CASES}_\text{no default}\text{ | } \epsilon$
+
+$\text{CASES}_\text{no default} \rightarrow \text{CASE CASES}_\text{no default}\text{ | } \epsilon$
+
+$\text{CASE} \rightarrow \texttt{case} \text{ LIT } \texttt{:} \text{ B}$
+
+$\text{DEFAULT} \rightarrow \texttt{default :} \text{ B}$
+
+where
+
+$\color{gray}\text{CASES} := \text{Optional case statements with one optional default case}$
+
+$\color{gray}\text{CASES}_\text{no default} := \text{Optional case statements only}$
+
+$\color{gray}\text{CASE} := \text{case statement}$
+
+$\color{gray}\text{DEFAULT} := \text{default statement}$
 
 ### 2.9. Functions
 
-$\text{FN} \rightarrow \texttt{mutable}\text{ FN}$
-$\text{FN} \rightarrow \text{RTYPE ID}\texttt{ ( ARGS ) } \text{B}$
+$\text{FN} \rightarrow \texttt{extern}\text{ FN | }\texttt{mutable}\text{ FN}$
+
+$\text{FN} \rightarrow \text{RTYPE ID ( ARGS ) } \text{B}$
 
 $\text{RTYPE} \rightarrow \texttt{void}\text{ | DTYPE}$
 
-$\text{ARGS} \rightarrow \text{ARG, ARGS | } \epsilon$
-$\text{ARG} \rightarrow\text{DTYPE ID = LIT}$
+<!-- use the interleave trick, this is still LL(1) -->
+$\text{ARGS} \rightarrow \text{ARG | ARG, ARGS}$
+
+$\text{ARG} \rightarrow\text{DTYPE ID = LIT | } \epsilon$
 
 ### 2.10. Return
+
+$\text{R} \rightarrow\texttt{return ( } \text{E} \texttt{ );}$
+
+$\text{R} \rightarrow\texttt{return;}$
+
 ### 2.11. Rules
+
+
+
 ### 2.12. Include
 
 $\text{I} \rightarrow \texttt{include }\text{STR}\texttt{;}$
