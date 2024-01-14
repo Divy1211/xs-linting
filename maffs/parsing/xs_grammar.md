@@ -48,7 +48,7 @@ This consists of all the constants and functions described in
 2. [XS Function Reference](https://ugc.aoe2.rocks/general/xs/functions/)
 
 ## 2. Statement
-$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | Br | Co | Brpt}$
+$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | BR | CO | BRPT | DE}$
 
 $\bar{\text{S}} \rightarrow \text{S }\bar{\text{S}}\text{ | }\epsilon$
 
@@ -59,6 +59,12 @@ $\text{BS} \rightarrow \text{B | S}$
 where
 
 $\color{gray} \text{S} := \text{Statement}$
+
+$\color{gray} \bar{\text{S}} := \text{Statements}$
+
+$\color{gray} \text{B} := \text{Body}$
+
+$\color{gray} \text{BS} := \text{Body or statement}$
 
 $\color{gray} \text{V}_\text{decl} := \text{Variable declaration}$
 
@@ -76,17 +82,13 @@ $\color{gray} \text{SC} := \text{Switch case}$
 
 $\color{gray} \text{R} := \text{Return statement}$
 
-$\color{gray} \text{Br} := \text{Break statement}$
+$\color{gray} \text{BR} := \text{Break statement}$
 
-$\color{gray} \text{Co} := \text{Continue statement}$
+$\color{gray} \text{CO} := \text{Continue statement}$
 
-$\color{gray} \bar{\text{S}} := \text{Statements}$
+$\color{gray} \text{BRPT} := \text{Breakpoint}$
 
-$\color{gray} \text{B} := \text{Body}$
-
-$\color{gray} \text{BS} := \text{Body or statement}$
-
-$\color{gray} \text{Brpt} := \text{Breakpoint}$
+$\color{gray} \text{DE} := \text{Discarded Expression}$
 
 ### 2.1. Top Level Var Def
 
@@ -251,15 +253,19 @@ $\text{I} \rightarrow \texttt{include }\text{STR}\texttt{;}$
 
 ### 2.13 Break
 
-$\text{Br} \rightarrow \texttt{break;}$
+$\text{BR} \rightarrow \texttt{break;}$
 
 ### 2.14 Continue
 
-$\text{Co} \rightarrow \texttt{continue;}$
+$\text{CO} \rightarrow \texttt{continue;}$
 
 ### 2.15 Continue
 
-$\text{Brpt} \rightarrow \texttt{breakpoint;}$
+$\text{BRPT} \rightarrow \texttt{breakpoint;}$
+
+### 2.16. Discarded Expression
+
+$\text{DE} \rightarrow \text{E}\texttt{;}$
 
 ### 2.17. Docstring
 
@@ -267,28 +273,91 @@ $\text{Brpt} \rightarrow \texttt{breakpoint;}$
 
 ## 3. Expression
 
-### 3.1. Expression
-### 3.2. Parenthesis
+### 3.1. Parenthesis
+
+$\text{E} \rightarrow \text{(E)}$
+
+### 3.2. Literal
+
+$\text{E} \rightarrow \text{LIT}$
+
 ### 3.3. Identifier
+
+$\text{E} \rightarrow \text{ID}$
+
+### 3.4. Function Call
+
+$\text{E} \rightarrow \text{ID(EL)}$
+
+$\text{EL} \rightarrow \text{EL}' \text{ | } \epsilon$
+
+$\text{EL}' \rightarrow \text{E | E, EL}'$
+
+
 ### 3.4. Operators
 
 #### 3.4.1. Postfix Double Plus
+
+$\text{E} \rightarrow \text{ID}\texttt{++}$
+
 #### 3.4.2. Postfix Double Minus
 
+$\text{E} \rightarrow \text{ID}\texttt{--}$
+
+
 #### 3.4.3. Plus
+
+$\text{E} \rightarrow \text{ID }\texttt{+}\text{ ID}$
+
 #### 3.4.4. Minus
+
+$\text{E} \rightarrow \text{ID }\texttt{-}\text{ ID}$
+
 #### 3.4.5. Asterisk
+
+$\text{E} \rightarrow \text{ID }\texttt{*}\text{ ID}$
+
 #### 3.4.6. Forward Slash
+
+$\text{E} \rightarrow \text{ID }\texttt{/}\text{ ID}$
+
 #### 3.4.7. Percent
 
-#### 3.4.8. Equals
-#### 3.4.9. Less Than
-#### 3.4.10. Greater Than
-#### 3.4.11. Less Than or Equal
-#### 3.4.12. Greater Than or Equal
+$\text{E} \rightarrow \text{ID }\texttt{\%}\text{ ID}$
+
+
+#### 3.4.8. Less Than
+
+$\text{E} \rightarrow \text{ID }\texttt{<}\text{ ID}$
+
+#### 3.4.9. Greater Than
+
+$\text{E} \rightarrow \text{ID }\texttt{>}\text{ ID}$
+
+#### 3.4.10. Less Than or Equal
+
+$\text{E} \rightarrow \text{ID }\texttt{<=}\text{ ID}$
+
+#### 3.4.11. Greater Than or Equal
+
+$\text{E} \rightarrow \text{ID }\texttt{>=}\text{ ID}$
+
+#### 3.4.12. Double Equals
+
+$\text{E} \rightarrow \text{ID }\texttt{==}\text{ ID}$
+
 #### 3.4.13. Not Equals
 
+$\text{E} \rightarrow \text{ID }\texttt{!=}\text{ ID}$
+
+
 #### 3.4.14 And
+
+$\text{E} \rightarrow \text{ID }\texttt{\&\&}\text{ ID}$
+
 #### 3.4.15 Or
+
+$\text{E} \rightarrow \text{ID }\texttt{||}\text{ ID}$
+
 
 ## 4. The Full Grammar
