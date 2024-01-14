@@ -48,7 +48,7 @@ This consists of all the constants and functions described in
 2. [XS Function Reference](https://ugc.aoe2.rocks/general/xs/functions/)
 
 ## 2. Statement
-$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | Br | Co}$
+$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | Br | Co | Brpt}$
 
 $\bar{\text{S}} \rightarrow \text{S }\bar{\text{S}}\text{ | }\epsilon$
 
@@ -85,6 +85,8 @@ $\color{gray} \bar{\text{S}} := \text{Statements}$
 $\color{gray} \text{B} := \text{Body}$
 
 $\color{gray} \text{BS} := \text{Body or statement}$
+
+$\color{gray} \text{Brpt} := \text{Breakpoint}$
 
 ### 2.1. Top Level Var Def
 
@@ -175,6 +177,8 @@ $\color{gray}\text{CASE} := \text{case statement}$
 
 $\color{gray}\text{DEFAULT} := \text{default statement}$
 
+
+
 ### 2.9. Functions
 
 $\text{FN} \rightarrow \texttt{extern}\text{ FN | }\texttt{mutable}\text{ FN}$
@@ -188,6 +192,15 @@ $\text{ARGS} \rightarrow \text{ARG | ARG, ARGS}$
 
 $\text{ARG} \rightarrow\text{DTYPE ID = LIT | } \epsilon$
 
+where
+
+$\color{gray}\text{RTYPE} := \text{Return type}$
+
+$\color{gray}\text{ARGS} := \text{Arguments}$
+
+$\color{gray}\text{ARG} := \text{Argument}$
+
+
 ### 2.10. Return
 
 $\text{R} \rightarrow\texttt{return ( } \text{E} \texttt{ );}$
@@ -196,7 +209,21 @@ $\text{R} \rightarrow\texttt{return;}$
 
 ### 2.11. Rules
 
+$\text{RL} \rightarrow \texttt{rule}\text{ ID RPS B}$
 
+$\text{RPS} \rightarrow \text{ | } \epsilon$
+
+$\text{RP}_\text{act} \rightarrow \texttt{active | inactive}$
+
+$\text{RP}_\text{grp} \rightarrow \texttt{group \textbackslash w+}$
+
+$\text{RP}_\text{sfq} \rightarrow \texttt{minInterval} \text{ INT | }\texttt{highFrequency}$
+
+$\text{RP}_\text{xfq} \rightarrow \texttt{maxInterval} \text{ INT}$
+
+$\text{RP}_\text{rim} \rightarrow \texttt{runImmediately}$
+
+$\text{RP}_\text{pty} \rightarrow \texttt{priority} \text{ INT}$
 
 ### 2.12. Include
 
@@ -209,6 +236,10 @@ $\text{Br} \rightarrow \texttt{break;}$
 ### 2.14 Continue
 
 $\text{Co} \rightarrow \texttt{continue;}$
+
+### 2.15 Continue
+
+$\text{Brpt} \rightarrow \texttt{breakpoint;}$
 
 ### 2.15. Single Comment
 ### 2.16. Multiple Line Comment
