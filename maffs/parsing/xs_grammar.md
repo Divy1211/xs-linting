@@ -120,7 +120,7 @@ $\text{V}_\text{decl} \rightarrow \text{DTYPE ID}\texttt{;}$
 
 ### 2.3. Var Def
 
-$\text{V}_\text{def} \rightarrow \texttt{const }\text{V}_\text{def}$
+$\text{V}_\text{def} \rightarrow \texttt{const }\text{V}_\text{def}x$
 
 $\text{V}_\text{def} \rightarrow \text{DTYPE ID}\texttt{ = }\text{E}\texttt{;}$
 
@@ -269,13 +269,28 @@ $\text{DE} \rightarrow \text{E}\texttt{;}$
 
 ### 2.17. Docstring
 
+#### Todo
 <!-- todo -->
 
 ## 3. Expression
 
-$\text{E} \rightarrow \text{P | LIT | ID}$
+$\text{E8} \rightarrow \text{LIT | ID | P | FNC}$
 
-$\text{E} \rightarrow \text{FNC}$
+$\text{E7} \rightarrow \text{E8 | ID}\texttt{++}\text{ | ID}\texttt{--}$
+
+$\text{E6} \rightarrow \text{E7 | E6 }\texttt{*}\text{ E7 | E6 }\texttt{/}\text{ E7 | E6 }\texttt{\%}\text{ E7}$
+
+$\text{E5} \rightarrow \text{E6 | E5 }\texttt{+}\text{ E6 | E5 }\texttt{-}\text{ E6}$
+
+$\text{E4} \rightarrow \text{E5 | E4 }\texttt{<}\text{ E5 | E4 }\texttt{>}\text{ E5 | E4 }\texttt{>=}\text{ E5 | E4 }\texttt{<=}\text{ E5}$
+
+$\text{E3} \rightarrow \text{E4 | E3 }\texttt{==}\text{ E4 | E3 }\texttt{!=}\text{ E4}$
+
+$\text{E2} \rightarrow \text{E3 | E2 }\texttt{\&\&}\text{ E3}$
+
+$\text{E1} \rightarrow \text{E2 | E1 }\texttt{||}\text{ E2}$
+
+$\text{E} \rightarrow \text{E1}$
 
 
 ### 3.1. Parenthesis
@@ -293,71 +308,5 @@ $\text{ARGS}' \rightarrow \text{E | E, ARGS}'$
 where
 
 $\color{gray}\text{ARGS}_\text{actual} := \text{Actual Arguments}$
-
-### 3.3. Operators
-
-#### 3.3.1. Postfix Double Plus
-
-$\text{E} \rightarrow \text{ID}\texttt{++}$
-
-#### 3.3.2. Postfix Double Minus
-
-$\text{E} \rightarrow \text{ID}\texttt{--}$
-
-
-#### 3.3.3. Plus
-
-$\text{E} \rightarrow \text{E }\texttt{+}\text{ E}$
-
-#### 3.3.4. Minus
-
-$\text{E} \rightarrow \text{E }\texttt{-}\text{ E}$
-
-#### 3.3.5. Asterisk
-
-$\text{E} \rightarrow \text{E }\texttt{*}\text{ E}$
-
-#### 3.3.6. Forward Slash
-
-$\text{E} \rightarrow \text{E }\texttt{/}\text{ E}$
-
-#### 3.3.7. Percent
-
-$\text{E} \rightarrow \text{E }\texttt{\%}\text{ E}$
-
-
-#### 3.3.8. Less Than
-
-$\text{E} \rightarrow \text{E }\texttt{<}\text{ E}$
-
-#### 3.3.9. Greater Than
-
-$\text{E} \rightarrow \text{E }\texttt{>}\text{ E}$
-
-#### 3.3.10. Less Than or Equal
-
-$\text{E} \rightarrow \text{E }\texttt{<=}\text{ E}$
-
-#### 3.3.11. Greater Than or Equal
-
-$\text{E} \rightarrow \text{E }\texttt{>=}\text{ E}$
-
-#### 3.3.12. Double Equals
-
-$\text{E} \rightarrow \text{E }\texttt{==}\text{ E}$
-
-#### 3.3.13. Not Equals
-
-$\text{E} \rightarrow \text{E }\texttt{!=}\text{ E}$
-
-
-#### 3.3.14 And
-
-$\text{E} \rightarrow \text{E }\texttt{\&\&}\text{ E}$
-
-#### 3.3.15 Or
-
-$\text{E} \rightarrow \text{E }\texttt{||}\text{ E}$
-
 
 ## 4. The Full Grammar
