@@ -82,11 +82,11 @@ Note: Vectors are part of the grammar and are not treated as literals
 
 ### 4.1. Single Comment
 
-$\text{CMT} \rightarrow \texttt{//[\^ \textbackslash n]*}$
+$\text{CMT} := \texttt{//[\^ \textbackslash n]*}$
 
 ### 4.2. Multiple Line Comment
 
-$\text{CMT} \rightarrow /* .* */$
+$\text{CMT} := /* .* */$
 
 ## XS Keywords
 

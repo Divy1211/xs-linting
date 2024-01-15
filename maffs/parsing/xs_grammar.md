@@ -120,7 +120,7 @@ $\text{V}_\text{decl} \rightarrow \text{DTYPE ID}\texttt{;}$
 
 ### 2.3. Var Def
 
-$\text{V}_\text{def} \rightarrow \texttt{const }\text{V}_\text{def}x$
+$\text{V}_\text{def} \rightarrow \texttt{const }\text{V}_\text{def}$
 
 $\text{V}_\text{def} \rightarrow \text{DTYPE ID}\texttt{ = }\text{E}\texttt{;}$
 
