@@ -28,7 +28,6 @@ maxInterval
 highFrequency
 active
 inactive
-highFrequency
 group
 infiniteLoopLimit
 infiniteRecursionLimit

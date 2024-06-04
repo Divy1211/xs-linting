@@ -1,6 +1,6 @@
 # XS Lint
 
-This tool is a linter AoE2:DE's flavour of XS.
+This tool is a linter  for AoE2:DE's flavour of XS.
 
 ## Cool Maffs
 

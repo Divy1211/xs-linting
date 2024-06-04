@@ -48,7 +48,7 @@ This consists of all the constants and functions described in
 2. [XS Function Reference](https://ugc.aoe2.rocks/general/xs/functions/)
 
 ## 2. Statement
-$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | BR | CO | BRPT | DE}$
+$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | BR | CO | BRPT | DE | DP | DM}$
 
 $\bar{\text{S}} \rightarrow \text{S }\bar{\text{S}}\text{ | }\epsilon$
 
@@ -272,11 +272,15 @@ $\text{DE} \rightarrow \text{E}\texttt{;}$
 #### Todo
 <!-- todo -->
 
+### 2.18. Postfix
+
+$\text{DP} \rightarrow \text{ID}\texttt{++}$
+
+$\text{DM} \rightarrow \text{ID}\texttt{--}$
+
 ## 3. Expression
 
-$\text{E8} \rightarrow \text{LIT | ID | P | FNC}$
-
-$\text{E7} \rightarrow \text{E8 | ID}\texttt{++}\text{ | ID}\texttt{--}$
+$\text{E7} \rightarrow \text{LIT | ID | P | FNC}$
 
 $\text{E6} \rightarrow \text{E7 | E6 }\texttt{*}\text{ E7 | E6 }\texttt{/}\text{ E7 | E6 }\texttt{\%}\text{ E7}$
 

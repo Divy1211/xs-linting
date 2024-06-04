@@ -49,6 +49,8 @@ $\text{OR} :=\ \texttt{||}$
 
 ## 2. Punctuations
 
+$\text{EQ} :=\ \texttt{=}$
+
 $\text{LBRACE} :=\ \texttt{\{}$
 
 $\text{RBRACE} :=\ \texttt{\}}$
@@ -58,6 +60,8 @@ $\text{LPAREN} :=\ \texttt{(}$
 $\text{RPAREN} :=\ \texttt{)}$
 
 $\text{SEMICOLON} :=\ \texttt{;}$
+
+$\text{COLON} :=\ \texttt{:}$
 
 $\text{COMMA} :=\ \texttt{,}$
 
