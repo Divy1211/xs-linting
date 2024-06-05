@@ -1,4 +1,5 @@
 use crate::lang::ast::literal::{Identifier, Literal};
+use crate::lang::span::Span;
 
 #[derive(Debug, Clone)]
 pub enum Token {
@@ -7,8 +8,8 @@ pub enum Token {
     Star,
     FSlash,
     PCent,
-    DPlus,  // currently not tokenized
-    DMinus, // currently not tokenized
+    DPlus,
+    DMinus,
     LT,
     GT,
     LE,

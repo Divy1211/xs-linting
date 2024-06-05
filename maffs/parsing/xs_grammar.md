@@ -16,7 +16,7 @@ The following represent terminal symbols:
 
 ### 1.1. Literals
 
-$\text{NUM} \rightarrow \text{INT | FLT}$
+$\text{NUM} \rightarrow \text{INT | FLT | -INT | -FLT}$
 
 $\text{VCT} \rightarrow \texttt{vector(}\text{NUM}\texttt{, }\text{NUM}\texttt{, }\text{NUM}\texttt{);}$
 

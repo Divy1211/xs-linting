@@ -7,7 +7,7 @@ pub enum E7 {
     Parenthesis(Box<Expr>),
     FnCall {
         name: Identifier,
-        args: Vec<Box<Expr>>
+        args: Vec<Expr>
     }
 }
 

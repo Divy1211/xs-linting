@@ -1,23 +1,28 @@
 use chumsky::prelude::*;
 use crate::lang::ast::literal::{Identifier, Literal};
 use crate::lang::lexer::tokens::Token;
+use crate::lang::span::Spanned;
 
-pub fn literal() -> impl Parser<char, Token, Error = Simple<char>> {
+pub fn literal() -> impl Parser<char, Spanned<Token>, Error = Simple<char>> {
     let int = text::int(10)
-        .map(|num: String| Token::Literal(Literal::Int(num.parse().unwrap())))
-        .padded();
+        .map_with_span(|num: String, span| {
+            Spanned::new(Token::Literal(Literal::Int(num.parse().unwrap())), span)
+        }).padded();
 
     let float = text::int(10)
         .then_ignore(just('.'))
         .then(text::digits(10))
-        .map(|(whole, fraction): (String, String)| {
-            Token::Literal(Literal::Float(format!("{}.{}", whole, fraction).parse().unwrap()))
-        })
-        .padded();
+        .map_with_span(|(whole, fraction), span| {
+            Spanned::new(
+                Token::Literal(Literal::Float(format!("{}.{}", whole, fraction).parse().unwrap())),
+                span
+            )
+        }).padded();
 
     let bool = just("true").or(just("false"))
-        .map(|val: &str| Token::Literal(Literal::Bool(val.parse().unwrap())))
-        .padded();
+        .map_with_span(|val, span| {
+            Spanned::new(Token::Literal(Literal::Bool(val.parse().unwrap())), span)
+        }).padded();
 
     let string = just('"')
         .ignore_then(
@@ -33,33 +38,21 @@ pub fn literal() -> impl Parser<char, Token, Error = Simple<char>> {
             )).repeated()
         )
         .then_ignore(just('"'))
-        .map(|chars: Vec<char>| {
+        .map_with_span(|chars, span| {
             let string: String = chars.into_iter().collect();
-            Token::Literal(Literal::Str(string))
-        })
-        .padded();
+            Spanned::new(Token::Literal(Literal::Str(string)), span)
+        }).padded();
 
-    let num = just("-").or_not().then(float.or(int))
-        .map(|(sign, num)| match num {
-            Token::Literal(n) => { match n {
-                Literal::Int(i) => { match sign { Some(_) => -i as f64, None => i as f64 } }
-                Literal::Float(f) => { match sign { Some(_) => -f, None => f } }
-                _ => { 0f64 }
-            }}
-            _ => { 0f64 }
-        });
-
-    let vec = just("vec(")
-        .ignore_then(num)
-        .then_ignore(just(",").padded())
-        .then(num)
-        .then_ignore(just(",").padded())
-        .then(num)
-        .then_ignore(just(")").padded())
-        .map(|((x, y), z)| Token::Literal(Literal::Vec { x, y, z }))
-        .padded();
-
-    let id = text::ident().map(|name: String| Token::Identifier(Identifier(name))).padded();
+    let id = text::ident()
+        .map_with_span(|name, span| {
+            Spanned::new(Token::Identifier(Identifier(name)), span)
+        }).padded();
     
-    choice((float, int, bool, string, vec, id))
+    choice((
+        float,
+        int,
+        bool,
+        string,
+        id,
+    ))
 }

@@ -5,20 +5,17 @@
   </component>
   <component name="CargoProjects">
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
-    <cargoProject FILE="$PROJECT_DIR$/src/lang/tea/Cargo.toml" />
-    <cargoProject FILE="$PROJECT_DIR$/src/lang/tokens/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/XSLint.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/XSLint.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Added source locs">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_keywords.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/parsing/xs_keywords.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_tokens.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/parsing/xs_tokens.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/expr.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/span.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/span.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/tokens.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/tokens.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +35,12 @@
   <component name="MacroExpansionManager">
     <option name="directoryName" value="x36qsvll" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -48,29 +51,35 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Cargo.Run XSLint.executor": "Run",
-    "Cargo.parse test.executor": "Run",
-    "Cargo.parse xslc_core.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Divy/IdeaProjects/XSLint",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "language.rust.cargo.check",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Cargo.Run XSLint.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse starter.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse test.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse xslc_core.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Divy/IdeaProjects/XSLint/test_xs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
+    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Divy\IdeaProjects\XSLint\test_xs" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -85,6 +94,23 @@
   <component name="RunManager" selected="Cargo.parse xslc_core">
     <configuration name="Run XSLint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="run --package XSLint --bin XSLint" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="parse starter" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="run --package XSLint --bin XSLint &quot;C:\Users\Divy\IdeaProjects\XSLint\test_xs\starter.xs&quot;" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
       <option name="emulateTerminal" value="true" />
@@ -136,6 +162,7 @@
     </configuration>
     <list>
       <item itemvalue="Cargo.parse xslc_core" />
+      <item itemvalue="Cargo.parse starter" />
       <item itemvalue="Cargo.parse test" />
       <item itemvalue="Cargo.Run XSLint" />
     </list>
@@ -157,11 +184,34 @@
       <option name="presentableId" value="Default" />
       <updated>1717355529951</updated>
       <workItem from="1717355529953" duration="659000" />
-      <workItem from="1717398425661" duration="31298000" />
+      <workItem from="1717398425661" duration="34313000" />
+      <workItem from="1717515012202" duration="12829000" />
     </task>
+    <task id="LOCAL-00001" summary="Implemented lexer">
+      <option name="closed" value="true" />
+      <created>1717499574085</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1717499574085</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Added source locs">
+      <option name="closed" value="true" />
+      <created>1717591223853</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1717591223853</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Implemented lexer" />
+    <MESSAGE value="Added source locs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added source locs" />
   </component>
 </project>
