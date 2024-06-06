@@ -3,14 +3,13 @@ pub mod lang;
 use std::{env, fs};
 use chumsky::prelude::*;
 use crate::lang::lexer::lexer;
-use crate::lang::parser::expression::expression;
 use crate::lang::parser::statement::statement;
 
 fn main() {
     // let src = fs::read_to_string(
     //     env::args().nth(1).expect("Filename not provided")
     // ).expect("Failed to read file");
-    let src = "const int test = 1+1;".to_string();
+    let src = "switch (5) { case 5+5 : {} case 6 : {} }".to_string();
     let (tokens, mut errs) = lexer()
         .parse(src.as_str())
         .into_output_errors();

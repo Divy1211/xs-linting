@@ -6,4 +6,6 @@ pub enum Type {
     Str,
     Vec,
     Void,
+    
+    Error(String)
 }

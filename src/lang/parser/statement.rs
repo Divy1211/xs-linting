@@ -1,11 +1,25 @@
 use chumsky::prelude::*;
-use crate::lang::ast::literal::Literal;
+
 use crate::lang::ast::astree::ASTreeNode;
-use crate::lang::ast::type_::Type;
 use crate::lang::lexer::token::Token;
-use crate::lang::parser::expression::expression;
 use crate::lang::parser::parser_input::ParserInput;
+use crate::lang::parser::statement::for_::for_;
+use crate::lang::parser::statement::include::include;
+use crate::lang::parser::statement::if_else::if_else;
+use crate::lang::parser::statement::switch::switch;
+use crate::lang::parser::statement::var_assign::var_assign;
+use crate::lang::parser::statement::var_def::var_def;
+use crate::lang::parser::statement::while_::while_;
 use crate::lang::span::{Span, Spanned};
+
+pub mod include;
+pub mod var_def;
+pub mod var_assign;
+pub mod body;
+pub mod if_else;
+pub mod while_;
+pub mod for_;
+pub mod switch;
 
 pub fn statement<'tokens>(
 ) -> impl Parser<
@@ -14,39 +28,15 @@ pub fn statement<'tokens>(
     Spanned<ASTreeNode>,
     extra::Err<Rich<'tokens, Token, Span>>,
 > + Clone {
-    let include = just([Token::Include])
-        .ignore_then(
-            select! { Token::Literal(Literal::Str(path)) => ASTreeNode::Include(path) }
-                .map_with(|node, info| (node, info.span()))
-        ).boxed();
-    
-    let var_def = 
-        one_of([Token::Extern, Token::Const, Token::Static]).repeated().collect::<Vec<Token>>()
-            .then(one_of([Token::Int, Token::Bool, Token::Float, Token::String, Token::Vector]))
-            .then(select! { Token::Identifier(id) => id })
-            .then_ignore(just(Token::Eq))
-            .then(expression().or_not())
-            .then_ignore(just(Token::SColon))
-            .map_with(|((((mods, type_), name)), value), info| {
-                (ASTreeNode::VarDef {
-                    is_extern: mods.contains(&Token::Extern),
-                    is_const: mods.contains(&Token::Const),
-                    is_static: mods.contains(&Token::Static),
-                    type_: match type_ {
-                        Token::Int => Type::Int,
-                        Token::Bool => Type::Bool,
-                        Token::Float => Type::Float,
-                        Token::String => Type::Str,
-                        Token::Vector => Type::Vec,
-                        _             => Type::Void, // this arm is unreachable
-                    },
-                    name,
-                    value,
-                }, info.span())
-            }).boxed();
-
-    choice((
-        include,
-        var_def,
-    ))
+    recursive(|statement| {
+        choice((
+            include(),
+            var_def(),
+            var_assign(),
+            if_else(statement.clone()),
+            while_(statement.clone()),
+            for_(statement.clone()),
+            switch(statement.clone()),
+        ))
+    })
 }

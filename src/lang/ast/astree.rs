@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use crate::lang::ast::expr::Expr;
 use crate::lang::ast::identifier::Identifier;
 use crate::lang::ast::literal::Literal;
@@ -8,13 +7,8 @@ use crate::lang::span::Spanned;
 
 #[derive(Debug, Clone)]
 pub enum Body {
-    Statements(Vec<Spanned<ASTreeNode>>),
-}
-
-#[derive(Debug, Clone)]
-pub enum BodyStatement {
-    Body(Body),
-    Statement(Box<Spanned<ASTreeNode>>),
+    Block(Vec<Spanned<ASTreeNode>>),
+    Single(Box<Spanned<ASTreeNode>>),
 }
 
 #[derive(Debug, Clone)]
@@ -31,7 +25,7 @@ pub enum ASTreeNode {
         is_const: bool, // only literals can be assigned to consts, no exprs allowed
         is_static: bool,
         type_: Type,
-        name: Identifier,
+        name: Spanned<Identifier>,
         value: Option<Spanned<Expr>>, // only literals allowed in top level, strings are bugged, vecs are fine
     },
     RuleDef {
@@ -52,26 +46,27 @@ pub enum ASTreeNode {
         body: Body,
     },
     VarAssign {
-        name: Identifier,
-        value: Expr,
+        name: Spanned<Identifier>,
+        value: Spanned<Expr>,
     },
     IfElse {
-        condition: Expr,
-        then: BodyStatement,
-        else_: Option<BodyStatement>,
+        condition: Spanned<Expr>,
+        consequent: Body,
+        alternate: Option<Body>,
     },
     While {
-        condition: Expr,
-        body: BodyStatement,
+        condition: Spanned<Expr>,
+        body: Body,
     },
     For {
-        var: Box<ASTreeNode>, // always VarAssign
-        condition: Expr,
-        body: BodyStatement,
+        var: Box<Spanned<ASTreeNode>>, // always VarAssign
+        condition: Spanned<Expr>,
+        body: Body,
     },
     Switch {
-        clause: Expr,
-        cases: HashMap<Literal, BodyStatement>,
+        clause: Spanned<Expr>,
+        cases: Vec<(Spanned<Expr>, Body)>, // expr can only be literal. todo: are vecs allowed?
+        default: Option<Body>,
     },
     PostDPlus(Identifier),
     PostDMinus(Identifier),
@@ -80,4 +75,6 @@ pub enum ASTreeNode {
     Continue,
     Return (Expr),
     DocStr(String),
+    
+    Error(String),
 }
