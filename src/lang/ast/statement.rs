@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use crate::lang::ast::expr::Expr;
-use crate::lang::ast::literal::{Identifier, Literal};
+use crate::lang::ast::identifier::Identifier;
+use crate::lang::ast::literal::Literal;
 use crate::lang::ast::type_::Type;
 
 #[derive(Debug)]

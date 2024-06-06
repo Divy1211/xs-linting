@@ -1,4 +1,5 @@
-use crate::lang::ast::literal::{Identifier, Literal};
+use crate::lang::ast::identifier::Identifier;
+use crate::lang::ast::literal::Literal;
 use crate::lang::ast::statement::Body;
 use crate::lang::ast::type_::Type;
 

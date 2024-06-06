@@ -1,28 +1,23 @@
 use chumsky::prelude::*;
-use crate::lang::ast::literal::{Identifier, Literal};
-use crate::lang::lexer::tokens::Token;
-use crate::lang::span::Spanned;
+use crate::lang::ast::literal::Literal;
+use crate::lang::lexer::token::Token;
+use crate::lang::span::{Span};
 
-pub fn literal() -> impl Parser<char, Spanned<Token>, Error = Simple<char>> {
+pub fn literal<'src>(
+) -> impl Parser<'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>> {
     let int = text::int(10)
-        .map_with_span(|num: String, span| {
-            Spanned::new(Token::Literal(Literal::Int(num.parse().unwrap())), span)
-        }).padded();
+        .to_slice().from_str().unwrapped()
+        .map(|val| Token::Literal(Literal::Int(val)));
 
     let float = text::int(10)
         .then_ignore(just('.'))
         .then(text::digits(10))
-        .map_with_span(|(whole, fraction), span| {
-            Spanned::new(
-                Token::Literal(Literal::Float(format!("{}.{}", whole, fraction).parse().unwrap())),
-                span
-            )
-        }).padded();
+        .to_slice().from_str().unwrapped()
+        .map(|val| Token::Literal(Literal::Float(val)));
 
     let bool = just("true").or(just("false"))
-        .map_with_span(|val, span| {
-            Spanned::new(Token::Literal(Literal::Bool(val.parse().unwrap())), span)
-        }).padded();
+        .to_slice().from_str().unwrapped()
+        .map(|val| Token::Literal(Literal::Bool(val)));
 
     let string = just('"')
         .ignore_then(
@@ -38,21 +33,13 @@ pub fn literal() -> impl Parser<char, Spanned<Token>, Error = Simple<char>> {
             )).repeated()
         )
         .then_ignore(just('"'))
-        .map_with_span(|chars, span| {
-            let string: String = chars.into_iter().collect();
-            Spanned::new(Token::Literal(Literal::Str(string)), span)
-        }).padded();
-
-    let id = text::ident()
-        .map_with_span(|name, span| {
-            Spanned::new(Token::Identifier(Identifier(name)), span)
-        }).padded();
+        .to_slice()
+        .map(|val: &str| Token::Literal(Literal::Str(val.to_string())));
     
     choice((
         float,
         int,
         bool,
         string,
-        id,
     ))
 }

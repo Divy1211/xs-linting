@@ -1,15 +1,5 @@
-use std::ops::Range;
+use chumsky::span::SimpleSpan;
 
-pub type Span = Range<usize>;
+pub type Span = SimpleSpan<usize>;
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct Spanned<T> {
-    pub value: T,
-    pub span: Span,
-}
-
-impl<T> Spanned<T> {
-    pub fn new(value: T, span: Span) -> Self {
-        Spanned { value, span }
-    }
-}
+pub type Spanned<T> = (T, Span);

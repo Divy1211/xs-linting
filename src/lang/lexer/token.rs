@@ -1,7 +1,8 @@
-use crate::lang::ast::literal::{Identifier, Literal};
-use crate::lang::span::Span;
+use crate::lang::ast::comment::Comment;
+use crate::lang::ast::identifier::Identifier;
+use crate::lang::ast::literal::Literal;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Token {
     Plus,
     Minus,
@@ -32,7 +33,7 @@ pub enum Token {
     Literal(Literal),
     Identifier(Identifier),
     
-    Comment(String),
+    Comment(Comment),
 
     Vector,
     Include,

@@ -9,13 +9,22 @@
   <component name="ChangeListManager">
     <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Added source locs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lang.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lang/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/expr.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/literal.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/program.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/program.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/statement.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/statement.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lang/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/span.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/span.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/tokens.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/tokens.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/literal.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/operator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/operator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/punctuation.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/punctuation.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/tokens.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/token.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/span.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/span.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,6 +92,7 @@
       <recent name="C:\Users\Divy\IdeaProjects\XSLint" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\lang" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\test_xs" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\lang\lexer" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\src" />
@@ -91,7 +101,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="runOnTheFly" value="true" />
   </component>
-  <component name="RunManager" selected="Cargo.parse xslc_core">
+  <component name="RunManager" selected="Cargo.parse test">
     <configuration name="Run XSLint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="run --package XSLint --bin XSLint" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -185,7 +195,7 @@
       <updated>1717355529951</updated>
       <workItem from="1717355529953" duration="659000" />
       <workItem from="1717398425661" duration="34313000" />
-      <workItem from="1717515012202" duration="12829000" />
+      <workItem from="1717515012202" duration="30316000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
@@ -203,7 +213,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717591223853</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added source locs">
+      <option name="closed" value="true" />
+      <created>1717602914285</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1717602914285</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
