@@ -19,6 +19,7 @@ dbg
 return
 void
 int
+bool
 float
 string
 const

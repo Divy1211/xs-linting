@@ -18,8 +18,8 @@ pub fn lexer<'src>(
 ) -> impl Parser<'src, &'src str, Vec<Spanned<Token>>, extra::Err<Rich<'src, char, Span>>> {
     choice((
         comment(),
-        keyword(),
         literal(),
+        keyword(),
         operator(),
         punctuation(),
     ))

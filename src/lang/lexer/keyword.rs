@@ -24,6 +24,7 @@ pub fn keyword<'src>(
         "return"                 => Token::Return,
         "void"                   => Token::Void,
         "int"                    => Token::Int,
+        "bool"                   => Token::Bool,
         "float"                  => Token::Float,
         "string"                 => Token::String,
         "const"                  => Token::Const,

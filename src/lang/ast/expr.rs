@@ -1,32 +1,37 @@
 use crate::lang::ast::identifier::Identifier;
 use crate::lang::ast::literal::Literal;
+use crate::lang::span::Spanned;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr {
     Literal(Literal),
     Identifier(Identifier),
-    Parenthesis(Box<Expr>),
+    Paren(Box<Spanned<Expr>>),
     FnCall {
-        name: Identifier,
-        args: Vec<Expr>
+        name: Box<Spanned<Expr>>,
+        args: Vec<Spanned<Expr>>
     },
     
-    Star(Box<Expr>, Box<Expr>),
-    FSlash(Box<Expr>, Box<Expr>),
-    PCent(Box<Expr>, Box<Expr>),
+    UMinus(Box<Spanned<Expr>>),
     
-    Plus(Box<Expr>, Box<Expr>),
-    Minus(Box<Expr>, Box<Expr>),
-
-    LT(Box<Expr>, Box<Expr>),
-    GT(Box<Expr>, Box<Expr>),
-    LE(Box<Expr>, Box<Expr>),
-    GE(Box<Expr>, Box<Expr>),
-
-    EQ(Box<Expr>, Box<Expr>),
-    NE(Box<Expr>, Box<Expr>),
-
-    And(Box<Expr>, Box<Expr>),
+    Star(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    FSlash(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    PCent(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
     
-    Or(Box<Expr>, Box<Expr>),
+    Plus(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    Minus(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+
+    Lt(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    Gt(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    Le(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    Ge(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+
+    Eq(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    Ne(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+
+    And(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    
+    Or(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
+    
+    Error(String)
 }

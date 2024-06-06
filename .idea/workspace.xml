@@ -7,8 +7,20 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Updated to chumsky 1.0.0">
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Updated license">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_keywords.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/parsing/xs_keywords.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/expr.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/program.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/astree.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/statement.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/type_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/type_.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/operator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/operator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/token.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/token.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +97,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="runOnTheFly" value="true" />
   </component>
-  <component name="RunManager" selected="Cargo.parse xslc_core">
+  <component name="RunManager" selected="Cargo.Run XSLint">
     <configuration name="Run XSLint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="run --package XSLint --bin XSLint" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -179,7 +191,7 @@
       <updated>1717355529951</updated>
       <workItem from="1717355529953" duration="659000" />
       <workItem from="1717398425661" duration="34313000" />
-      <workItem from="1717515012202" duration="30636000" />
+      <workItem from="1717515012202" duration="47155000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
@@ -213,16 +225,36 @@
       <option name="project" value="LOCAL" />
       <updated>1717656579589</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Updated license">
+      <option name="closed" value="true" />
+      <created>1717657024512</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1717657024512</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Implemented lexer" />
     <MESSAGE value="Added source locs" />
     <MESSAGE value="Updated to chumsky 1.0.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated to chumsky 1.0.0" />
+    <MESSAGE value="Updated license" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated license" />
   </component>
 </project>
