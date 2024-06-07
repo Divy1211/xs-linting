@@ -6,7 +6,6 @@ pub enum Literal {
     Float(f64),
     Bool(bool),
     Str(String),
-    Vec {x: f64, y: f64, z: f64},
 }
 
 impl PartialEq for Literal {
@@ -16,7 +15,6 @@ impl PartialEq for Literal {
             (Literal::Float(_), Literal::Float(_))   => true,
             (Literal::Bool(_), Literal::Bool(_))     => true,
             (Literal::Str(_), Literal::Str(_))       => true,
-            (Literal::Vec{ .. }, Literal::Vec{ .. }) => true,
             _                                        => false,
         }
     }
@@ -31,7 +29,6 @@ impl Hash for Literal {
             Literal::Float(_) =>   1,
             Literal::Bool(_) =>    2,
             Literal::Str(_) =>     3,
-            Literal::Vec { .. } => 4,
         });
         state.finish();
     }

@@ -1,12 +1,10 @@
 use chumsky::prelude::*;
 use crate::lang::ast::expr::Expr;
-use crate::lang::ast::identifier::Identifier;
 use crate::lang::lexer::token::Token;
 use crate::lang::parser::parser_input::ParserInput;
 use crate::lang::span::{Span, Spanned};
 
-pub fn expression<'tokens>(
-) -> impl Parser<
+pub fn expression<'tokens>() -> impl Parser<
     'tokens,
     ParserInput<'tokens>,
     Spanned<Expr>,
@@ -22,8 +20,16 @@ pub fn expression<'tokens>(
 
         let id = select! {
             Token::Identifier(id) => Expr::Identifier(id),
-            Token::Vector         => Expr::Identifier(Identifier("vector".to_string())),
         }.map_with(|exp, info| (exp, info.span()));
+        
+        let vec_lit = just(Token::Vector).ignore_then(
+            expr.clone().then_ignore(just(Token::Comma))
+                .then(expr.clone().then_ignore(just(Token::Comma)))
+                .then(expr.clone())
+                .delimited_by(just(Token::LParen), just(Token::RParen))
+        ).map_with(|((x, y), z), info| {
+            (Expr::Vec { x: Box::new(x), y: Box::new(y), z: Box::new(z) }, info.span())
+        });
         
         let fn_call = id.clone().then(
             expr.clone()
@@ -36,16 +42,18 @@ pub fn expression<'tokens>(
         });
 
         let expr7 = choice((
+            vec_lit,
             fn_call,
             paren_expr,
             lit,
             id,
         )).boxed();
 
-        let unary = just(Token::Minus).or_not()
+        let unary = one_of([Token::Minus, Token::Excl]).or_not()
             .then(expr7)
             .map_with(|(sign, exp), info| match sign {
-                Some(_) => (Expr::UMinus(Box::new(exp)), info.span()),
+                Some(Token::Minus) => (Expr::Neg(Box::new(exp)), info.span()),
+                Some(_)  =>           (Expr::Not(Box::new(exp)), info.span()),
                 None    => exp,
             }).boxed();
 
@@ -55,8 +63,7 @@ pub fn expression<'tokens>(
                 |a, (op, b), info| (match op {
                     Token::Star   => Expr::Star(Box::new(a), Box::new(b)),
                     Token::FSlash => Expr::FSlash(Box::new(a), Box::new(b)),
-                    Token::PCent  => Expr::PCent(Box::new(a), Box::new(b)),
-                    _             => Expr::Error("E6Unreachable".to_string()),
+                    _             => Expr::PCent(Box::new(a), Box::new(b)),
                 }, info.span())
             ).boxed();
 
@@ -65,8 +72,7 @@ pub fn expression<'tokens>(
                 one_of([Token::Plus, Token::Minus]).then(expr6).repeated(),
                 |a, (op, b), info| (match op {
                     Token::Plus  => Expr::Plus(Box::new(a), Box::new(b)),
-                    Token::Minus => Expr::Minus(Box::new(a), Box::new(b)),
-                    _            => Expr::Error("E5Unreachable".to_string()),
+                    _            => Expr::Minus(Box::new(a), Box::new(b)),
                 }, info.span())
             ).boxed();
 
@@ -77,8 +83,7 @@ pub fn expression<'tokens>(
                     Token::Lt => Expr::Lt(Box::new(a), Box::new(b)),
                     Token::Le => Expr::Le(Box::new(a), Box::new(b)),
                     Token::Gt => Expr::Gt(Box::new(a), Box::new(b)),
-                    Token::Ge => Expr::Ge(Box::new(a), Box::new(b)),
-                    _         => Expr::Error("E4Unreachable".to_string()),
+                    _         => Expr::Ge(Box::new(a), Box::new(b)),
                 }, info.span())
             ).boxed();
 
@@ -87,14 +92,13 @@ pub fn expression<'tokens>(
                 one_of([Token::Deq, Token::Neq]).then(expr4).repeated(),
                 |a, (op, b), info| (match op {
                     Token::Deq => Expr::Eq(Box::new(a), Box::new(b)),
-                    Token::Neq => Expr::Ne(Box::new(a), Box::new(b)),
-                    _          => Expr::Error("E3Unreachable".to_string()),
+                    _          => Expr::Ne(Box::new(a), Box::new(b)),
                 }, info.span())
             ).boxed();
 
         let expr2 = expr3.clone()
             .foldl_with(
-                just(Token::And).ignore_then(expr3).repeated(),
+                just(Token::DAmp).ignore_then(expr3).repeated(),
                 |a, b, info| {
                     (Expr::And(Box::new(a), Box::new(b)), info.span())
                 }
@@ -102,7 +106,7 @@ pub fn expression<'tokens>(
 
         let expr1 = expr2.clone()
             .foldl_with(
-                just(Token::Or).ignore_then(expr2).repeated(),
+                just(Token::DPipe).ignore_then(expr2).repeated(),
                 |a, b, info| {
                     (Expr::Or(Box::new(a), Box::new(b)), info.span())
                 }

@@ -17,8 +17,9 @@ pub enum Token {
     Ge,
     Deq,
     Neq,
-    And,
-    Or,
+    DAmp,
+    DPipe,
+    Excl,
     
     Eq,
     LBrace,

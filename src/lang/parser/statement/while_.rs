@@ -23,8 +23,8 @@ pub fn while_<'tokens>(
         .ignore_then(expression().delimited_by(just(Token::LParen), just(Token::RParen)))
         .then(body(statement.clone()))
         .map_with(|
-            ((condition, body)),
-             info
+            (condition, body),
+            info
         | {
             (ASTreeNode::While { condition, body }, info.span())
         })

@@ -1,11 +1,10 @@
 use chumsky::prelude::*;
 use crate::lang::ast::astree::ASTreeNode;
 use crate::lang::lexer::token::Token;
-use crate::lang::parser::expression::expression;
 use crate::lang::parser::parser_input::ParserInput;
 use crate::lang::span::{Span, Spanned};
 
-pub fn var_assign<'tokens>() -> impl Parser<
+pub fn postfix<'tokens>() -> impl Parser<
     'tokens,
     ParserInput<'tokens>,
     Spanned<ASTreeNode>,
@@ -13,13 +12,10 @@ pub fn var_assign<'tokens>() -> impl Parser<
 > + Clone {
     select! { Token::Identifier(id) => id }
         .map_with(|id, info| (id, info.span()))
-        .then_ignore(just(Token::Eq))
-        .then(expression())
+        .then(one_of([Token::DMinus, Token::DPlus]))
         .then_ignore(just(Token::SColon))
-        .map_with(|(name,  value), info| {
-            (ASTreeNode::VarAssign {
-                name,
-                value,
-            }, info.span())
-        })
+        .map_with(|(name, tok), info| (match tok {
+            Token::DMinus => ASTreeNode::PostDMinus(name),
+            _             => ASTreeNode::PostDPlus(name),
+        }, info.span()))
 }

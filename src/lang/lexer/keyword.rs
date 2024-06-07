@@ -3,8 +3,9 @@ use crate::lang::ast::identifier::Identifier;
 use crate::lang::span::{Span};
 use crate::lang::lexer::token::Token;
 
-pub fn keyword<'src>(
-) -> impl Parser<'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>> {
+pub fn keyword<'src>() -> impl Parser<
+    'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>
+> {
     text::ascii::ident().map(|ident| match ident {
         "vector"                 => Token::Vector,
         "include"                => Token::Include,

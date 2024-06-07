@@ -14,8 +14,9 @@ use crate::lang::lexer::operator::operator;
 use crate::lang::lexer::punctuation::punctuation;
 use crate::lang::span::{Span, Spanned};
 
-pub fn lexer<'src>(
-) -> impl Parser<'src, &'src str, Vec<Spanned<Token>>, extra::Err<Rich<'src, char, Span>>> {
+pub fn lexer<'src>() -> impl Parser<
+    'src, &'src str, Vec<Spanned<Token>>, extra::Err<Rich<'src, char, Span>>
+> {
     choice((
         comment(),
         literal(),

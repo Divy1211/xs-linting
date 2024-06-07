@@ -3,8 +3,9 @@ use crate::lang::ast::literal::Literal;
 use crate::lang::lexer::token::Token;
 use crate::lang::span::{Span};
 
-pub fn literal<'src>(
-) -> impl Parser<'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>> {
+pub fn literal<'src>() -> impl Parser<
+    'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>
+> {
     let int = text::int(10)
         .to_slice().from_str().unwrapped()
         .map(|val| Token::Literal(Literal::Int(val)));

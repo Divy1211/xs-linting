@@ -23,27 +23,21 @@ pub fn switch<'tokens>(
     let case = just(Token::Case)
         .ignore_then(expression())
         .then_ignore(just(Token::Colon))
-        .then(body(statement.clone()));
-    
+        .then(body(statement.clone()))
+        .map(|(expr, body)| (Some(expr), body));
+
     let default = just([Token::Default, Token::Colon])
-        .ignore_then(body(statement.clone()));
-    
+        .ignore_then(body(statement.clone()))
+        .map(|body| (None, body));
+
     just(Token::Switch)
         .ignore_then(expression().delimited_by(just(Token::LParen), just(Token::RParen)))
         .then(
-            case.clone().repeated().collect::<Vec<(Spanned<Expr>, Body)>>()
-                .then(default.then(case.repeated().collect::<Vec<(Spanned<Expr>, Body)>>()).or_not())
+            choice((case, default))
+                .repeated()
+                .collect::<Vec<(Option<Spanned<Expr>>, Spanned<Body>)>>()
                 .delimited_by(just(Token::LBrace), just(Token::RBrace))
-        ).map_with(|(clause, (mut cases, cases2)), info| {
-
-        let default = match cases2 {
-            Some((default, cases2)) => {
-                cases.extend(cases2);
-                Some(default)
-            },
-            None => None,
-        };
-
-        (ASTreeNode::Switch { clause, cases, default }, info.span())
-    })
+        ).map_with(|(clause, cases), info| (
+        ASTreeNode::Switch { clause, cases }, info.span())
+    )
 }

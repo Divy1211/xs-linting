@@ -1,6 +1,5 @@
 use crate::lang::ast::expr::Expr;
 use crate::lang::ast::identifier::Identifier;
-use crate::lang::ast::literal::Literal;
 use crate::lang::ast::param::Param;
 use crate::lang::ast::type_::Type;
 use crate::lang::span::Spanned;
@@ -12,69 +11,76 @@ pub enum Body {
 }
 
 #[derive(Debug, Clone)]
-pub enum RuleFreq {
-    HighFreq,
-    Interval(i64, i64)
+pub enum RuleOpt {
+    Active,
+    Inactive,
+    RunImmediately,
+    HighFrequency,
+    MinInterval(Spanned<i64>),
+    MaxInterval(Spanned<i64>),
+    Priority(Spanned<i64>),
+    Group(Spanned<String>),
 }
 
 #[derive(Debug, Clone)]
 pub enum ASTreeNode {
-    Include(String),
+    Include(Spanned<String>),
     VarDef {
-        is_extern: bool, // no extern in locals
-        is_const: bool, // only literals can be assigned to consts, no exprs allowed
+        is_extern: bool,              // no extern inside locals
+        is_const: bool,               // only literals can be assigned to consts, no exprs allowed
         is_static: bool,
         type_: Type,
         name: Spanned<Identifier>,
-        value: Option<Spanned<Expr>>, // only literals allowed in top level, strings are bugged, vecs are fine
-    },
-    RuleDef {
-        name: Identifier,
-        is_active: bool,
-        run_immediately: bool,
-        frequency: Spanned<RuleFreq>,
-        priority: Spanned<i64>,
-        group_name: Spanned<Literal>, // always Str
-        body: Body,
-    },
-    FnDef {
-        is_extern: bool,
-        is_mutable: bool,
-        return_type: Type,
-        name: Identifier,
-        parameters: Vec<Param>,
-        body: Body,
+        value: Option<Spanned<Expr>>, // only literals allowed in top level, strings are bugged, vecs are fine. Top levels can't be decls
     },
     VarAssign {
         name: Spanned<Identifier>,
         value: Spanned<Expr>,
     },
+    RuleDef {
+        name: Spanned<Identifier>,
+        rule_opts: Vec<Spanned<RuleOpt>>,
+        body: Spanned<Body>,
+    },
+    FnDef {
+        is_mutable: bool,
+        return_type: Type,
+        name: Spanned<Identifier>,
+        params: Vec<Param>,
+        body: Spanned<Body>,
+    },
+    Return (Option<Spanned<Expr>>), // must always be a parenthesized expr
     IfElse {
         condition: Spanned<Expr>,
-        consequent: Body,
-        alternate: Option<Body>,
+        consequent: Spanned<Body>,
+        alternate: Option<Spanned<Body>>,
     },
     While {
         condition: Spanned<Expr>,
-        body: Body,
+        body: Spanned<Body>,
     },
     For {
         var: Box<Spanned<ASTreeNode>>, // always VarAssign
         condition: Spanned<Expr>,
-        body: Body,
+        body: Spanned<Body>,
     },
     Switch {
-        clause: Spanned<Expr>,
-        cases: Vec<(Spanned<Expr>, Body)>, // expr can only be literal. todo: are vecs allowed?
-        default: Option<Body>,
+        clause: Spanned<Expr>,                              // clause and expr can only be int, float,
+        cases: Vec<(Option<Spanned<Expr>>, Spanned<Body>)>, // or bool literals. floats cast to ints
     },
-    PostDPlus(Identifier),
-    PostDMinus(Identifier),
-    Discarded(Expr),
+    PostDPlus(Spanned<Identifier>),
+    PostDMinus(Spanned<Identifier>),
     Break,
     Continue,
-    Return (Expr),
-    DocStr(String),
+    LabelDef(Spanned<Identifier>),
+    Goto(Spanned<Identifier>),
+    Discarded(Spanned<Expr>), // only FnCalls are allowed to be discarded.
     
-    Error(String),
+    // How do you use these?
+    Debug(Spanned<Identifier>),
+    Breakpoint,
+    Class {
+        name: Spanned<Identifier>,
+        member_vars: Vec<Spanned<ASTreeNode>>, // always VarDef, no static/const/externs allowed
+    },
 }

@@ -6,8 +6,7 @@ use crate::lang::parser::expression::expression;
 use crate::lang::parser::parser_input::ParserInput;
 use crate::lang::span::{Span, Spanned};
 
-pub fn var_def<'tokens>(
-) -> impl Parser<
+pub fn var_def<'tokens>() -> impl Parser<
     'tokens,
     ParserInput<'tokens>,
     Spanned<ASTreeNode>,
@@ -26,14 +25,7 @@ pub fn var_def<'tokens>(
                 is_extern: mods.contains(&Token::Extern),
                 is_const: mods.contains(&Token::Const),
                 is_static: mods.contains(&Token::Static),
-                type_: match type_ {
-                    Token::Int => Type::Int,
-                    Token::Bool => Type::Bool,
-                    Token::Float => Type::Float,
-                    Token::String => Type::Str,
-                    Token::Vector => Type::Vec,
-                    _             => Type::Error("TypeUnreachable".to_string()),
-                },
+                type_: Type::from_tok(type_),
                 name,
                 value,
             }, info.span())

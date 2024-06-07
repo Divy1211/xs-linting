@@ -48,7 +48,7 @@ This consists of all the constants and functions described in
 2. [XS Function Reference](https://ugc.aoe2.rocks/general/xs/functions/)
 
 ## 2. Statement
-$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | BR | CO | BRPT | DE | DP | DM}$
+$\text{S} \rightarrow \text{V}_\text{decl}\text{ | V}_\text{def}\text{ | V}_\text{asgn}\text{ | IE | W | F | SC | R | BR | CO | LBL | GT | DBG | BRPT | DP | DM}$
 
 $\bar{\text{S}} \rightarrow \text{S }\bar{\text{S}}\text{ | }\epsilon$
 
@@ -87,8 +87,6 @@ $\color{gray} \text{BR} := \text{Break statement}$
 $\color{gray} \text{CO} := \text{Continue statement}$
 
 $\color{gray} \text{BRPT} := \text{Breakpoint}$
-
-$\color{gray} \text{DE} := \text{Discarded Expression}$
 
 ### 2.1. Top Level Var Def
 
@@ -179,8 +177,6 @@ $\color{gray}\text{CASE} := \text{case statement}$
 
 $\color{gray}\text{DEFAULT} := \text{default statement}$
 
-
-
 ### 2.9. Functions
 
 $\text{FN} \rightarrow \texttt{extern}\text{ FN | }\texttt{mutable}\text{ FN}$
@@ -247,36 +243,60 @@ $\color{gray}\text{RP}_\text{rim} := \text{Run Immediately}$
 
 $\color{gray}\text{RP}_\text{pty} := \text{Priority}$
 
-### 2.12. Include
-
-$\text{I} \rightarrow \texttt{include }\text{STR}\texttt{;}$
-
-### 2.13 Break
-
-$\text{BR} \rightarrow \texttt{break;}$
-
-### 2.14 Continue
-
-$\text{CO} \rightarrow \texttt{continue;}$
-
-### 2.15 Continue
-
-$\text{BRPT} \rightarrow \texttt{breakpoint;}$
-
-### 2.16. Discarded Expression
-
-$\text{DE} \rightarrow \text{E}\texttt{;}$
-
-### 2.17. Docstring
-
-#### Todo
-<!-- todo -->
-
-### 2.18. Postfix
+### 2.12. Postfix
 
 $\text{DP} \rightarrow \text{ID}\texttt{++}$
 
 $\text{DM} \rightarrow \text{ID}\texttt{--}$
+
+### 2.13. Include
+
+$\text{I} \rightarrow \texttt{include }\text{STR}\texttt{;}$
+
+### 2.14 Break
+
+$\text{BR} \rightarrow \texttt{break;}$
+
+### 2.15 Continue
+
+$\text{CO} \rightarrow \texttt{continue;}$
+
+### 2.16 Label Def
+
+$\text{LBL} \rightarrow \texttt{label }\text{ID}\texttt{;}$
+
+### 2.17 Goto
+
+$\text{GT} \rightarrow \texttt{goto }\text{ID}\texttt{;}$
+
+### 2.18 Function Call (Statement)
+
+$\text{FNCS} \rightarrow \text{FNC}\texttt{;}$
+
+### 2.19 Debug
+
+$\text{DBG} \rightarrow \texttt{dbg }\text{ID}\texttt{;}$
+
+Note: I don't know what this does in XS, its valid syntax though.
+
+### 2.20 Breakpoint
+
+$\text{BRPT} \rightarrow \texttt{breakpoint;}$
+
+Note: This will pause XS execution. I don't know if its possible to resume execution/if this keyword is useful.
+
+### 2.21 Class
+
+$\text{CLS} \rightarrow \texttt{class } \text{ID} \texttt{ \{ } \text{MEM\_VARS} \texttt{ \};}$
+
+$\text{MEM\_VARS} \rightarrow \text{DTYPE ID}\texttt{ = }\text{E}\texttt{;} \text{ MEM\_VARS | } \epsilon$
+
+Note: I don't know how to use classes in XS, its valid syntax though. The furthest I've gotten is declaring a class variable: `ClsName obj;`. Initialising it or accessing member values doesn't seem possible.
+
+### 2.22. Docstring
+
+#### Todo
+<!-- todo -->
 
 ## 3. Expression
 
@@ -301,7 +321,7 @@ $\text{E} \rightarrow \text{E1}$
 
 $\text{P} \rightarrow \text{(E)}$
 
-### 3.2. Function Call
+### 3.2. Function Call (Expression)
 
 $\text{FNC} \rightarrow \text{ID(ARGS}_\text{actual}\text{)}$
 

@@ -15,17 +15,21 @@ pub fn body<'tokens>(
 ) -> impl Parser<
     'tokens,
     ParserInput<'tokens>,
-    Body,
+    Spanned<Body>,
     extra::Err<Rich<'tokens, Token, Span>>,
 > + Clone {
     let block = statement.clone()
         .repeated()
         .collect::<Vec<Spanned<ASTreeNode>>>()
         .delimited_by(just(Token::LBrace), just(Token::RBrace))
-        .map(Body::Block);
+        .map_with(|stmts, info| (
+            Body::Block(stmts), info.span()
+        ));
     
     let single = statement
-        .map(|stmt| Body::Single(Box::new(stmt)));
+        .map_with(|stmt, info| (
+            Body::Single(Box::new(stmt)), info.span()
+        ));
     
     choice((
         block,

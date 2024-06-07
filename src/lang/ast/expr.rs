@@ -7,12 +7,14 @@ pub enum Expr {
     Literal(Literal),
     Identifier(Identifier),
     Paren(Box<Spanned<Expr>>),
+    Vec { x: Box<Spanned<Expr>>, y: Box<Spanned<Expr>>, z: Box<Spanned<Expr>> }, // only int/float literals allowed
     FnCall {
         name: Box<Spanned<Expr>>,
         args: Vec<Spanned<Expr>>
     },
-    
-    UMinus(Box<Spanned<Expr>>),
+
+    Neg(Box<Spanned<Expr>>),
+    Not(Box<Spanned<Expr>>),
     
     Star(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
     FSlash(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
@@ -32,6 +34,4 @@ pub enum Expr {
     And(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
     
     Or(Box<Spanned<Expr>>, Box<Spanned<Expr>>),
-    
-    Error(String)
 }
