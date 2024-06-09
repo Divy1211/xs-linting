@@ -4,6 +4,8 @@ This tool is a linter  for AoE2:DE's flavour of XS.
 
 ## Cool Maffs
 
+Note: GitHub renders of these pages are a bit cooked because of latex, check out the accompanying pdf renders if required
+
 | Topic            | Subtopic                                                   |
 |------------------|------------------------------------------------------------|
 | Parsing          | [XS Tokens](./maffs/parsing/xs_tokens.md)                  |
