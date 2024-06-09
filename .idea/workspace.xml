@@ -7,31 +7,13 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="WIP Statements. Added include, var defs, var assigns, if else, while, for, switch">
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Finished Parser, Updated grammar rules">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/parsing/xs_grammar.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/astree.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/astree.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/expr.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/literal.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/param.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/param.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_grammar_sets.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/maffs/parsing/xs_lr_automaton.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/maffs/static/xs_type_chk.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/static/xs_type_chk.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lang/ast/type_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/ast/type_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/comment.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/comment.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/literal.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/operator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/operator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/punctuation.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/punctuation.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/token.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/lexer/token.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/expression.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/body.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement/body.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/for_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement/for_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/include.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement/include.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/switch.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement/switch.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/var_assign.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement/var_assign.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/var_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement/var_def.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/while_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/parser/statement/while_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,32 +49,32 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Cargo.Run XSLint.executor": "Run",
-    "Cargo.parse starter.executor": "Run",
-    "Cargo.parse test.executor": "Run",
-    "Cargo.parse xslc_core.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Divy/IdeaProjects/XSLint/src/lang/parser/statement",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "language.rust.cargo.check",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Cargo.Run XSLint.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse starter.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse test.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse xslc_core.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Divy/IdeaProjects/XSLint/src/lang/parser/statement&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
+    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\lang\parser\statement" />
@@ -109,7 +91,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="runOnTheFly" value="true" />
   </component>
-  <component name="RunManager" selected="Cargo.parse test">
+  <component name="RunManager" selected="Cargo.parse xslc_core">
     <configuration name="Run XSLint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="run --package XSLint --bin XSLint" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -203,7 +185,10 @@
       <updated>1717355529951</updated>
       <workItem from="1717355529953" duration="659000" />
       <workItem from="1717398425661" duration="34313000" />
-      <workItem from="1717515012202" duration="76468000" />
+      <workItem from="1717515012202" duration="77482000" />
+      <workItem from="1717825895339" duration="795000" />
+      <workItem from="1717830814834" duration="595000" />
+      <workItem from="1717848153613" duration="26322000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
@@ -261,7 +246,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717694838962</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Finished Parser, Updated grammar rules">
+      <option name="closed" value="true" />
+      <created>1717762140498</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1717762140498</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -285,6 +278,7 @@
     <MESSAGE value="Updated license" />
     <MESSAGE value="WIP statements" />
     <MESSAGE value="WIP Statements. Added include, var defs, var assigns, if else, while, for, switch" />
-    <option name="LAST_COMMIT_MESSAGE" value="WIP Statements. Added include, var defs, var assigns, if else, while, for, switch" />
+    <MESSAGE value="Finished Parser, Updated grammar rules" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished Parser, Updated grammar rules" />
   </component>
 </project>

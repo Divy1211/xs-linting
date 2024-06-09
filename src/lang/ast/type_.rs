@@ -8,6 +8,7 @@ pub enum Type {
     Str,
     Vec,
     Void,
+    Label,
 }
 
 impl Type {

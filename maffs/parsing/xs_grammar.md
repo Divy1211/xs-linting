@@ -253,39 +253,39 @@ $\text{DM} \rightarrow \text{ID}\texttt{--}$
 
 $\text{I} \rightarrow \texttt{include }\text{STR}\texttt{;}$
 
-### 2.14 Break
+### 2.14. Break
 
 $\text{BR} \rightarrow \texttt{break;}$
 
-### 2.15 Continue
+### 2.15. Continue
 
 $\text{CO} \rightarrow \texttt{continue;}$
 
-### 2.16 Label Def
+### 2.16. Label Def
 
 $\text{LBL} \rightarrow \texttt{label }\text{ID}\texttt{;}$
 
-### 2.17 Goto
+### 2.17. Goto
 
 $\text{GT} \rightarrow \texttt{goto }\text{ID}\texttt{;}$
 
-### 2.18 Function Call (Statement)
+### 2.18. Function Call (Statement)
 
 $\text{FNCS} \rightarrow \text{FNC}\texttt{;}$
 
-### 2.19 Debug
+### 2.19. Debug
 
 $\text{DBG} \rightarrow \texttt{dbg }\text{ID}\texttt{;}$
 
 Note: I don't know what this does in XS, its valid syntax though.
 
-### 2.20 Breakpoint
+### 2.20. Breakpoint
 
 $\text{BRPT} \rightarrow \texttt{breakpoint;}$
 
 Note: This will pause XS execution. I don't know if its possible to resume execution/if this keyword is useful.
 
-### 2.21 Class
+### 2.21. Class
 
 $\text{CLS} \rightarrow \texttt{class } \text{ID} \texttt{ \{ } \text{MEM\_VARS} \texttt{ \};}$
 
