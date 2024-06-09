@@ -443,11 +443,9 @@ $({\tt xsTcFncStmt})$ same as [2.4. Function Call (Expression)](#24-function-cal
 
 ### 3.13. Class Definition
 
-$({\tt xsTcClsDef})$
-
 $$
 \begin{array}{rc}
-    {\tt (xsTcFncExpr)} & \begin{array}{c}
+    {\tt (xsTcClsDef)} & \begin{array}{c}
         \begin{array}{c}
             \Gamma \vdash E_i : T_i
         \end{array}
