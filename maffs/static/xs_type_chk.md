@@ -5,15 +5,14 @@
 - $\Gamma$ is a type environment mapping XS identifiers to types.
 - $\Gamma \vdash E : T$ means that an expression $E$ has type $T$ in $\Gamma$ (read as $\Gamma$ yields $E$ of type $T$)
 - $\Gamma \vdash S$ means that a statement $S$ is soundly typed in $\Gamma$ (read as $\Gamma$ yields $S$)
-- $
-\begin{array}{rc}
+- $$\begin{array}{rc}
     {\tt (xsTcCase)} & \begin{array}{c}
-        \begin{array}{c} C_1 & C_2 \end{array}
+        \begin{array}{cc} C_1 & C_2 \end{array}
         \\ \hline
         S_1
     \end{array}
 \end{array}
-$ is read as $C_1 \land C_2 \implies S_1$
+$$ is read as $C_1 \land C_2 \implies S_1$
 
 ## 2. Type Checking For Expressions
 
@@ -67,7 +66,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcVec)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cccc}
             L\ |\ L := {\tt vector}(x, y, z)
             & \Gamma \vdash x : {\tt int}\ |\ {\tt float}
             & \Gamma \vdash y : {\tt int}\ |\ {\tt float}
@@ -112,7 +111,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcFncExpr)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             ({\tt fnName}, (T_1, ..., T_n) \rightarrow T_r) \in \Gamma
             & \Gamma \vdash E_i : T_i\ |\ {\tt void}
             & n \leq 12
@@ -130,7 +129,7 @@ Note: XS can have functions of arity $\in [0, 12]$ but every function must defin
 $$
 \begin{array}{rc}
     {\tt (xsTcArithInt)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt int}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}
             & \text{OP}\ \in \{{\tt +,\ -,\ *,\ /,\ \%}\}
@@ -146,7 +145,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcArithFloat)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt float}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}
             & \text{OP}\ \in \{{\tt +,\ -,\ *,\ /,\ \%}\}
@@ -160,7 +159,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcStrConc1)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cc}
             \Gamma \vdash E_1 : {\tt string}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}\ |\ {\tt bool}\ |\ {\tt string}\ |\ {\tt vector}
         \end{array}
@@ -173,7 +172,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcStrConc2)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cc}
             \Gamma \vdash E_1 : {\tt int}\ |\ {\tt float}\ |\ {\tt bool}\ |\ {\tt string}\ |\ {\tt vector}
             & \Gamma \vdash E_2 : {\tt string}
         \end{array}
@@ -186,7 +185,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcRelnNum)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt int}\ |\ {\tt float}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}
             & \text{OP}\ \in \{{\tt <,\ <=,\ >,\ >=,\ ==,\ !=}\}
@@ -200,7 +199,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcRelnStr)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt string}
             & \Gamma \vdash E_2 : {\tt string}
             & \text{OP}\ \in \{{\tt <,\ <=,\ >,\ >=,\ ==,\ !=}\}
@@ -216,7 +215,7 @@ Note: strings are compared lexically
 $$
 \begin{array}{rc}
     {\tt (xsTcEqVec)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt vector}
             & \Gamma \vdash E_2 : {\tt vector}
             & \text{OP}\ \in \{{\tt ==,\ !=}\}
@@ -231,7 +230,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcEqBool)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt bool}
             & \Gamma \vdash E_2 : {\tt bool}
             & \text{OP}\ \in \{{\tt ==,\ !=}\}
@@ -247,7 +246,7 @@ Note: Trying relational operators on vectors and booleans passes the in game typ
 $$
 \begin{array}{rc}
     {\tt (xsTcLogical)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt bool}
             & \Gamma \vdash E_2 : {\tt bool}
             & \text{OP}\ \in \{{\tt \&\&,\ ||}\}
@@ -265,7 +264,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcSeq)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cc}
             \Gamma \vdash S
             & \Gamma \vdash \bar{S}
         \end{array}
@@ -292,7 +291,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcAssign)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cc}
             \Gamma \vdash X : T
             & \Gamma \vdash E : T
         \end{array}
@@ -309,7 +308,7 @@ Note: floats may be assigned to ints - they follow the expected casting rules.
 $$
 \begin{array}{rc}
     {\tt (xsTcIf)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{ccc}
             \Gamma \vdash E_c : {\tt bool}
             & \Gamma \vdash \bar{S_1}
             & \Gamma \vdash \bar{S_2}
@@ -325,7 +324,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcWhile)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cc}
             \Gamma \vdash E_c : {\tt bool}
             & \Gamma \vdash \bar{S}
         \end{array}
@@ -340,7 +339,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcFor)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cccc}
             \Gamma \vdash E_1 : {\tt int}\ |\ {\tt float}\ |\ {\tt bool}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}
             & \Gamma \vdash \bar{S}
@@ -360,7 +359,7 @@ Note: Floats may be used in $E_1$ or $E_2$ they will be cast to int before being
 $$
 \begin{array}{rc}
     {\tt (xsTcSwitch)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cccc}
             \Gamma \vdash E_c : {\tt int}\ |\ {\tt float}\ |\ {\tt bool}
             & \Gamma \vdash E_i : {\tt int}\ |\ {\tt float}
             & \Gamma \vdash \bar{S_i}
@@ -385,7 +384,7 @@ $$\Gamma \vdash {\tt breakpoint;}$$
 $$
 \begin{array}{rc}
     {\tt (xsTcFn)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cccccc}
             T_r \in \{{\tt int,\ float,\ bool,\ string,\ vector,\ void}\}
             & \Gamma \vdash E_i : T_i
             & n \leq 12
@@ -407,7 +406,7 @@ $$
 \begin{array}{rc}
     {\tt (xsTcFn)} & \begin{array}{c}
         \begin{array}{c}
-            & \Gamma \vdash \bar{S}
+            \Gamma \vdash \bar{S}
         \end{array}
         \\ \hline
         \Gamma \vdash {\tt rule\ ruleName\ ruleOpts\ \ \{\ } \bar{S} {\tt\ \}}
@@ -420,7 +419,7 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsTcPost)} & \begin{array}{c}
-        \begin{array}{c}
+        \begin{array}{cc}
             ({\tt id,\ int\ |\ float}) \in \Gamma
             & \text{\#\#}\ \in \{{\tt ++,\ --}\}
         \end{array}
@@ -432,16 +431,16 @@ $$
 
 Postfixes are ~~expressions~~ statements in XS. yES
 
-### 3.11. Label, Goto
+### 3.12. Label, Goto
 
 $$\Gamma \vdash {\tt label\ id;}$$
 $$\Gamma \vdash {\tt goto\ id;}$$
 
-### 3.12. Function Call (Statement)
+### 3.13. Function Call (Statement)
 
 $({\tt xsTcFncStmt})$ same as [2.4. Function Call (Expression)](#24-function-call-expression) with a terminating semicolon.
 
-### 3.13. Class Definition
+### 3.14. Class Definition
 
 $$
 \begin{array}{rc}
