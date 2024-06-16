@@ -57,11 +57,11 @@ pub fn arith_op<'src>(
             ));
             Some(&Type::Int)
         }
-        
+
         (Type::Float, Type::Int | Type::Float) => { Some(&Type::Float) }
 
         (Type::Str, _) | (_, Type::Str) if op_name == "add" => { Some(&Type::Str) }
-        
+
         _ => {
             errs.push(type_err(
                 &format!("Cannot {:} types `{:}` and `{:}`", op_name, type1, type2), span
@@ -99,7 +99,7 @@ pub fn reln_op<'src>(
             }
             Some(&Type::Bool)
         }
-        
+
         _ => {
             errs.push(type_err(
                 &format!("Cannot compare types `{:}` and `{:}`", type1, type2), span
@@ -145,15 +145,19 @@ pub fn type_cmp(
 ) {
     match (expected, actual) {
         (_, _) if *expected == *actual => {},
+        (Type::Int, Type::Bool) => {} // yES
         (Type::Int, Type::Float) => {
             errs.push(warn(
                 "Possible loss of precision due to downcast from `float` to an `int`",
                 actual_span
             ))
         }
-        (Type::Float, Type::Int) => if is_fn_call {
+        (Type::Float, Type::Int | Type::Bool) => if is_fn_call {
             errs.push(warn(
-                "`int` value may not get promoted to `float` automatically in a function call, floating point operations may not work correctly",
+                "Intermediate `int` or `bool` values do not get promoted to `float` in a \
+                function call, floating point operations on this parameter will not work correctly. \
+                Consider explicitly assigning this expression to a temporary `float` variable \
+                before passing that as a parameter. yES",
                 actual_span
             ))
         }
