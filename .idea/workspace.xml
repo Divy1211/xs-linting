@@ -7,49 +7,12 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Updated links to point to pdfs where necessary">
-      <change beforePath="$PROJECT_DIR$/.idea/XSLint.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/XSLint.iml" afterDir="false" />
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Type checking for expressions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/astree.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/astree.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/comment.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/comment.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/expr.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/identifier.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/identifier.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/literal.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/param.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/param.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/ast/type_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/type_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/comment.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/comment.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/keyword.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/literal.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/operator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/operator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/punctuation.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/punctuation.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/lexer/token.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/token.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/expression.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/parser_input.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/parser_input.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/body.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/body.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/break_or_continue.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/break_or_continue.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/class_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/class_def.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/discarded_expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/discarded_expr.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/fn_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/fn_def.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/for_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/for_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/if_else.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/if_else.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/include.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/include.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/label_def_or_goto_or_dbg.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/label_def_or_goto_or_dbg.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/postfix.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/postfix.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/return_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/return_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/rule_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/rule_def.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/switch.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/switch.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/var_assign.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/var_assign.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/var_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/var_def.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/while_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/while_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/span.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/span.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/expression.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check/util.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/util.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +28,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
+    <option name="RESET_MODE" value="SOFT" />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="x36qsvll" />
@@ -229,7 +192,7 @@
       <workItem from="1717848153613" duration="26700000" />
       <workItem from="1717967761453" duration="2153000" />
       <workItem from="1718041341553" duration="32920000" />
-      <workItem from="1718537168995" duration="15004000" />
+      <workItem from="1718537168995" duration="21304000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
@@ -311,7 +274,55 @@
       <option name="project" value="LOCAL" />
       <updated>1717970799976</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Type checking for expressions">
+      <option name="closed" value="true" />
+      <created>1718556928935</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1718556928935</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Type checking for expressions">
+      <option name="closed" value="true" />
+      <created>1718556974541</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1718556974541</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Type checking for expressions">
+      <option name="closed" value="true" />
+      <created>1718557053456</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1718557053456</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Type checking for expressions">
+      <option name="closed" value="true" />
+      <created>1718557065637</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1718557065637</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Type checking for expressions">
+      <option name="closed" value="true" />
+      <created>1718557082812</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1718557082812</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Type checking for expressions">
+      <option name="closed" value="true" />
+      <created>1718557150465</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1718557150465</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -338,6 +349,7 @@
     <MESSAGE value="Finished Parser, Updated grammar rules" />
     <MESSAGE value="Formulated type checking rules" />
     <MESSAGE value="Fixed typo" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed typo" />
+    <MESSAGE value="Type checking for expressions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Type checking for expressions" />
   </component>
 </project>

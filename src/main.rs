@@ -10,6 +10,7 @@ use crate::parsing::lexer::lexer;
 use crate::parsing::parser::expression::expression;
 use crate::parsing::parser::statement::statement;
 use crate::r#static::type_check::expression::xs_tc_expr;
+use crate::r#static::type_check::statement::xs_tc_stmt;
 // use crate::parsing::parser::parser;
 
 fn main() {
@@ -17,7 +18,7 @@ fn main() {
     //     env::args().nth(1).expect("Filename not provided")
     // ).expect("Failed to read file");
 
-    let src = "2 == 2|| 3 < 1+test(10*10+2, 55.6)".to_string();
+    let src = "int fn() { return (1); }".to_string();
     
     let (tokens, errs) = lexer()
         .parse(src.as_str())
@@ -28,7 +29,7 @@ fn main() {
         return;
     };
 
-    let (ast, parse_errors) = expression()
+    let (ast, parse_errors) = statement()
         .map_with(|ast, e| (ast, e.span()))
         .parse(tokens.as_slice().spanned((src.len()..src.len()).into()))
         .into_output_errors();
@@ -38,19 +39,21 @@ fn main() {
         return;
     };
     
-    let type_env = HashMap::from([
+    let mut type_env = HashMap::from([
         (Identifier::new("b"), Type::Int),
             (Identifier::new("test"), Type::Func(vec![Type::Int, Type::Float, Type::Float]))
     ]);
     let mut errs = vec![];
 
-    let Some(type_) = xs_tc_expr(&ast, &type_env, &mut errs) else {
-        println!("Errors: {:?}", errs);
-        return;
-    };
+    // let Some(type_) = xs_tc_expr(&ast, &type_env, &mut errs) else {
+    //     println!("Errors: {:?}", errs);
+    //     return;
+    // };
 
-    println!("Type: {:?}", type_);
+    xs_tc_stmt(&ast, &mut type_env, &mut errs, false);
+    // println!("Type: {:?}", type_);
+    println!("TypeEnv: {:?}", type_env);
     println!("Errors: {:?}", errs);
-    
+
     // fs::write("./test.ast", format!("{:?}", ast)).expect("Unabled to write AST to file");
 }

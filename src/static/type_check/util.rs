@@ -1,10 +1,9 @@
-use std::collections::HashMap;
 use crate::parsing::ast::expr::Expr;
-use crate::parsing::ast::identifier::Identifier;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::ast::type_::Type;
 use crate::parsing::span::{Span, Spanned};
 use crate::r#static::type_check::expression::xs_tc_expr;
+use crate::r#static::type_check::TypeEnv;
 use crate::r#static::xs_error::{type_err, warn, XSError};
 
 pub fn chk_int_lit(val: &i64, span: &Span) -> Vec<XSError> {
@@ -37,7 +36,7 @@ pub fn arith_op<'src>(
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
-    type_env: &'src HashMap<Identifier, Type>,
+    type_env: &'src TypeEnv,
     errs: &mut Vec<XSError>,
     op_name: &str
 ) -> Option<&'src Type> {
@@ -76,7 +75,7 @@ pub fn reln_op<'src>(
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
-    type_env: &'src HashMap<Identifier, Type>,
+    type_env: &'src TypeEnv,
     errs: &mut Vec<XSError>,
     op_name: &str
 ) -> Option<&'src Type> {
@@ -114,7 +113,7 @@ pub fn logical_op<'src>(
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
-    type_env: &'src HashMap<Identifier, Type>,
+    type_env: &'src TypeEnv,
     errs: &mut Vec<XSError>,
     op_name: &str
 ) -> Option<&'src Type> {
