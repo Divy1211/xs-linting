@@ -7,9 +7,49 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Fixed typo">
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Updated links to point to pdfs where necessary">
+      <change beforePath="$PROJECT_DIR$/.idea/XSLint.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/XSLint.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maffs/static/xs_type_chk.md" beforeDir="false" afterPath="$PROJECT_DIR$/maffs/static/xs_type_chk.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/astree.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/astree.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/comment.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/comment.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/expr.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/identifier.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/identifier.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/literal.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/param.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/param.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/ast/type_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/type_.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/comment.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/comment.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/keyword.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/keyword.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/literal.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/operator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/operator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/punctuation.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/punctuation.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/lexer/token.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/lexer/token.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/expression.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/parser_input.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/parser_input.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/body.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/body.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/break_or_continue.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/break_or_continue.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/class_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/class_def.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/discarded_expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/discarded_expr.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/fn_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/fn_def.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/for_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/for_.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/if_else.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/if_else.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/include.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/include.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/label_def_or_goto_or_dbg.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/label_def_or_goto_or_dbg.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/postfix.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/postfix.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/return_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/return_.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/rule_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/rule_def.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/switch.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/switch.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/var_assign.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/var_assign.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/var_def.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/var_def.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/parser/statement/while_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/parser/statement/while_.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lang/span.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/span.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +65,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="x36qsvll" />
@@ -45,32 +86,32 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Cargo.Run XSLint.executor": "Run",
-    "Cargo.parse starter.executor": "Run",
-    "Cargo.parse test.executor": "Run",
-    "Cargo.parse xslc_core.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Divy/IdeaProjects/XSLint/src/lang/parser/statement",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Cargo.Run XSLint.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse starter.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse test.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.parse xslc_core.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Divy/IdeaProjects/XSLint/src/lang/parser/statement&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
+    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\lang\parser\statement" />
@@ -78,6 +119,7 @@
       <recent name="C:\Users\Divy\IdeaProjects\XSLint" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\static\type_check" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\lang" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\test_xs" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\lang\lexer" />
@@ -87,7 +129,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="runOnTheFly" value="true" />
   </component>
-  <component name="RunManager" selected="Cargo.parse xslc_core">
+  <component name="RunManager" selected="Cargo.Run XSLint">
     <configuration name="Run XSLint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="run --package XSLint --bin XSLint" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -186,6 +228,8 @@
       <workItem from="1717830814834" duration="595000" />
       <workItem from="1717848153613" duration="26700000" />
       <workItem from="1717967761453" duration="2153000" />
+      <workItem from="1718041341553" duration="32920000" />
+      <workItem from="1718537168995" duration="15004000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
