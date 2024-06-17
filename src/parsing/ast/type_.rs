@@ -16,7 +16,7 @@ pub enum Type {
     Label,
     Rule,
     Group,
-    Func(Vec<Type>), // a -> b -> c
+    Func { is_mutable: bool, type_sign: Vec<Type> },
 }
 
 impl Type {
@@ -42,14 +42,15 @@ impl Display for Type {
             Type::Str => write!(f, "string"),
             Type::Vec => write!(f, "vector"),
             Type::Void => write!(f, "void"),
-            
+
             Type::Label => write!(f, "label"),
             Type::Rule => write!(f, "rule"),
             Type::Group => write!(f, "group"),
-            Type::Func(params) => write!(
+            Type::Func { is_mutable, type_sign} => write!(
                 f,
-                "{}",
-                params
+                "{}{}",
+                if *is_mutable { "mut " } else { "" },
+                type_sign
                     .iter()
                     .map(|type_| type_.to_string())
                     .collect::<Vec<String>>()

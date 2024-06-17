@@ -18,7 +18,7 @@ fn main() {
     //     env::args().nth(1).expect("Filename not provided")
     // ).expect("Failed to read file");
 
-    let src = "int fn(float a = false) { return (1); }".to_string();
+    let src = "float fn(int a = 1, float b = 1.1) {}".to_string();
     
     let (tokens, errs) = lexer()
         .parse(src.as_str())
@@ -40,8 +40,7 @@ fn main() {
     };
     
     let mut type_env = HashMap::from([
-        (Identifier::new("b"), Type::Int),
-            (Identifier::new("test"), Type::Func(vec![Type::Int, Type::Float, Type::Float]))
+        (Identifier::new("fn"), Type::Func { is_mutable: true, type_sign: vec![Type::Int, Type::Float, Type::Float] })
     ]);
     let mut errs = vec![];
 
@@ -50,7 +49,7 @@ fn main() {
     //     return;
     // };
 
-    xs_tc_stmt(&ast, &mut type_env, &mut errs, false);
+    xs_tc_stmt(&ast, &mut type_env, &mut errs, true);
     // println!("Type: {:?}", type_);
     println!("TypeEnv: {:?}", type_env);
     println!("Errors: {:?}", errs);

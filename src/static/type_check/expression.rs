@@ -4,7 +4,7 @@ use crate::parsing::ast::type_::Type;
 use crate::parsing::span::Spanned;
 use crate::r#static::type_check::TypeEnv;
 use crate::r#static::type_check::util::{arith_op, chk_int_lit, chk_num_lit, logical_op, reln_op, type_cmp};
-use crate::r#static::xs_error::{name_err, type_err, XSError};
+use crate::r#static::xs_error::{name_err, syntax_err, type_err, XSError};
 
 pub fn xs_tc_expr<'src>(
     (expr, span): &'src Spanned<Expr>,
@@ -39,7 +39,7 @@ pub fn xs_tc_expr<'src>(
             errs.push(name_err(&format!("Undefined name {:}", name.0), name_span));
             return None;
         };
-        let Type::Func(params) = type_ else {
+        let Type::Func { type_sign, .. } = type_ else {
             errs.push(type_err(
                 &format!(
                     "Variable '{:}' is of type `{:}` and is not callable", name.0, type_
@@ -47,15 +47,26 @@ pub fn xs_tc_expr<'src>(
             ));
             return None;
         };
-        for (param, arg) in params.iter().zip(args) {
-            let Some(arg_type) = xs_tc_expr(arg, type_env, errs) else {
+        for (param_type, arg_expr) in type_sign[..type_sign.len()-1].iter().zip(args) {
+            let Some(arg_type) = xs_tc_expr(arg_expr, type_env, errs) else {
                 // expr will generate its own error if the type cannot be inferred
                 continue;
             };
-            type_cmp(param, arg_type, &arg.1, errs, true);
+            type_cmp(param_type, arg_type, &arg_expr.1, errs, true);
+        }
+        
+        for (_expr, span) in args[type_sign.len()..].iter() {
+            errs.push(syntax_err(
+                &format!(
+                    "Function '{:}' takes {:} arguments, but {:} were given",
+                    name.0,
+                    type_sign.len()-1,
+                    args.len(),
+                ), span
+            ));
         }
 
-        params.last()
+        type_sign.last()
     }
 
     Expr::Neg(expr) => {

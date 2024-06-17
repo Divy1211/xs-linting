@@ -96,7 +96,7 @@ pub fn xs_tc_stmt<'src>(
                 "Assignments are not allowed at the top level", span
             ));
         }
-        
+
         let (name, name_span) = spanned_name;
 
         let Some(type_) = type_env.get(name) else {
@@ -118,6 +118,12 @@ pub fn xs_tc_stmt<'src>(
         rule_opts: _rule_opts,
         body: (body, _body_span)
     } => {
+        if !is_top_level {
+            errs.push(name_err(
+                "Rule definitions are only allowed at the top level", name_span
+            ))
+        }
+        
         match type_env.get(name) {
             Some(_) => {
                 errs.push(name_err(
@@ -128,7 +134,7 @@ pub fn xs_tc_stmt<'src>(
                 type_env.push((name.clone(), Type::Rule));
             }
         };
-        
+
         let mut local_type_env = type_env.clone();
         for spanned_stmt in body.0.iter() {
             xs_tc_stmt(spanned_stmt, &mut local_type_env, errs, false);
@@ -141,6 +147,12 @@ pub fn xs_tc_stmt<'src>(
         params,
         body: (body, _body_span)
     } => {
+        if !is_top_level {
+            errs.push(name_err(
+                "Function definitions are only allowed at the top level", name_span
+            ))
+        }
+        
         let mut local_type_env = HashMap::with_capacity(params.len());
         for param in params {
             let (param_name, param_name_span) = &param.name;
@@ -160,7 +172,7 @@ pub fn xs_tc_stmt<'src>(
                     expr_span,
                 ));
             };
-            
+
             // expr will generate its own error when it returns None
             let Some(param_default_value_type) = xs_tc_expr(&param.default, type_env, errs)
                 else { continue; };
@@ -173,15 +185,39 @@ pub fn xs_tc_stmt<'src>(
             );
         }
 
-        if let Some(_) = type_env.get(name) {
-            // todo: check mutability
-            errs.push(name_err(
+        let mut new_type_sign = params
+            .iter()
+            .map(|param| param.type_.clone())
+            .collect::<Vec<Type>>();
+        new_type_sign.push(return_type.clone());
+        
+        match type_env.get(name) {
+            Some(Type::Func {
+                is_mutable: was_mutable,
+                type_sign 
+            }) => if !was_mutable {
+                errs.push(name_err(
+                    "This function is not mutable and cannot be redefined", name_span,
+                ))
+            } else if new_type_sign != *type_sign {
+                errs.push(syntax_err(
+                    "Type signature of mutable functions must be consistent", name_span,
+                ))
+            } else {
+                type_env.push((
+                    name.clone(),
+                    Type::Func { is_mutable: is_mutable.clone(), type_sign: new_type_sign }
+                ));
+            },
+            Some(_) => errs.push(name_err(
                 "Variable name is already in use", name_span
-            ))
-        } else {
-            let mut param_types = local_type_env.values().cloned().collect::<Vec<Type>>();
-            param_types.push(return_type.clone());
-            type_env.push((name.clone(), Type::Func(param_types)));
+            )),
+            _ => {
+                type_env.push((
+                    name.clone(),
+                    Type::Func { is_mutable: is_mutable.clone(), type_sign: new_type_sign }
+                ));
+            }
         }
 
         local_type_env.extend(type_env.clone());
@@ -200,7 +236,7 @@ pub fn xs_tc_stmt<'src>(
             ));
             return;
         };
-        
+
         let Some(spanned_expr) = spanned_expr else {
             if *return_type != Type::Void {
                 errs.push(syntax_err(
@@ -214,7 +250,7 @@ pub fn xs_tc_stmt<'src>(
             errs.push(syntax_err("This function cannot return a value", span));
             return;
         }
-        
+
         let (expr, expr_span) = spanned_expr;
         if let Expr::Paren(_) = expr {} else {
             errs.push(syntax_err(
@@ -227,7 +263,7 @@ pub fn xs_tc_stmt<'src>(
         let Some(return_expr_type) = xs_tc_expr(spanned_expr, type_env, errs) else {
             return;
         };
-        
+
         type_cmp(return_type, return_expr_type, expr_span, errs, false);
     },
     ASTreeNode::IfElse { .. } => {},

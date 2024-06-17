@@ -7,10 +7,11 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="WIP Type checking for statements">
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Improved expected vs actual type error messages">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/static/type_check/util.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/util.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parsing/ast/type_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/type_.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/expression.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check/statement.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/statement.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -190,7 +191,7 @@
       <workItem from="1717848153613" duration="26700000" />
       <workItem from="1717967761453" duration="2153000" />
       <workItem from="1718041341553" duration="32920000" />
-      <workItem from="1718537168995" duration="22292000" />
+      <workItem from="1718537168995" duration="24220000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
@@ -328,7 +329,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718562120900</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Improved expected vs actual type error messages">
+      <option name="closed" value="true" />
+      <created>1718563086281</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1718563086281</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -357,6 +366,7 @@
     <MESSAGE value="Fixed typo" />
     <MESSAGE value="Type checking for expressions" />
     <MESSAGE value="WIP Type checking for statements" />
-    <option name="LAST_COMMIT_MESSAGE" value="WIP Type checking for statements" />
+    <MESSAGE value="Improved expected vs actual type error messages" />
+    <option name="LAST_COMMIT_MESSAGE" value="Improved expected vs actual type error messages" />
   </component>
 </project>
