@@ -7,10 +7,9 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Improved expected vs actual type error messages">
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Updated fn checker to handle mutability">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parsing/ast/type_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/type_.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/static/type_check/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/expression.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/static/type_check/statement.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/statement.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -191,7 +190,8 @@
       <workItem from="1717848153613" duration="26700000" />
       <workItem from="1717967761453" duration="2153000" />
       <workItem from="1718041341553" duration="32920000" />
-      <workItem from="1718537168995" duration="24220000" />
+      <workItem from="1718537168995" duration="27283000" />
+      <workItem from="1718647360478" duration="1473000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
@@ -337,7 +337,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718563086281</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Updated fn checker to handle mutability">
+      <option name="closed" value="true" />
+      <created>1718605104966</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1718605104966</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -367,6 +375,7 @@
     <MESSAGE value="Type checking for expressions" />
     <MESSAGE value="WIP Type checking for statements" />
     <MESSAGE value="Improved expected vs actual type error messages" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved expected vs actual type error messages" />
+    <MESSAGE value="Updated fn checker to handle mutability" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated fn checker to handle mutability" />
   </component>
 </project>

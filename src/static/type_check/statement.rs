@@ -5,11 +5,12 @@ use crate::parsing::ast::expr::Expr;
 use crate::parsing::ast::identifier::Identifier;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::ast::type_::Type;
+use crate::parsing::parser::statement::body::body;
 use crate::parsing::span::Spanned;
 use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::type_check::TypeEnv;
 use crate::r#static::type_check::util::type_cmp;
-use crate::r#static::xs_error::{name_err, syntax_err, warn, XSError};
+use crate::r#static::xs_error::{name_err, syntax_err, type_err, warn, XSError};
 
 pub fn xs_tc_stmt<'src>(
     (stmt, span): &'src Spanned<ASTreeNode>,
@@ -266,9 +267,76 @@ pub fn xs_tc_stmt<'src>(
 
         type_cmp(return_type, return_expr_type, expr_span, errs, false);
     },
-    ASTreeNode::IfElse { .. } => {},
-    ASTreeNode::While { .. } => {},
-    ASTreeNode::For { .. } => {},
+    ASTreeNode::IfElse {
+        condition,
+        consequent,
+        alternate
+    } => {
+        if let Some(type_) = xs_tc_expr(condition, type_env, errs) {
+            if *type_ != Type::Bool {
+                errs.push(type_err(
+                    "`Conditional expression must be a boolean value",
+                    &condition.1,
+                ));
+            }
+        }
+
+        for spanned_stmt in consequent.0.0.iter() {
+            xs_tc_stmt(spanned_stmt, type_env, errs, false);
+        }
+
+        if let Some(alternate) = alternate {
+            for spanned_stmt in alternate.0.0.iter() {
+                xs_tc_stmt(spanned_stmt, type_env, errs, false);
+            }
+        }
+    },
+    ASTreeNode::While { condition, body } => {
+        if let Some(type_) = xs_tc_expr(condition, type_env, errs) {
+            if *type_ != Type::Bool {
+                errs.push(type_err(
+                    "Conditional expression must be a boolean value",
+                    &condition.1,
+                ));
+            }
+        }
+
+        for spanned_stmt in body.0.0.iter() {
+            xs_tc_stmt(spanned_stmt, type_env, errs, false);
+        }
+    },
+    ASTreeNode::For { var, condition, body } => {
+        let (ASTreeNode::VarAssign { name: (name, name_span), value }, span) = var.as_ref() else {
+            // unreachable
+            return;
+        };
+        
+        let None = type_env.get(name) else {
+            errs.push(name_err(
+                "Variable name already in use",
+                name_span,
+            ));
+            return;
+        };
+        
+        if let Some(value_type) = xs_tc_expr(value, type_env, errs) {
+            type_cmp(&Type::Int, value_type, &value.1, errs, false);
+        }
+        
+        type_env.push((name.clone(), Type::Int));
+        if let Some(type_) = xs_tc_expr(condition, type_env, errs) {
+            if *type_ != Type::Bool {
+                errs.push(type_err(
+                    "Conditional expression must be a boolean value",
+                    &condition.1,
+                ));
+            }
+        }
+
+        for spanned_stmt in body.0.0.iter() {
+            xs_tc_stmt(spanned_stmt, type_env, errs, false);
+        }
+    },
     ASTreeNode::Switch { .. } => {},
     ASTreeNode::PostDPlus(_) => {},
     ASTreeNode::PostDMinus(_) => {},

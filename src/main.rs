@@ -18,7 +18,7 @@ fn main() {
     //     env::args().nth(1).expect("Filename not provided")
     // ).expect("Failed to read file");
 
-    let src = "float fn(int a = 1, float b = 1.1) {}".to_string();
+    let src = "for (i = 10; < 20) { int a = 10; }".to_string();
     
     let (tokens, errs) = lexer()
         .parse(src.as_str())
