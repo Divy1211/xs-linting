@@ -2,7 +2,7 @@ use crate::parsing::ast::identifier::Identifier;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::span::Spanned;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Expr {
     Literal(Literal),
     Identifier(Identifier),

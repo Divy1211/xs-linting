@@ -15,8 +15,8 @@ pub enum Type {
     // not real types in XS
     Label,
     Rule,
-    Group,
     Func { is_mutable: bool, type_sign: Vec<Type> },
+    Class,
 }
 
 impl Type {
@@ -45,7 +45,6 @@ impl Display for Type {
 
             Type::Label => write!(f, "label"),
             Type::Rule => write!(f, "rule"),
-            Type::Group => write!(f, "group"),
             Type::Func { is_mutable, type_sign} => write!(
                 f,
                 "{}{}",
@@ -55,7 +54,8 @@ impl Display for Type {
                     .map(|type_| type_.to_string())
                     .collect::<Vec<String>>()
                     .join(" -> ")
-            )
+            ),
+            Type::Class => write!(f, "class"),
         }
     }
 }

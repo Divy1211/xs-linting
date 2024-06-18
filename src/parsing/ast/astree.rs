@@ -7,7 +7,7 @@ use crate::parsing::span::Spanned;
 #[derive(Debug, Clone)]
 pub struct Body(pub Vec<Spanned<ASTreeNode>>);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RuleOpt {
     Active,
     Inactive,

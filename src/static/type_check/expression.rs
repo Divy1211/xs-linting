@@ -22,7 +22,7 @@ pub fn xs_tc_expr<'src>(
     }
     Expr::Identifier(id) => {
         let Some(type_) = type_env.get(&id) else {
-            errs.push(name_err(&format!("Undefined name {:}", id.0), span));
+            errs.push(name_err(&format!("Undefined name `{:}`", id.0), span));
             return None;
         };
         Some(type_)
@@ -36,7 +36,7 @@ pub fn xs_tc_expr<'src>(
     }
     Expr::FnCall { name: (name, name_span), args } => {
         let Some(type_) = type_env.get(&name) else {
-            errs.push(name_err(&format!("Undefined name {:}", name.0), name_span));
+            errs.push(name_err(&format!("Undefined name `{:}`", name.0), name_span));
             return None;
         };
         let Type::Func { type_sign, .. } = type_ else {
@@ -52,10 +52,10 @@ pub fn xs_tc_expr<'src>(
                 // expr will generate its own error if the type cannot be inferred
                 continue;
             };
-            type_cmp(param_type, arg_type, &arg_expr.1, errs, true);
+            type_cmp(param_type, arg_type, &arg_expr.1, errs, true, false);
         }
         
-        for (_expr, span) in args[type_sign.len()..].iter() {
+        for (_expr, span) in args[type_sign.len()-1..].iter() {
             errs.push(syntax_err(
                 &format!(
                     "Function '{:}' takes {:} arguments, but {:} were given",

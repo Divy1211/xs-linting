@@ -2,23 +2,16 @@ pub mod parsing;
 pub mod r#static;
 
 use std::{env, fs};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use chumsky::prelude::*;
-use crate::parsing::ast::identifier::Identifier;
-use crate::parsing::ast::type_::Type;
 use crate::parsing::lexer::lexer;
-use crate::parsing::parser::expression::expression;
-use crate::parsing::parser::statement::statement;
-use crate::r#static::type_check::expression::xs_tc_expr;
-use crate::r#static::type_check::statement::xs_tc_stmt;
-// use crate::parsing::parser::parser;
+use crate::parsing::parser::parser;
+use crate::r#static::type_check::statements::xs_tc;
 
 fn main() {
-    // let src = fs::read_to_string(
-    //     env::args().nth(1).expect("Filename not provided")
-    // ).expect("Failed to read file");
-
-    let src = "for (i = 10; < 20) { int a = 10; }".to_string();
+    let src = fs::read_to_string(
+        env::args().nth(1).expect("Filename not provided")
+    ).expect("Failed to read file");
     
     let (tokens, errs) = lexer()
         .parse(src.as_str())
@@ -29,7 +22,7 @@ fn main() {
         return;
     };
 
-    let (ast, parse_errors) = statement()
+    let (ast, parse_errors) = parser()
         .map_with(|ast, e| (ast, e.span()))
         .parse(tokens.as_slice().spanned((src.len()..src.len()).into()))
         .into_output_errors();
@@ -39,20 +32,11 @@ fn main() {
         return;
     };
     
-    let mut type_env = HashMap::from([
-        (Identifier::new("fn"), Type::Func { is_mutable: true, type_sign: vec![Type::Int, Type::Float, Type::Float] })
-    ]);
+    let mut type_env = HashMap::new();
+    let mut groups = HashSet::new();
     let mut errs = vec![];
 
-    // let Some(type_) = xs_tc_expr(&ast, &type_env, &mut errs) else {
-    //     println!("Errors: {:?}", errs);
-    //     return;
-    // };
-
-    xs_tc_stmt(&ast, &mut type_env, &mut errs, true);
-    // println!("Type: {:?}", type_);
+    xs_tc(&ast, &mut type_env, &mut groups, &mut errs);
     println!("TypeEnv: {:?}", type_env);
     println!("Errors: {:?}", errs);
-
-    // fs::write("./test.ast", format!("{:?}", ast)).expect("Unabled to write AST to file");
 }

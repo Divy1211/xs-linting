@@ -11,11 +11,11 @@ pub enum Literal {
 impl PartialEq for Literal {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (Literal::Int(_), Literal::Int(_))       => true,
-            (Literal::Float(_), Literal::Float(_))   => true,
-            (Literal::Bool(_), Literal::Bool(_))     => true,
-            (Literal::Str(_), Literal::Str(_))       => true,
-            _                                        => false,
+            (Literal::Int(val1), Literal::Int(val2))     => val1 == val2,
+            (Literal::Float(val1), Literal::Float(val2)) => val1 == val2,
+            (Literal::Bool(val1), Literal::Bool(val2))   => val1 == val2,
+            (Literal::Str(val1), Literal::Str(val2))     => val1 == val2,
+            _                                            => false
         }
     }
 }
@@ -24,12 +24,12 @@ impl Eq for Literal {}
 
 impl Hash for Literal {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        state.write_i32(match self {
-            Literal::Int(_) =>     0,
-            Literal::Float(_) =>   1,
-            Literal::Bool(_) =>    2,
-            Literal::Str(_) =>     3,
-        });
+        match self {
+            Literal::Int(val)   => val.hash(state),
+            Literal::Float(val) => format!("π{:}Σ", val).hash(state),
+            Literal::Bool(val)  => val.hash(state),
+            Literal::Str(val)   => val.hash(state),
+        }
         state.finish();
     }
 }

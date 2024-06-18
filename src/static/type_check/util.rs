@@ -1,10 +1,12 @@
+use std::collections::HashMap;
+use chumsky::container::{Container};
 use crate::parsing::ast::expr::Expr;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::ast::type_::Type;
 use crate::parsing::span::{Span, Spanned};
 use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::type_check::TypeEnv;
-use crate::r#static::xs_error::{type_err, warn, XSError};
+use crate::r#static::xs_error::{syntax_err, type_err, warn, XSError};
 
 pub fn chk_int_lit(val: &i64, span: &Span) -> Vec<XSError> {
     if *val < -999_999_999 || 999_999_999 < *val {
@@ -142,9 +144,16 @@ pub fn type_cmp(
     actual_span: &Span,
     errs: &mut Vec<XSError>,
     is_fn_call: bool,
+    is_case_expr: bool,
 ) {
     match (expected, actual) {
         (_, _) if *expected == *actual => {},
+        (Type::Int, Type::Bool) if is_case_expr => {
+            errs.push(syntax_err(
+                "Using booleans in a case's expression will cause a silent XS crash",
+                actual_span
+            ))
+        }
         (Type::Int, Type::Bool) => {} // yES
         (Type::Int, Type::Float) => {
             errs.push(warn(
@@ -166,5 +175,25 @@ pub fn type_cmp(
                 &format!("Expected `{:}` found `{:}`", expected, actual), actual_span
             ))
         }
+    }
+}
+
+pub fn chk_rule_opt<'src>(
+    opt_type: &'static str,
+    opt_span: &'src Span,
+    opt_spans: &mut HashMap<&'static str, &'src Span>,
+    errs: &mut Vec<XSError>,
+) -> bool {
+    return if let Some(&og_span) = opt_spans.get(opt_type) {
+        errs.push(syntax_err(
+            &format!("Cannot set {:} twice", opt_type), og_span
+        ));
+        errs.push(syntax_err(
+            &format!("Cannot set {:} twice", opt_type), opt_span
+        ));
+        true
+    } else {
+        opt_spans.push((opt_type, opt_span));
+        false
     }
 }

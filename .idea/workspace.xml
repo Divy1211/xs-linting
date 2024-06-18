@@ -7,10 +7,17 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="Updated fn checker to handle mutability">
+    <list default="true" id="3eec511d-2d31-49dd-ab25-abb7e7d1cdc2" name="Changes" comment="WIP type check statements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parsing/ast/astree.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/astree.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parsing/ast/expr.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/expr.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parsing/ast/literal.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/literal.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parsing/ast/type_.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parsing/ast/type_.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check/expression.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/expression.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/static/type_check/statement.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/statement.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/static/type_check/util.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/static/type_check/util.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,34 +54,35 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Cargo.Run XSLint.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.parse starter.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.parse test.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.parse xslc_core.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
-    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Divy/IdeaProjects/XSLint/src/lang/parser/statement&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Cargo.Run XSLint.executor": "Run",
+    "Cargo.parse starter.executor": "Run",
+    "Cargo.parse test.executor": "Run",
+    "Cargo.parse xslc_core.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Divy/IdeaProjects/XSLint/src/static/type_check",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\static\type_check" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\src\lang\parser\statement" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint\test_xs" />
       <recent name="C:\Users\Divy\IdeaProjects\XSLint" />
@@ -90,7 +98,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="runOnTheFly" value="true" />
   </component>
-  <component name="RunManager" selected="Cargo.Run XSLint">
+  <component name="RunManager" selected="Cargo.parse starter">
     <configuration name="Run XSLint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="run --package XSLint --bin XSLint" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -192,6 +200,8 @@
       <workItem from="1718041341553" duration="32920000" />
       <workItem from="1718537168995" duration="27283000" />
       <workItem from="1718647360478" duration="1473000" />
+      <workItem from="1718655830610" duration="926000" />
+      <workItem from="1718724435116" duration="8248000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented lexer">
       <option name="closed" value="true" />
@@ -345,7 +355,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718605104966</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="WIP type check statements">
+      <option name="closed" value="true" />
+      <created>1718656004496</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1718656004496</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -376,6 +394,7 @@
     <MESSAGE value="WIP Type checking for statements" />
     <MESSAGE value="Improved expected vs actual type error messages" />
     <MESSAGE value="Updated fn checker to handle mutability" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated fn checker to handle mutability" />
+    <MESSAGE value="WIP type check statements" />
+    <option name="LAST_COMMIT_MESSAGE" value="WIP type check statements" />
   </component>
 </project>
