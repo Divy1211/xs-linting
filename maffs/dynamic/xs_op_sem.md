@@ -23,21 +23,15 @@ This is a formal description of how a [well typed XS program](../static/xs_type_
 let $L$ denote a literal
 
 $$
-\Delta \vdash L \Downarrow L
+{\tt (xsBssLit)} \Delta \vdash L \Downarrow L
 $$
 
 ### 2.2. Identifiers
 
-let $X$ be an identifier, $V$ be a value
+let $X$ be an identifier
 
 $$
-\begin{array}{rc}
-    {\tt (xsBssId)} & \begin{array}{c}
-        (X, V) \in \Delta
-        \\ \hline
-        \Delta \vdash X \Downarrow V
-    \end{array}
-\end{array}
+{\tt (xsBssId)} \Delta \vdash X \Downarrow \Delta(X)
 $$
 
 ### 2.3. Parenthesis
@@ -45,27 +39,24 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsBssParen)} & \begin{array}{c}
-        \Delta \vdash E \Downarrow V
+        \Delta \vdash E \Downarrow L
         \\ \hline
-        \Delta \vdash (E) \Downarrow V
+        \Delta \vdash (E) \Downarrow L
     \end{array}
 \end{array}
 $$
 
 ### 2.4. Function Call (Expression)
 
-let $L$ be a source location (`file::line_no`)
-
 $$
 \begin{array}{rc}
     {\tt (xsBssFncExpr)} & \begin{array}{c}
-        \begin{array}{ccc}
-            ({\tt fnName}, L) \in \Delta
-            & \Delta \vdash E_i \Downarrow V_i
-            & \Delta \vdash {\tt fnName(V_1, ..., V_i)} \Downarrow V_{r}
+        \begin{array}{cc}
+            \Delta \vdash E_i \Downarrow L_i
+            & \Delta \vdash {\tt fnName(L_1, ..., L_i)} \Downarrow (\Delta', L_r)
         \end{array}
         \\ \hline
-        \Delta \vdash {\tt fnName(E_1, ..., E_n)} \Downarrow V_r
+        \Delta \vdash {\tt fnName(E_1, ..., E_n)} \Downarrow (\Delta', L_r)
     \end{array}
 \end{array}
 $$
@@ -76,12 +67,12 @@ $$
 \begin{array}{rc}
     {\tt (xsBssOp)} & \begin{array}{c}
         \begin{array}{ccc}
-            \Delta \vdash E_1 \Downarrow V_1
-            & \Delta \vdash E_2 \Downarrow V_2
-            & \Delta \vdash V_1\ {\tt op}\ V_2 \Downarrow V_3
+            \Delta \vdash E_1 \Downarrow L_1
+            & \Delta \vdash E_2 \Downarrow L_2
+            & \Delta \vdash L_1\ {\tt op}\ L_2 \Downarrow L_3
         \end{array}
         \\ \hline
-        \Delta \vdash E_1\ {\tt op}\ E_2 \Downarrow V_3
+        \Delta \vdash E_1\ {\tt op}\ E_2 \Downarrow L_3
     \end{array}
 \end{array}
 $$
@@ -105,7 +96,7 @@ $$
 
 ### 3.2. Include
 
-let $X$ be a named XS program
+let $X$ be a named, well typed XS program
 
 $$
 \begin{array}{rc}
@@ -128,10 +119,10 @@ $$
 \begin{array}{rc}
     {\tt (xsBssAssign)} & \begin{array}{c}
         \begin{array}{c}
-            \Delta \vdash E \Downarrow V
+            \Delta \vdash E \Downarrow L
         \end{array}
         \\ \hline
-        (\Delta, X\ =\ E;) \Downarrow \Delta \oplus (X, V)
+        (\Delta, X\ =\ E;) \Downarrow \Delta \oplus (X, L)
     \end{array}
 \end{array}
 $$
@@ -242,4 +233,3 @@ $$
     \end{array}
 \end{array}
 $$
-
