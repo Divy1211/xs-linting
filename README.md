@@ -12,6 +12,6 @@ This tool is a linter  for AoE2:DE's flavour of XS.
 | Static Analysis  | [XS Type Checking](./maffs/static/xs_type_chk.pdf)       |
 | Static Analysis  | [XS Type Inference](./maffs/static/xs_type_inf.md)       |
 | Static Analysis  | [XS Sign Analysis](./maffs/static/xs_sign.md)            |
-| Static Analysis  | [XS Live Analysis](./maffs/static/xs_liveness.md)        |
+| Static Analysis  | [XS Liveness Analysis](./maffs/static/xs_liveness.md)    |
 | Dynamic Analysis | [XS Operational Semantics](./maffs/dynamic/xs_op_sem.md) |
 | Code Generation  | [XS Maximal Munch](./maffs/code_gen/xs_mm.md)            |

@@ -14,6 +14,10 @@
 \end{array}
 $$ is read as $C_1 \land C_2 \implies S_1$
 
+### 1.1 Well Typed Programs
+
+An XS program $X := \bar{S}$ (a sequence of statements) is said to be well typed iff $\exists\ \Gamma\ |\ \Gamma \vdash X$ (there exists some type environment such that it can type check the program)
+
 ## 2. Type Checking For Expressions
 
 ### 2.1. Literals
@@ -308,6 +312,19 @@ Note: floats may be assigned to ints - they follow the expected casting rules.
 $$
 \begin{array}{rc}
     {\tt (xsTcIf)} & \begin{array}{c}
+        \begin{array}{ccc}
+            \Gamma \vdash E_c : {\tt bool}
+            & \Gamma \vdash \bar{S}
+        \end{array}
+        \\ \hline
+        \Gamma \vdash {\tt if\ (} E_c {\tt)\ \{\ } \bar{S} {\tt\ \}}
+    \end{array}
+\end{array}
+$$
+
+$$
+\begin{array}{rc}
+    {\tt (xsTcIfElse)} & \begin{array}{c}
         \begin{array}{ccc}
             \Gamma \vdash E_c : {\tt bool}
             & \Gamma \vdash \bar{S_1}
