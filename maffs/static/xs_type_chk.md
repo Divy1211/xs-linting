@@ -136,10 +136,10 @@ $$
         \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt int}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}
-            & \text{OP}\ \in \{{\tt +,\ -,\ *,\ /,\ \%}\}
+            & {\tt op}\ \in \{{\tt +,\ -,\ *,\ /,\ \%}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash E_1\ \text{OP}\ E_2 : {\tt int}
+        \Gamma \vdash E_1\ {\tt op}\ E_2 : {\tt int}
     \end{array}
 \end{array}
 $$
@@ -152,10 +152,10 @@ $$
         \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt float}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}
-            & \text{OP}\ \in \{{\tt +,\ -,\ *,\ /,\ \%}\}
+            & {\tt op}\ \in \{{\tt +,\ -,\ *,\ /,\ \%}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash E_1\ \text{OP}\ E_2 : {\tt float}
+        \Gamma \vdash E_1\ {\tt op}\ E_2 : {\tt float}
     \end{array}
 \end{array}
 $$
@@ -192,10 +192,10 @@ $$
         \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt int}\ |\ {\tt float}
             & \Gamma \vdash E_2 : {\tt int}\ |\ {\tt float}
-            & \text{OP}\ \in \{{\tt <,\ <=,\ >,\ >=,\ ==,\ !=}\}
+            & {\tt op}\ \in \{{\tt <,\ <=,\ >,\ >=,\ ==,\ !=}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash E_1\ \text{OP}\ E_2 : {\tt bool}
+        \Gamma \vdash E_1\ {\tt op}\ E_2 : {\tt bool}
     \end{array}
 \end{array}
 $$
@@ -206,10 +206,10 @@ $$
         \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt string}
             & \Gamma \vdash E_2 : {\tt string}
-            & \text{OP}\ \in \{{\tt <,\ <=,\ >,\ >=,\ ==,\ !=}\}
+            & {\tt op}\ \in \{{\tt <,\ <=,\ >,\ >=,\ ==,\ !=}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash E_1\ \text{OP}\ E_2 : {\tt bool}
+        \Gamma \vdash E_1\ {\tt op}\ E_2 : {\tt bool}
     \end{array}
 \end{array}
 $$
@@ -222,10 +222,10 @@ $$
         \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt vector}
             & \Gamma \vdash E_2 : {\tt vector}
-            & \text{OP}\ \in \{{\tt ==,\ !=}\}
+            & {\tt op}\ \in \{{\tt ==,\ !=}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash E_1\ \text{OP}\ E_2 : {\tt bool}
+        \Gamma \vdash E_1\ {\tt op}\ E_2 : {\tt bool}
     \end{array}
 \end{array}
 $$
@@ -237,10 +237,10 @@ $$
         \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt bool}
             & \Gamma \vdash E_2 : {\tt bool}
-            & \text{OP}\ \in \{{\tt ==,\ !=}\}
+            & {\tt op}\ \in \{{\tt ==,\ !=}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash E_1\ \text{OP}\ E_2 : {\tt bool}
+        \Gamma \vdash E_1\ {\tt op}\ E_2 : {\tt bool}
     \end{array}
 \end{array}
 $$
@@ -253,10 +253,10 @@ $$
         \begin{array}{ccc}
             \Gamma \vdash E_1 : {\tt bool}
             & \Gamma \vdash E_2 : {\tt bool}
-            & \text{OP}\ \in \{{\tt \&\&,\ ||}\}
+            & {\tt op}\ \in \{{\tt \&\&,\ ||}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash E_1\ \text{OP}\ E_2 : {\tt bool}
+        \Gamma \vdash E_1\ {\tt op}\ E_2 : {\tt bool}
     \end{array}
 \end{array}
 $$
@@ -311,19 +311,6 @@ Note: floats may be assigned to ints - they follow the expected casting rules.
 
 $$
 \begin{array}{rc}
-    {\tt (xsTcIf)} & \begin{array}{c}
-        \begin{array}{ccc}
-            \Gamma \vdash E_c : {\tt bool}
-            & \Gamma \vdash \bar{S}
-        \end{array}
-        \\ \hline
-        \Gamma \vdash {\tt if\ (} E_c {\tt)\ \{\ } \bar{S} {\tt\ \}}
-    \end{array}
-\end{array}
-$$
-
-$$
-\begin{array}{rc}
     {\tt (xsTcIfElse)} & \begin{array}{c}
         \begin{array}{ccc}
             \Gamma \vdash E_c : {\tt bool}
@@ -363,7 +350,7 @@ $$
             & \text{OP } \in {\{\tt <,\ <=,\ >,\ >=}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash {\tt for\ (}X\ =\ E_1{\tt ;}\ \text{OP}\ E_2 {\tt)\ \{\ } \bar{S} {\tt\ \}}
+        \Gamma \vdash {\tt for\ (}X\ =\ E_1{\tt ;}\ {\tt op}\ E_2 {\tt)\ \{\ } \bar{S} {\tt\ \}}
     \end{array}
 \end{array}
 $$
@@ -392,9 +379,11 @@ Note: Floats may be used in $E_c$ or $E_n$ they will be cast to int before being
 
 ### 3.8. Break, Continue, Break Point
 
-$$\Gamma \vdash {\tt break;}$$
-$$\Gamma \vdash {\tt continue;}$$
-$$\Gamma \vdash {\tt breakpoint;}$$
+$$\begin{matrix} {\tt (xsTcBr)} & \Gamma \vdash {\tt break;} \end{matrix}$$
+
+$$\begin{matrix} {\tt (xsTcCo)} & \Gamma \vdash {\tt continue;} \end{matrix}$$
+
+$$\begin{matrix} {\tt (xsTcBrPt)} & \Gamma \vdash {\tt breakpoint;} \end{matrix}$$
 
 ### 3.9. Function Definitions
 
@@ -410,7 +399,7 @@ $$
             & \Gamma \vdash E_r : T_r
         \end{array}
         \\ \hline
-        \Gamma \vdash T_r\ {\tt fnName(} T_1\ id_1\ =\ E_1,\ ...,\ T_n\ id_n\ =\ E_n {\tt)\ \{\ } \bar{S} {\tt\ \}}
+        \Gamma \vdash T_r\ {\tt fnName(T_1\ id_1\ =\ E_1,\ ...,\ T_n\ id_n\ =\ E_n )\ \{\ } \bar{S} {\tt\ \}}
     \end{array}
 \end{array}
 $$
