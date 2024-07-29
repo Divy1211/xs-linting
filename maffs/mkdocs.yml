@@ -1,0 +1,126 @@
+docs_dir:           "docs/"
+
+repo_name:          "xs-check"
+repo_url:           "https://github.com/Divy1211/xs-check"
+
+site_author:        "Alian713"
+site_description:   "Docs for the all the cool maths behind xs-check"
+site_name:          "XS Check Maths"
+edit_uri:           "edit/main/docs/"
+
+use_directory_urls: true
+
+nav:
+  -                                "index.md"
+  - Parsing:
+    - XS Keywords:                 "general/xs_keywords.md"
+    - XS Tokens:                   "parsing/xs_tokens.md"
+    - XS Grammar:                  "parsing/xs_grammar.md"
+  - Static Analysis:
+      - XS Type Checking:          "static/xs_type_chk.md"
+  - Dynamic Analysis:
+      - XS Operational Semantics:  "dynamic/xs_op_sem.md"
+  - Code Generation:
+      - XS to Pseudo Assembly:     "code_gen/xs_mm.md"
+
+markdown_extensions:
+  - attr_list
+  - admonition                # Create not and warning boxes        https://squidfunk.github.io/mkdocs-material/reference/admonitions/#admonition
+  - md_in_html
+  - pymdownx.caret            # Handling sub- and superscripts      https://facelessuser.github.io/pymdown-extensions/extensions/caret/
+  - pymdownx.critic           #                                     https://facelessuser.github.io/pymdown-extensions/extensions/critic/
+  - pymdownx.details          # Collapsable elements                https://facelessuser.github.io/pymdown-extensions/extensions/details/
+  - pymdownx.inlinehilite     # Inline code highlighting            https://facelessuser.github.io/pymdown-extensions/extensions/inlinehilite/
+  - pymdownx.keys             # Add styling keyboard keys           https://facelessuser.github.io/pymdown-extensions/extensions/keys/
+  - pymdownx.mark             # Highlighting of text                https://facelessuser.github.io/pymdown-extensions/extensions/mark/
+  - pymdownx.smartsymbols     # Creating special characters         https://facelessuser.github.io/pymdown-extensions/extensions/smartsymbols/
+  - pymdownx.snippets         #                                     https://facelessuser.github.io/pymdown-extensions/extensions/snippets/
+  - pymdownx.superfences
+  - pymdownx.tabbed           # Tabs                                https://facelessuser.github.io/pymdown-extensions/extensions/tabbed/
+  - pymdownx.tasklist         #                                     https://facelessuser.github.io/pymdown-extensions/extensions/tasklist/
+  - pymdownx.tilde            # Strikethrough of text               https://facelessuser.github.io/pymdown-extensions/extensions/tilde/
+  - pymdownx.arithmatex:      # Preserve LaTeX math equations       https://facelessuser.github.io/pymdown-extensions/extensions/arithmatex/
+      generic: true
+  - pymdownx.emoji:           # Emojis                              https://facelessuser.github.io/pymdown-extensions/extensions/emoji/
+      emoji_index:     !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:       # Highlighting code blocks            https://facelessuser.github.io/pymdown-extensions/extensions/highlight/
+      linenums:     true
+      use_pygments: true
+  - pymdownx.superfences:     # Complicated code fences             https://facelessuser.github.io/pymdown-extensions/extensions/superfences/
+      custom_fences:
+        - name:   mermaid
+          class:  mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tasklist:        # Creating Check-able tasklist        https://facelessuser.github.io/pymdown-extensions/extensions/tasklist/
+      custom_checkbox:    true
+      clickable_checkbox: true
+  - toc:
+      permalink: true
+plugins:
+  - search:
+      lang: en
+      separator: '[\s\-\.\_]+'
+
+theme:
+  # favicon:
+  language: en
+  name: material
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - navigation.expand
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    # - toc.integrate
+  font:
+    text: Roboto
+    code: Fira Code
+  icon:
+    logo: octicons/file-code-24
+    admonition:
+      abstract: octicons/checklist-16
+      bug:      octicons/bug-16
+      danger:   octicons/zap-16
+      example:  octicons/beaker-16
+      failure:  octicons/x-circle-16
+      info:     octicons/info-16
+      note:     octicons/tag-16
+      success:  octicons/check-16
+      tip:      octicons/squirrel-16
+      question: octicons/question-16
+      quote:    octicons/quote-16
+      warning:  octicons/alert-16
+  palette:
+    scheme:  slate
+    primary: red
+    accent:  red
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js
+extra_css:
+  - ./css/style.css
+extra:
+  analytics:
+    provider: google
+    property: G-X6E7LFHRLR
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >- 
+            Thanks for your feedback! Help us improve this page by
+            using our <a href="..." target=_blank>feedback form</a>.
