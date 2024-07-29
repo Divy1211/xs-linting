@@ -116,7 +116,7 @@ $$
 \begin{array}{rc}
     {\tt (xsTcFncExpr)} & \begin{array}{c}
         \begin{array}{ccc}
-            ({\tt fnName}, (T_1, ..., T_n) \rightarrow T_r) \in \Gamma
+            \Gamma \vdash {\tt fnName} : (T_1, ..., T_n) \rightarrow T_r
             & \Gamma \vdash E_i : T_i\ |\ {\tt void}
             & n \leq 12
         \end{array}
@@ -290,7 +290,24 @@ $$
 \end{array}
 $$
 
-### 3.3. Var Def/Assign
+### 3.3. Var Def
+
+$$
+\begin{array}{rc}
+    {\tt (xsTcDef)} & \begin{array}{c}
+        \Gamma \vdash E : T
+        \\ \hline
+        \begin{array}{cc}
+            \Gamma \vdash T\ X\ =\ E{\tt ;}
+            & \Gamma \oplus (X, T)
+        \end{array}
+    \end{array}
+\end{array}
+$$
+
+Note an initialiser in a definition is optional
+
+### 3.4. Var Assign
 
 $$
 \begin{array}{rc}
@@ -307,7 +324,7 @@ $$
 
 Note: floats may be assigned to ints - they follow the expected casting rules.
 
-### 3.4. If Else
+### 3.5. If Else
 
 $$
 \begin{array}{rc}
@@ -323,7 +340,7 @@ $$
 \end{array}
 $$
 
-### 3.5. While
+### 3.6. While
 
 $$
 \begin{array}{rc}
@@ -338,7 +355,7 @@ $$
 \end{array}
 $$
 
-### 3.6. For
+### 3.7. For
 
 $$
 \begin{array}{rc}
@@ -358,7 +375,7 @@ $$
 Note: Floats may be used in $E_1$ or $E_2$ they will be cast to int before being used by the loop. Bools in the initializer are cast to int, bools in the conditional pass the in game type checker but will cause a silent XS crash.
 
 
-### 3.7. Switch
+### 3.8. Switch
 
 $$
 \begin{array}{rc}
@@ -377,7 +394,7 @@ $$
 
 Note: Floats may be used in $E_c$ or $E_n$ they will be cast to int before being used by the cases. Bools in the expression are cast to int, bools in a case's expression pass the in game type checker but will cause a silent XS crash.
 
-### 3.8. Break, Continue, Break Point
+### 3.9. Break, Continue, Break Point, Debug
 
 $$\begin{matrix} {\tt (xsTcBr)} & \Gamma \vdash {\tt break;} \end{matrix}$$
 
@@ -385,7 +402,20 @@ $$\begin{matrix} {\tt (xsTcCo)} & \Gamma \vdash {\tt continue;} \end{matrix}$$
 
 $$\begin{matrix} {\tt (xsTcBrPt)} & \Gamma \vdash {\tt breakpoint;} \end{matrix}$$
 
-### 3.9. Function Definitions
+$$
+\begin{array}{rc}
+    {\tt (xsTcDbg)} & \begin{array}{c}
+        \begin{array}{c}
+            \Gamma \vdash X : T
+            & T \notin \{A \rightarrow B, {\tt rule}, {\tt label}, {\tt class}\}
+        \end{array}
+        \\ \hline
+        \Gamma \vdash {\tt dbg\ } X{\tt ;}
+    \end{array}
+\end{array}
+$$
+
+### 3.10. Function Definitions
 
 $$
 \begin{array}{rc}
@@ -399,28 +429,32 @@ $$
             & \Gamma \vdash E_r : T_r
         \end{array}
         \\ \hline
-        \Gamma \vdash T_r\ {\tt fnName(T_1\ id_1\ =\ E_1,\ ...,\ T_n\ id_n\ =\ E_n )\ \{\ } \bar{S} {\tt\ \}}
+        \begin{array}{cc}
+            \Gamma \vdash T_r\ {\tt fnName(T_1\ id_1\ =\ E_1,\ ...,\ T_n\ id_n\ =\ E_n )\ \{\ } \bar{S} {\tt\ \}}
+            & \Gamma \oplus ({\tt fnName}, (T_1, ..., T_n) \rightarrow T_r)
+        \end{array}
     \end{array}
 \end{array}
 $$
 
 If the return type of a function is `void`, the return statement may be omitted
 
-### 3.10 Rule Definitions
+### 3.11. Rule Definitions
 
 $$
 \begin{array}{rc}
-    {\tt (xsTcFn)} & \begin{array}{c}
-        \begin{array}{c}
-            \Gamma \vdash \bar{S}
-        \end{array}
+    {\tt (xsTcRule)} & \begin{array}{c}
+        \Gamma \vdash \bar{S}
         \\ \hline
-        \Gamma \vdash {\tt rule\ ruleName\ ruleOpts\ \ \{\ } \bar{S} {\tt\ \}}
+        \begin{array}{cc}
+            \Gamma \vdash {\tt rule\ ruleName\ ruleOpts\ \ \{\ } \bar{S} {\tt\ \}}
+            & \Gamma \oplus ({\tt ruleName}, {\tt rule})
+        \end{array}
     \end{array}
 \end{array}
 $$
 
-### 3.11. Postfix
+### 3.12. Postfix
 
 $$
 \begin{array}{rc}
@@ -437,16 +471,17 @@ $$
 
 Postfixes are ~~expressions~~ statements in XS. yES
 
-### 3.12. Label, Goto
+### 3.13. Label, Goto
 
-$$\Gamma \vdash {\tt label\ id;}$$
-$$\Gamma \vdash {\tt goto\ id;}$$
+$$\begin{matrix} {\tt (xsTcLabel)} & \Gamma \vdash {\tt label\ id;} \end{matrix}$$
 
-### 3.13. Function Call (Statement)
+$$\begin{matrix} {\tt (xsTcGoto)} & \Gamma \vdash {\tt goto\ id;} \end{matrix}$$
+
+### 3.14. Function Call (Statement)
 
 $({\tt xsTcFncStmt})$ same as [2.4. Function Call (Expression)](#24-function-call-expression) with a terminating semicolon.
 
-### 3.14. Class Definition
+### 3.15. Class Definition
 
 $$
 \begin{array}{rc}

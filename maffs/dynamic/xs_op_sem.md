@@ -52,13 +52,13 @@ $$
 \begin{array}{rc}
     {\tt (xsBssFncExpr)} & \begin{array}{c}
         \begin{array}{cccc}
-            \Delta \vdash {\tt fnName} \Downarrow (\{{\tt id_1, ..., id_n}\}, \bar{S})
-            & \Delta \vdash E_i \Downarrow L_i
-            & (\Delta \oplus ({\tt id_1}, L_1), \bar{S}) \Downarrow (\Delta', {\tt return\ (E_r)}; \bar{S}')
+            \Delta \vdash {\tt fnName} \Downarrow (\{{\tt (id_1, L_1), ..., (id_n, L_n)}\}, \bar{S})
+            & \Delta \vdash E_j \Downarrow V_j
+            & (\Delta \oplus ({\tt id_1}, V_1) \oplus ... \oplus ({\tt id_j}, V_j) \oplus ... \oplus ({\tt id_n}, L_n), \bar{S}) \Downarrow (\Delta', {\tt return\ (E_r)}; \bar{S}')
             & \Delta \vdash E_r \Downarrow L_r
         \end{array}
         \\ \hline
-        \Delta \vdash {\tt fnName(E_1, ..., E_n)} \Downarrow (\Delta', L_r)
+        \Delta \vdash {\tt fnName(E_1, ..., E_j)} \Downarrow (\Delta', L_r)
     \end{array}
 \end{array}
 $$
@@ -275,15 +275,19 @@ $$
 \end{array}
 $$
 
-### 3.8 Break, Continue, Break Point
+### 3.8 Break, Continue, Break Point, Debug
 
-$$\begin{matrix}{\tt (xsTcBr)} & (\Delta, {\tt break;}) \Downarrow \Delta \end{matrix}$$
+$$\begin{matrix}{\tt (xsBssBr)} & (\Delta, {\tt break;}) \Downarrow \Delta \end{matrix}$$
 
-$$\begin{matrix}{\tt (xsTcCo)} & (\Delta, {\tt continue;}) \Downarrow \Delta \end{matrix}$$
+$$\begin{matrix}{\tt (xsBssCo)} & (\Delta, {\tt continue;}) \Downarrow \Delta \end{matrix}$$
 
 Note: `break` or `continue` outside a looping construct is not allowed. `break` may be used in switch case blocks but is unnecessary.
 
-$$\begin{matrix}{\tt (xsTcBrPt)} & (\Delta, {\tt breakpoint;}) \Downarrow \Delta \end{matrix}$$
+$$\begin{matrix}{\tt (xsBssBrPt)} & (\Delta, {\tt breakpoint;}) \Downarrow \Delta \end{matrix}$$
+
+$$\begin{matrix}{\tt (xsBssBrPt)} & (\Delta, {\tt dbg\ id;}) \Downarrow \Delta \end{matrix}$$
+
+Note: `breakpoint` will pause XS execution with no known way of resumption. `debug` operational semantics are unknown
 
 ### 3.9. Function Definition
 
@@ -294,7 +298,78 @@ $$
             \Delta \vdash E_i \Downarrow L_i
         \end{array}
         \\ \hline
-        (\Delta, T_r\ {\tt fnName(T_1\ id_1\ =\ E_1,\ ...,\ T_n\ id_n\ =\ E_n )\ \{\ } \bar{S} {\tt\ \}}) \Downarrow \Delta \oplus ({\tt fnName}, (\{{\tt id_i, id_2}\}, \{\bar{S}\}))
+        (\Delta, T_r\ {\tt fnName(T_1\ id_1\ =\ E_1,\ ...,\ T_n\ id_n\ =\ E_n )\ \{\ } \bar{S} {\tt\ \}}) \Downarrow \Delta \oplus ({\tt fnName}, (\{{\tt (id_1, L_1), ..., (id_n, L_n)}\}, \bar{S}))
     \end{array}
 \end{array}
 $$
+
+### 3.10. Rule Definitions
+
+$$
+\begin{array}{rc}
+    {\tt (xsBssRule)} & (\Delta, {\tt rule\ ruleName\ ruleOpts\ \ \{\ } \bar{S} {\tt\ \}}) \Downarrow \Delta \oplus ({\tt ruleName}, \bar{S})
+\end{array}
+$$
+
+Note: Running a rule has the same semantics as a void function with no arguments.
+
+### 3.11. Postfix
+
+$$
+\begin{array}{rc}
+    {\tt (xsBssPostInc)} & (\Delta, X{\tt ++};) \Downarrow \Delta \oplus (X, \Delta(X) + 1)
+\end{array}
+$$
+
+$$
+\begin{array}{rc}
+    {\tt (xsBssPostDec)} & (\Delta, X{\tt --};) \Downarrow \Delta \oplus (X, \Delta(X) - 1)
+\end{array}
+$$
+
+### 3.12. Label, Goto
+
+$$
+\begin{array}{rc}
+    {\tt (xsBssLabel)} & \begin{array}{c}
+        \begin{array}{cc}
+            (\Delta, \bar{S}) \Downarrow \Delta'
+        \end{array}
+        \\ \hline
+        (\Delta, {\tt label\ id}; \bar{S}) \Downarrow \Delta'
+    \end{array}
+\end{array}
+$$
+
+$$
+\begin{array}{rc}
+    {\tt (xsBssGoto)} & \begin{array}{c}
+        \begin{array}{cc}
+            (\Delta, \bar{S}) \Downarrow (\Delta', {\tt goto\ id}; \bar{S}')
+            & (\Delta', {\tt label\ id}; \bar{S}) \Downarrow \Delta''
+        \end{array}
+        \\ \hline
+        (\Delta, {\tt label\ id}; \bar{S}) \Downarrow \Delta''
+    \end{array}
+\end{array}
+$$
+
+### 3.13. Function Call (Statement)
+
+$({\tt xsBssFncStmt})$ same as [2.4. Function Call (Expression)](#24-function-call-expression) with a terminating semicolon.
+
+### 3.14. Class Definition
+
+$$
+\begin{array}{rc}
+    {\tt (xsBssClsDef)} & \begin{array}{c}
+        \begin{array}{c}
+            \Delta \vdash E_i \Downarrow L_i
+        \end{array}
+        \\ \hline
+        (\Delta, {\tt class\ clsName\ \{}\ T_1\ id_1\ =\ E_1;\ ...\ T_n\ id_n\ =\ E_n; {\tt\ \};}) \Downarrow \Delta \oplus ({\tt clsName}, \{ ({\tt id_1}, L_1), ..., ({\tt id_n}, L_n) \})
+    \end{array}
+\end{array}
+$$
+
+Classes are unused in XS and can't be instantiated afaik. This exists purely for completeness' sake.

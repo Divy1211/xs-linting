@@ -553,7 +553,7 @@ pub fn xs_tc_stmt<'src>(
             return;
         };
         
-        let (Type::Func { .. } | Type::Rule) = id_type else {
+        let (Type::Func { .. } | Type::Rule | Type::Class | Type::Label) = id_type else {
             return;
         };
 
