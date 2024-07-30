@@ -17,11 +17,18 @@ nav:
     - XS Tokens:                   "parsing/xs_tokens.md"
     - XS Grammar:                  "parsing/xs_grammar.md"
   - Static Analysis:
+      - XS Type Inference:         "static/xs_type_inf.md"
       - XS Type Checking:          "static/xs_type_chk.md"
+      - XS Liveness Analysis:      "static/xs_liveness.md"
   - Dynamic Analysis:
       - XS Operational Semantics:  "dynamic/xs_op_sem.md"
   - Code Generation:
-      - XS to Pseudo Assembly:     "code_gen/xs_mm.md"
+      - Pseudo Assembly Syntax:    "code_gen/pa.md"
+      - XS Maximal Munch (to PA):  "code_gen/xs_mm.md"
+      - XS IR to Byte Code:        "code_gen/xs_bc.md"
+  - XS Runtime:
+      - XS Runtime Env:            "xs_vm/xs_rt.md"
+      - XS Byte Code:              "xs_vm/xs_ops.md"
 
 markdown_extensions:
   - attr_list

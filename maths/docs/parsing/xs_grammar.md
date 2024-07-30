@@ -18,7 +18,7 @@ The following represent terminal symbols:
 
 $\text{NUM} \rightarrow \text{INT | FLT}$
 
-$\text{VCT} \rightarrow \texttt{vector(}\text{NUM}\texttt{, }\text{NUM}\texttt{, }\text{NUM}\texttt{);}$
+$\text{VCT} \rightarrow \texttt{vector(}\text{NUM}\texttt{, }\text{NUM}\texttt{, }\text{NUM}\texttt{)}$
 
 ### 1.2. Top Level Statements
 

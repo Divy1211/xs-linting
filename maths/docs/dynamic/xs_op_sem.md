@@ -24,17 +24,13 @@ This is a formal description of how a [well typed XS program](../static/xs_type_
 
 let $L$ denote a literal
 
-$$
-{\tt (xsBssLit)} \Delta \vdash L \Downarrow L
-$$
+$$\begin{matrix}{\tt (xsBssLit)} & \Delta \vdash L \Downarrow L \end{matrix}$$
 
 ### 2.2. Identifiers
 
 let $X$ be an identifier
 
-$$
-{\tt (xsBssId)} \Delta \vdash X \Downarrow \Delta(X)
-$$
+$$\begin{matrix}{\tt (xsBssId)} & \Delta \vdash X \Downarrow \Delta(X) \end{matrix}$$
 
 ### 2.3. Parenthesis
 
