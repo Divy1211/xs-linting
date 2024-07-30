@@ -96,4 +96,4 @@ $\text{CMT} := /* .* */$
 
 every XS keyword is a token
 
-[XS Keywords](./maffs/parsing/xs_keywords.md)
+[XS Keywords](./xs_keywords.md)

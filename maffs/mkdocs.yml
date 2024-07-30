@@ -11,9 +11,9 @@ edit_uri:           "edit/main/docs/"
 use_directory_urls: true
 
 nav:
-  -                                "index.md"
+  - About:                         "index.md"
   - Parsing:
-    - XS Keywords:                 "general/xs_keywords.md"
+    - XS Keywords:                 "parsing/xs_keywords.md"
     - XS Tokens:                   "parsing/xs_tokens.md"
     - XS Grammar:                  "parsing/xs_grammar.md"
   - Static Analysis:
@@ -106,21 +106,3 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js
 extra_css:
   - ./css/style.css
-extra:
-  analytics:
-    provider: google
-    property: G-X6E7LFHRLR
-    feedback:
-      title: Was this page helpful?
-      ratings:
-        - icon: material/emoticon-happy-outline
-          name: This page was helpful
-          data: 1
-          note: >-
-            Thanks for your feedback!
-        - icon: material/emoticon-sad-outline
-          name: This page could be improved
-          data: 0
-          note: >- 
-            Thanks for your feedback! Help us improve this page by
-            using our <a href="..." target=_blank>feedback form</a>.

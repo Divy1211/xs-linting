@@ -14,7 +14,9 @@ This is a formal description of how a [well typed XS program](../static/xs_type_
     S_1
     \end{array}
     \end{array}
-    $$ is read as $C_1 \land C_2 \implies S_1$
+    $$
+
+    is read as $C_1 \land C_2 \implies S_1$
 
 ## 2. Big Step Semantics For Expressions
 
