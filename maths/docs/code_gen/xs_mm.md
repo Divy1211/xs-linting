@@ -50,13 +50,14 @@ $$
         \begin{array}{c}
             M_e(E_i) \vdash ({\tt d_i}, {\tt lis_i})
             \\ {\tt newId} \vdash {\tt d_r}
-            \\ {\tt newAddr} \vdash {\tt l}
+            \\ {\tt newAddr} \vdash {\tt l_r}
         \end{array}
         \\ \hline
         M_e({\tt fnName(E_1, ..., E_n)}) \vdash \left({\tt d_r}, \begin{array}{c}
             {\tt lis_1\ +\ ...\ +\ lis_n}
             \\ {\tt +\ [push\ d_n, ..., push\ d_1]}
             \\ {\tt +\ [jmp\ fnName]}
+            \\ {\tt +\ [dealloc\ n]}
             \\ {\tt +\ [ l_r : d_r \leftarrow r_{ret} ]}
         \end{array}\right)
     \end{array}
