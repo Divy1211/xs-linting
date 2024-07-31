@@ -36,7 +36,7 @@ $$
 \end{array}
 $$
 
-(XS `int` literals may not be more than 9 digits long. yES)
+(XS ${\tt int}$ literals may not be more than 9 digits long. yES)
 
 $$
 \begin{array}{rc}
@@ -128,7 +128,7 @@ $$
 \end{array}
 $$
 
-Note: XS can have functions of arity $\in [0, 12]$ but every function must define default values for each parameter, which means it is possible to omit any number of its arguments which are initialised with defaults in that case. Hence the `T_n | void` type for parameters. There is no currying in XS :(
+Note: XS can have functions of arity $\in [0, 12]$ but every function must define default values for each parameter, which means it is possible to omit any number of its arguments which are initialised with defaults in that case. Hence the ${\tt T_n | void}$ type for parameters. There is no currying in XS :(
 
 ### 2.5. Operations
 
@@ -146,7 +146,7 @@ $$
 \end{array}
 $$
 
-(an `int op float` is an `int` in XS... yES.)
+(an ${\tt int op float}$ is an ${\tt int}$ in XS... yES.)
 
 $$
 \begin{array}{rc}
@@ -439,7 +439,7 @@ $$
 \end{array}
 $$
 
-If the return type of a function is `void`, the return statement may be omitted
+If the return type of a function is ${\tt void}$, the return statement may be omitted
 
 ### 3.11. Rule Definitions
 

@@ -25,7 +25,7 @@ nav:
   - Code Generation:
       - Pseudo Assembly Syntax:    "code_gen/pa.md"
       - XS Maximal Munch (to PA):  "code_gen/xs_mm.md"
-      - XS IR to Byte Code:        "code_gen/xs_bc.md"
+      - XS PA to Byte Code:        "code_gen/xs_bc.md"
   - XS Runtime:
       - XS Runtime Env:            "xs_vm/xs_rt.md"
       - XS Byte Code:              "xs_vm/xs_ops.md"

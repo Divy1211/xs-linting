@@ -279,13 +279,13 @@ $$\begin{matrix}{\tt (xsBssBr)} & (\Delta, {\tt break;}) \Downarrow \Delta \end{
 
 $$\begin{matrix}{\tt (xsBssCo)} & (\Delta, {\tt continue;}) \Downarrow \Delta \end{matrix}$$
 
-Note: `break` or `continue` outside a looping construct is not allowed. `break` may be used in switch case blocks but is unnecessary.
+Note: ${\tt break}$ or ${\tt continue}$ outside a looping construct is not allowed. ${\tt break}$ may be used in switch case blocks but is unnecessary.
 
 $$\begin{matrix}{\tt (xsBssBrPt)} & (\Delta, {\tt breakpoint;}) \Downarrow \Delta \end{matrix}$$
 
 $$\begin{matrix}{\tt (xsBssBrPt)} & (\Delta, {\tt dbg\ id;}) \Downarrow \Delta \end{matrix}$$
 
-Note: `breakpoint` will pause XS execution with no known way of resumption. `debug` operational semantics are unknown
+Note: ${\tt breakpoint}$ will pause XS execution with no known way of resumption. ${\tt debug}$ operational semantics are unknown
 
 ### 3.9. Function Definition
 

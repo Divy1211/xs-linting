@@ -291,7 +291,8 @@ $\text{CLS} \rightarrow \texttt{class } \text{ID} \texttt{ \{ } \text{MEM\_VARS}
 
 $\text{MEM\_VARS} \rightarrow \text{DTYPE ID}\texttt{ = }\text{E}\texttt{;} \text{ MEM\_VARS | } \epsilon$
 
-Note: I don't know how to use classes in XS, its valid syntax though. The furthest I've gotten is declaring a class variable: `ClsName obj;`. Initialising it or accessing member values doesn't seem possible.
+Note: I don't know how to use classes in XS, its valid syntax though. The furthest I've gotten is declaring a class variable: ${\tt ClsName
+obj;}$. Initialising it or accessing member values doesn't seem possible.
 
 ### 2.22. Docstring
 
