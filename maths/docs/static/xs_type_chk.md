@@ -463,10 +463,10 @@ $$
     {\tt (xsTcPost)} & \begin{array}{c}
         \begin{array}{cc}
             ({\tt id,\ int\ |\ float}) \in \Gamma
-            & \text{\#\#}\ \in \{{\tt ++,\ --}\}
+            & \text{##}\ \in \{{\tt ++,\ --}\}
         \end{array}
         \\ \hline
-        \Gamma \vdash \text{id\#\#;}
+        \Gamma \vdash \text{id##;}
     \end{array}
 \end{array}
 $$
