@@ -131,6 +131,7 @@ $$
 \begin{array}{rc}
     {\tt (xsMmAssign)} & \begin{array}{c}
         \begin{array}{c}
+            \Delta(X) \vdash {\tt d}
             \\ M_e(E, \Delta(X)) \vdash {({\tt d}, {\tt lis})}
         \end{array}
         \\ \hline
@@ -150,10 +151,10 @@ $$
             M_e(E_c) \vdash {({\tt d_c}, {\tt lis_c})}
             \\ {\tt newAddr} \vdash {\tt l_c}
             \\ M_s(\bar{S}_1) \vdash {\tt lis_1}
-            \\ {\tt newAddr} \vdash {\tt l_{endThen}}
+            \\ \color{yellow} {\tt newAddr} \vdash {\tt l_{endThen}}
             \\ {\tt newAddr?} \vdash {\tt l_{else}}
-            \\ M_s(\bar{S}_2) \vdash {\tt lis_2}
-            \\ {\tt newAddr?} \vdash {\tt l_{endElse}}
+            \\ \color{yellow} M_s(\bar{S}_2) \vdash {\tt lis_2}
+            \\ \color{yellow} {\tt newAddr?} \vdash {\tt l_{endIf}}
         \end{array}
         \\ \hline
         \begin{array}{cc}
@@ -161,10 +162,14 @@ $$
             {\tt lis_c}
             \\ {\tt +\ [l_c : ifn\ d_c\ goto\ l_{else}}]
             \\ {\tt +\ lis_1}
-            \\ {\tt +\ [l_{endThen} : goto\ l_{endElse}}]
-            \\ {\tt +\ lis_2}
+            \\ \color{yellow} {\tt +\ [l_{endThen} : goto\ l_{endIf}}]
+            \\ \color{yellow} {\tt +\ lis_2}
         \end{array}
         \end{array}
     \end{array}
 \end{array}
 $$
+
+Note: The instructions highlighted in yellow are not generated when an else block is not present
+
+### 3.5. While
