@@ -4,13 +4,13 @@ Generation of PA from XS.
 
 ## 1. Notation
 
-- $M_e(E) \vdash ({\tt d}, {\tt lis})$ is a function which yields the PA labeled instructions ${\tt lis}$ which compute the value of the expression $E$ and stores the result in ${\tt d}$. An optional second argument may provide a custom name for ${\tt d}$
-- $M_s(S) \vdash {\tt lis}$ is a function which yields the PA labeled instructions ${\tt lis}$ for statement $S$
+- $M_e(E) \vdash ({\tt d}, {\tt lis})$ is a function which yields the PA addressed instructions ${\tt lis}$ which compute the value of the expression $E$ and stores the result in ${\tt d}$. An optional second argument may provide a custom name for ${\tt d}$
+- $M_s(S) \vdash {\tt lis}$ is a function which yields the PA addressed instructions ${\tt lis}$ for statement $S$
 - $\Delta(X)$ is a mapping of program variables to PA identifiers
 - ${\tt newId} \vdash {\tt n}$ is a generator which yields a new and unique identifier
 - ${\tt newAddr} \vdash {\tt l}$ is a generator which yields the next address for a PA instruction.
 - ${\tt newAddr?} \vdash {\tt l}$ is a function which peeks the next address for a PA instruction without incrementing it.
-- ${\tt inFn} \vdash {\tt fnName}$ is a function which yields the name of the procedure for which code is being generated.
+- ${\tt endAddr?} \vdash {\tt l}$ is a function which yields the address of the returning/ending instruction name of the procedure/loop for which code is being generated.
 - $$\begin{array}{rc}
     {\tt (xsMmCase)} & \begin{array}{c}
         \begin{array}{cc} C_1 & C_2 \end{array}
@@ -146,7 +146,7 @@ $$
 
 $$
 \begin{array}{rc}
-    {\tt (xsMmAssign)} & \begin{array}{c}
+    {\tt (xsMmIfElse)} & \begin{array}{c}
         \begin{array}{c}
             M_e(E_c) \vdash {({\tt d_c}, {\tt lis_c})}
             \\ {\tt newAddr} \vdash {\tt l_c}
@@ -173,3 +173,92 @@ $$
 Note: The instructions highlighted in yellow are not generated when an else block is not present
 
 ### 3.5. While
+
+$$
+\begin{array}{rc}
+    {\tt (xsMmWhile)} & \begin{array}{c}
+        \begin{array}{c}
+            \\ {\tt newAddr?} \vdash {\tt l_{eval}}
+            \\ M_e(E_c) \vdash {({\tt d_c}, {\tt lis_c})}
+            \\ {\tt newAddr} \vdash {\tt l_c}
+            \\ M_s(\bar{S}) \vdash {\tt lis}
+            \\ {\tt newAddr} \vdash {\tt l_{loop}}
+            \\ {\tt newAddr?} \vdash {\tt l_{end}}
+        \end{array}
+        \\ \hline
+        \begin{array}{cc}
+            M_s({\tt while\ (} E_c {\tt)\ \{\ } \bar{S} {\tt\ \}}) \vdash \begin{array}{c}
+            {\tt lis_c}
+            \\ {\tt +\ [l_c : ifn\ d_c\ goto\ l_{end}}]
+            \\ {\tt +\ lis}
+            \\ {\tt +\ [l_{loop} : goto\ l_{eval}]}
+        \end{array}
+        \end{array}
+    \end{array}
+\end{array}
+$$
+
+### 3.6. For
+
+$$
+\begin{array}{rc}
+    {\tt (xsMmForInc)} & \begin{array}{c}
+        \begin{array}{c}
+            {\tt op} \in \{{\tt <, <=}\}
+            \\ \Delta(X) \vdash {\tt d_1}
+            \\ M_e(E_1, \Delta(X)) \vdash {({\tt d_1}, {\tt lis_1})}
+            \\ {\tt newAddr?} \vdash {\tt l_{eval}}
+            \\ M_e(E_2) \vdash {({\tt d_2}, {\tt lis_2})}
+            \\ {\tt newAddr} \vdash {\tt l_{c1}}
+            \\ {\tt newAddr} \vdash {\tt l_{c2}}
+            \\ M_s(\bar{S}) \vdash {\tt lis}
+            \\ {\tt newAddr} \vdash {\tt l_{inc}}
+            \\ {\tt newAddr} \vdash {\tt l_{loop}}
+            \\ {\tt newAddr?} \vdash {\tt l_{end}}
+        \end{array}
+        \\ \hline
+        \begin{array}{cc}
+            M_s({\tt for\ (}X\ =\ E_1{\tt ;}\ {\tt op}\ E_2 {\tt)\ \{\ } \bar{S} {\tt\ \}}) \vdash \begin{array}{c}
+            {\tt lis_1\ +\ lis_2}
+            \\ {\tt +\ [l_{c1} : d_{c1} \leftarrow d_1\ op\ d_2]}
+            \\ {\tt +\ [l_{c2} : ifn\ d_{c1}\ goto\ l_{end}]}
+            \\ {\tt +\ lis}
+            \\ {\tt +\ [l_{inc} : d_1 \leftarrow d_1 + 1]}
+            \\ {\tt +\ [l_{loop} : goto\ l_{eval}]}
+        \end{array}
+        \end{array}
+    \end{array}
+\end{array}
+$$
+
+
+$$
+\begin{array}{rc}
+    {\tt (xsMmForDec)} & \begin{array}{c}
+        \begin{array}{c}
+            {\tt op} \in \{{\tt >, >=}\}
+            \\ \Delta(X) \vdash {\tt d_1}
+            \\ M_e(E_1, \Delta(X)) \vdash {({\tt d_1}, {\tt lis_1})}
+            \\ {\tt newAddr?} \vdash {\tt l_{eval}}
+            \\ M_e(E_2) \vdash {({\tt d_2}, {\tt lis_2})}
+            \\ {\tt newAddr} \vdash {\tt l_{c1}}
+            \\ {\tt newAddr} \vdash {\tt l_{c2}}
+            \\ M_s(\bar{S}) \vdash {\tt lis}
+            \\ {\tt newAddr} \vdash {\tt l_{inc}}
+            \\ {\tt newAddr} \vdash {\tt l_{loop}}
+            \\ {\tt newAddr?} \vdash {\tt l_{end}}
+        \end{array}
+        \\ \hline
+        \begin{array}{cc}
+            M_s({\tt for\ (}X\ =\ E_1{\tt ;}\ {\tt op}\ E_2 {\tt)\ \{\ } \bar{S} {\tt\ \}}) \vdash \begin{array}{c}
+            {\tt lis_1\ +\ lis_2}
+            \\ {\tt +\ [l_{c1} : d_{c1} \leftarrow d_1\ op\ d_2]}
+            \\ {\tt +\ [l_{c2} : ifn\ d_{c1}\ goto\ l_{end}]}
+            \\ {\tt +\ lis}
+            \\ {\tt +\ [l_{inc} : d_1 \leftarrow d_1 - 1]}
+            \\ {\tt +\ [l_{loop} : goto\ l_{eval}]}
+        \end{array}
+        \end{array}
+    \end{array}
+\end{array}
+$$
