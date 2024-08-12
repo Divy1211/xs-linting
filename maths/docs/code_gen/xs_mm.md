@@ -1,4 +1,4 @@
-# XS Maximal Munch
+# XS Maximal Munch (WIP)
 
 Generation of PA from XS.
 
@@ -209,8 +209,9 @@ $$
             \\ M_e(E_1, \Delta(X)) \vdash {({\tt d_1}, {\tt lis_1})}
             \\ {\tt newAddr?} \vdash {\tt l_{eval}}
             \\ M_e(E_2) \vdash {({\tt d_2}, {\tt lis_2})}
-            \\ {\tt newAddr} \vdash {\tt l_{c1}}
-            \\ {\tt newAddr} \vdash {\tt l_{c2}}
+            \\ {\tt newAddr} \vdash {\tt l_{cmp}}
+            \\ {\tt newId} \vdash {\tt d_{cmp}}
+            \\ {\tt newAddr} \vdash {\tt l_{br}}
             \\ M_s(\bar{S}) \vdash {\tt lis}
             \\ {\tt newAddr} \vdash {\tt l_{inc}}
             \\ {\tt newAddr} \vdash {\tt l_{loop}}
@@ -220,8 +221,8 @@ $$
         \begin{array}{cc}
             M_s({\tt for\ (}X\ =\ E_1{\tt ;}\ {\tt op}\ E_2 {\tt)\ \{\ } \bar{S} {\tt\ \}}) \vdash \begin{array}{c}
             {\tt lis_1\ +\ lis_2}
-            \\ {\tt +\ [l_{c1} : d_{c1} \leftarrow d_1\ op\ d_2]}
-            \\ {\tt +\ [l_{c2} : ifn\ d_{c1}\ goto\ l_{end}]}
+            \\ {\tt +\ [l_{cmp} : d_{cmp} \leftarrow d_1\ op\ d_2]}
+            \\ {\tt +\ [l_{br} : ifn\ d_{cmp}\ goto\ l_{end}]}
             \\ {\tt +\ lis}
             \\ {\tt +\ [l_{inc} : d_1 \leftarrow d_1 + 1]}
             \\ {\tt +\ [l_{loop} : goto\ l_{eval}]}
@@ -241,8 +242,9 @@ $$
             \\ M_e(E_1, \Delta(X)) \vdash {({\tt d_1}, {\tt lis_1})}
             \\ {\tt newAddr?} \vdash {\tt l_{eval}}
             \\ M_e(E_2) \vdash {({\tt d_2}, {\tt lis_2})}
-            \\ {\tt newAddr} \vdash {\tt l_{c1}}
-            \\ {\tt newAddr} \vdash {\tt l_{c2}}
+            \\ {\tt newAddr} \vdash {\tt l_{cmp}}
+            \\ {\tt newId} \vdash {\tt d_{cmp}}
+            \\ {\tt newAddr} \vdash {\tt l_{br}}
             \\ M_s(\bar{S}) \vdash {\tt lis}
             \\ {\tt newAddr} \vdash {\tt l_{inc}}
             \\ {\tt newAddr} \vdash {\tt l_{loop}}
@@ -252,8 +254,8 @@ $$
         \begin{array}{cc}
             M_s({\tt for\ (}X\ =\ E_1{\tt ;}\ {\tt op}\ E_2 {\tt)\ \{\ } \bar{S} {\tt\ \}}) \vdash \begin{array}{c}
             {\tt lis_1\ +\ lis_2}
-            \\ {\tt +\ [l_{c1} : d_{c1} \leftarrow d_1\ op\ d_2]}
-            \\ {\tt +\ [l_{c2} : ifn\ d_{c1}\ goto\ l_{end}]}
+            \\ {\tt +\ [l_{cmp} : d_{cmp} \leftarrow d_1\ op\ d_2]}
+            \\ {\tt +\ [l_{br} : ifn\ d_{c1}\ goto\ l_{end}]}
             \\ {\tt +\ lis}
             \\ {\tt +\ [l_{inc} : d_1 \leftarrow d_1 - 1]}
             \\ {\tt +\ [l_{loop} : goto\ l_{eval}]}
@@ -268,27 +270,52 @@ $$
 $$
 \begin{array}{rc}
     {\tt (xsMmSwitch)} & \begin{array}{c}
-        \begin{array}{c}
-            M_e(E_c) \vdash {({\tt d_c}, {\tt lis_c})}
-            \\ {\tt newAddr} \vdash {\tt l_c}
-            \\ M_s(\bar{S}_1) \vdash {\tt lis_1}
-            \\ \color{yellow} {\tt newAddr} \vdash {\tt l_{endThen}}
-            \\ {\tt newAddr?} \vdash {\tt l_{else}}
-            \\ \color{yellow} M_s(\bar{S}_2) \vdash {\tt lis_2}
-            \\ \color{yellow} {\tt newAddr?} \vdash {\tt l_{endIf}}
+        \begin{array}{cccc}
+            & M_e(E_c) \vdash {({\tt d_c}, {\tt lis_c})} &
+            \\ & M_e(E_i) \vdash {({\tt d_i}, {\tt lis_{eval_i}})} & {\tt newAddr} \vdash {\tt l_{cmp_i}} & {\tt newAddr} \vdash {\tt l_{br_i}}
+            \\ & {\tt newAddr} \vdash {\tt l_{br_{default}}}
+            \\ {\tt newAddr?} \vdash {\tt l_{start_i}} &  M_s(\bar{S}_i) \vdash {\tt lis_i} & {\tt newAddr} \vdash {\tt l_{end_i}}
+            \\ {\tt newAddr?} \vdash {\tt l_{default}} & \color{yellow} M_s(\bar{S}_{default}) \vdash {\tt lis_{default}}
+            \\ & {\tt newAddr?} \vdash {\tt l_{end}}
         \end{array}
         \\ \hline
         \begin{array}{cc}
             M_s({\tt switch\ (} E_c {\tt)\ \{\ } {\tt case\ } E_1 {\tt\ :\ \{\ } \bar{S_1} {\tt\ \}} {\tt\ ...\ case\ } E_n {\tt\ :\ \{\ } \bar{S_n} {\tt\ \}} {\tt\ default\ :\ \{\ } \bar{S_d} {\tt\ \}} {\tt\ \}}) \vdash \begin{array}{c}
             {\tt lis_c}
-            \\ {\tt +\ [l_c : ifn\ d_c\ goto\ l_{else}}]
-            \\ {\tt +\ lis_1}
-            \\ \color{yellow} {\tt +\ [l_{endThen} : goto\ l_{endIf}}]
-            \\ \color{yellow} {\tt +\ lis_2}
+            \\ {\tt +\ lis_{eval_1}\ +\ [l_{cmp_1} : d_{cmp_1} \leftarrow d_c\ !=\ d_1,\ l_{br_1} : ifn\ d_{cmp_1}\ goto\ l_{start_1}]}
+            \\ ...
+            \\ {\tt +\ lis_{eval_n}\ +\ [l_{cmp_n} : d_{cmp_n} \leftarrow d_c\ !=\ d_n,\ l_{br_n} : ifn\ d_{cmp_n}\ goto\ l_{start_n}]}
+            \\ {\tt +\ [l_{br_{default}} : goto\ l_{default}]}
+            \\ {\tt lis_1 + [l_{end_1} : goto\ l_{end}]}
+            \\ ...
+            \\ {\tt lis_n + [l_{end_n} : goto\ l_{end}]}
+            \\ \color{yellow} {\tt +\ lis_{default}}
         \end{array}
         \end{array}
     \end{array}
 \end{array}
 $$
 
+Note: The instructions highlighted in yellow are not generated when a default block is not present. In that case, ${\tt l_
+{default}}$ is the same label as ${\tt l_{end}}$ 
+
+### 3.8 Break, Continue, Break Point, Debug
+
 Note: An ${\tt endAddr?}$ call will yield the ${\tt l_{end}}$ of the most recently entered for/while/switch/function body. It will never be invoked outside a proper context (outside a switch/for/while/function body) in a [well typed XS program](../static/xs_type_chk.md#11-well-typed-programs) (passing the type checker is a prerequisite to code generation)
+
+### 3.9. Function Definition
+
+
+### 3.10. Rule Definitions
+
+
+### 3.11. Postfix
+
+
+### 3.12. Label, Goto
+
+
+### 3.13. Function Call (Statement)
+
+
+### 3.14. Class Definition
