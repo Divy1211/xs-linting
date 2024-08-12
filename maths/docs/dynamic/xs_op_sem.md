@@ -61,7 +61,7 @@ $$
 \end{array}
 $$
 
-Note2: See [Function Definition](#39-function-definition)
+See [§ 3.9. Function Definition](#39-function-definition)
 
 ### 2.5. Operations
 

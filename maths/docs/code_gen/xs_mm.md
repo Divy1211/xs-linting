@@ -123,7 +123,7 @@ $$
 \end{array}
 $$
 
-<!-- todo: check for def inits -->
+[//]: # (todo: check for def inits)
 
 ### 3.4. Var Assign
 
@@ -262,3 +262,33 @@ $$
     \end{array}
 \end{array}
 $$
+
+### 3.7. Switch
+
+$$
+\begin{array}{rc}
+    {\tt (xsMmSwitch)} & \begin{array}{c}
+        \begin{array}{c}
+            M_e(E_c) \vdash {({\tt d_c}, {\tt lis_c})}
+            \\ {\tt newAddr} \vdash {\tt l_c}
+            \\ M_s(\bar{S}_1) \vdash {\tt lis_1}
+            \\ \color{yellow} {\tt newAddr} \vdash {\tt l_{endThen}}
+            \\ {\tt newAddr?} \vdash {\tt l_{else}}
+            \\ \color{yellow} M_s(\bar{S}_2) \vdash {\tt lis_2}
+            \\ \color{yellow} {\tt newAddr?} \vdash {\tt l_{endIf}}
+        \end{array}
+        \\ \hline
+        \begin{array}{cc}
+            M_s({\tt switch\ (} E_c {\tt)\ \{\ } {\tt case\ } E_1 {\tt\ :\ \{\ } \bar{S_1} {\tt\ \}} {\tt\ ...\ case\ } E_n {\tt\ :\ \{\ } \bar{S_n} {\tt\ \}} {\tt\ default\ :\ \{\ } \bar{S_d} {\tt\ \}} {\tt\ \}}) \vdash \begin{array}{c}
+            {\tt lis_c}
+            \\ {\tt +\ [l_c : ifn\ d_c\ goto\ l_{else}}]
+            \\ {\tt +\ lis_1}
+            \\ \color{yellow} {\tt +\ [l_{endThen} : goto\ l_{endIf}}]
+            \\ \color{yellow} {\tt +\ lis_2}
+        \end{array}
+        \end{array}
+    \end{array}
+\end{array}
+$$
+
+Note: An ${\tt endAddr?}$ call will yield the ${\tt l_{end}}$ of the most recently entered for/while/switch/function body. It will never be invoked outside a proper context (outside a switch/for/while/function body) in a [well typed XS program](../static/xs_type_chk.md#11-well-typed-programs) (passing the type checker is a prerequisite to code generation)

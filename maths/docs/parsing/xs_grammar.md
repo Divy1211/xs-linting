@@ -94,7 +94,7 @@ $\text{V}_\text{top} \rightarrow \texttt{extern } \text{V}_\text{top}\text{ | }\
 
 $\text{V}_\text{top} \rightarrow \text{DTYPE ID}\texttt{ = }\text{LIT}\texttt{;}$
 
-<!-- todo: double check if top level var defs can have exprs -->
+[//]: # (todo: double check if top level var defs can have exprs)
 
 $\text{DTYPE} \rightarrow \texttt{int | float | bool | string | vect}$
 
@@ -152,8 +152,8 @@ where
 
 $\color{gray}\text{OP}_\text{rel} := \text{Relational operators}$
 
-<!-- todo: check for all rel op use -->
-<!-- todo: check for exp in for asgn -->
+[//]: # (todo: check for all rel op use)
+[//]: # (todo: check for exp in for asgn)
 
 ### 2.8. Switch
 
@@ -297,7 +297,8 @@ obj;}$. Initialising it or accessing member values doesn't seem possible.
 ### 2.22. Docstring
 
 #### Todo
-<!-- todo -->
+
+[//]: # (todo)
 
 ## 3. Expression
 
