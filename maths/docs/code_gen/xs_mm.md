@@ -1,6 +1,6 @@
 # XS Maximal Munch (WIP)
 
-Generation of PA from XS.
+Generation of [PA](../pa) from XS.
 
 ## 1. Notation
 
@@ -84,6 +84,28 @@ $$
     \end{array}
 \end{array}
 $$
+
+### 2.5. Type Casting
+
+Whilst explicit type casting is not allowed in XS, when code is generated for an expression, there *may* be one additional step to perform an implicit type cast to the desired type for that expression. An invalid type cast will never be required in a [well-typed XS program](../static/xs_type_chk.md#11-well-typed-programs). This step is omitted from the description of the algorithm above since it would add unnecessary repetitive logic to each case and hinder clarity. In the actual algorithm, $M_e$ takes an extra argument specifying the required type $T_{req}$ and is provided with the inferred type $T_{inf}$ from the type checking phase:
+
+$$
+\begin{array}{rc}
+    {\tt (xsMmImplicitCast)} & \begin{array}{c}
+        \begin{array}{c}
+            M_e(E) \vdash ({\tt d}, {\tt lis})
+            \\ \Gamma \vdash E : T_{inf}
+            \\ T_{req} \neq T_{inf}
+            \\ {\tt newAddr} \vdash {\tt l}
+        \end{array}
+        \\ \hline
+        M_e(E, T_{req}) \vdash ({\tt d}, {\tt lis\ +\ [ l : d \leftarrow tcast\ d ]})
+    \end{array}
+\end{array}
+$$
+
+Where ${\tt tcast}$ may be one of ${\tt icast}$, ${\tt fcast}$, or ${\tt scast}$ depending on $T_{req}$.
+
 
 ## 3. MM for Statements
 
@@ -301,7 +323,7 @@ Note: The instructions highlighted in yellow are not generated when a default bl
 
 ### 3.8 Break, Continue, Break Point, Debug
 
-Note: An ${\tt endAddr?}$ call will yield the ${\tt l_{end}}$ of the most recently entered for/while/switch/function body. It will never be invoked outside a proper context (outside a switch/for/while/function body) in a [well typed XS program](../static/xs_type_chk.md#11-well-typed-programs) (passing the type checker is a prerequisite to code generation)
+Note: An ${\tt endAddr?}$ call will yield the ${\tt l_{end}}$ of the most recently entered for/while/switch/function body. It will never be invoked outside a proper context (outside a switch/for/while/function body) in a [well-typed XS program](../static/xs_type_chk.md#11-well-typed-programs)
 
 ### 3.9. Function Definition
 
