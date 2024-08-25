@@ -312,7 +312,7 @@ $\text{E4} \rightarrow \text{E5 | E4 }\texttt{<}\text{ E5 | E4 }\texttt{>}\text{
 
 $\text{E3} \rightarrow \text{E4 | E3 }\texttt{==}\text{ E4 | E3 }\texttt{!=}\text{ E4}$
 
-$\text{E2} \rightarrow \text{E3 | E2 }\texttt{\&\&}\text{ E3}$
+$\text{E2} \rightarrow \text{E3 | E2 }\texttt{&&}\text{ E3}$
 
 $\text{E1} \rightarrow \text{E2 | E1 }\texttt{||}\text{ E2}$
 

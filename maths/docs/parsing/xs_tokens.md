@@ -72,9 +72,9 @@ $\text{DOT} :=\ \texttt{.}$
 
 $\text{INT} :=\ \texttt{-999999999} \text{ to } \texttt{999999999}$
 
-$\text{FLT} :=\ \texttt{-?\textbackslash d+.\textbackslash d+} \text{ where } \texttt{\textbackslash d} \text{ is a digit}$
+$\text{FLT} :=\ \texttt{-?\d+.\d+} \text{ where } \texttt{\d} \text{ is a digit}$
 
-$\text{STR} :=\ \texttt{"\textbackslash w*"}  \text{ where } \texttt{\textbackslash w} \text{ is a unicode character}$
+$\text{STR} :=\ \texttt{"\w*"}  \text{ where } \texttt{\w} \text{ is a unicode character}$
 
 $\text{BOOL} :=\ \texttt{false} \text{ or } \texttt{true}$
 
@@ -86,7 +86,7 @@ Note: Vectors are part of the grammar and are not treated as literals
 
 ### 4.1. Single Comment
 
-$\text{CMT} := \texttt{//[\^ \textbackslash n]*}$
+$\text{CMT} := \texttt{//[\^ \\ n]*}$
 
 ### 4.2. Multiple Line Comment
 
