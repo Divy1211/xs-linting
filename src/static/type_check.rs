@@ -14,7 +14,7 @@ pub type LocalEnv = HashMap<Identifier, Vec<(TypeEnv, Span)>>;
 pub type Groups = HashSet<String>;
 
 pub fn env_get<'src>(
-    local_env: Option<&'src TypeEnv>,
+    local_env: &'src Option<TypeEnv>,
     type_env: &'src TypeEnv,
     id: &Identifier
 ) -> Option<&'src (Type, Span)> {
@@ -25,7 +25,7 @@ pub fn env_get<'src>(
 }
 
 pub fn env_set<'src>(
-    local_env: Option<&'src mut TypeEnv>,
+    local_env: &'src mut Option<TypeEnv>,
     type_env: &'src mut TypeEnv,
     id: &Identifier,
     val: (Type, Span),

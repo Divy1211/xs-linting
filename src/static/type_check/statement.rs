@@ -39,14 +39,14 @@ pub fn xs_tc_stmt<'src>(
         value
     } => {
         let (name, name_span) = spanned_name;
-        match env_get(local_env.as_ref(), type_env, name) {
+        match env_get(local_env, type_env, name) {
             Some(_) => {
                 errs.push(name_err(
                     "Variable name is already in use", name_span
                 ))
             }
             None => {
-                env_set(local_env.as_mut(), type_env, name, (type_.clone(), name_span.clone()));
+                env_set(local_env, type_env, name, (type_.clone(), name_span.clone()));
             }
         };
 
@@ -104,7 +104,7 @@ pub fn xs_tc_stmt<'src>(
 
         let (name, name_span) = spanned_name;
 
-        let Some((type_, _span)) = env_get(local_env.as_ref(), type_env, name) else {
+        let Some((type_, _span)) = env_get(local_env, type_env, name) else {
             errs.push(name_err(
                 "Undefined variable", name_span
             ));
@@ -160,14 +160,14 @@ pub fn xs_tc_stmt<'src>(
             }
         }
         
-        match env_get(local_env.as_ref(), type_env, name) {
+        match env_get(local_env, type_env, name) {
             Some(_) => {
                 errs.push(name_err(
                     "Variable name is already in use", name_span
                 ))
             }
             None => {
-                env_set(local_env.as_mut(), type_env, name, (Type::Rule, name_span.clone()));
+                env_set(local_env, type_env, name, (Type::Rule, name_span.clone()));
             }
         };
 
@@ -200,12 +200,12 @@ pub fn xs_tc_stmt<'src>(
         let mut local_type_env = Some(HashMap::with_capacity(params.len()));
         for param in params {
             let (param_name, param_name_span) = &param.name;
-            if let Some(_) = env_get(local_type_env.as_ref(), type_env, param_name) {
+            if let Some(_) = env_get(&local_type_env, type_env, param_name) {
                 errs.push(name_err(
                     "Variable name is already in use", param_name_span
                 ))
             }
-            env_set(local_type_env.as_mut(), type_env, param_name, (param.type_.clone(), param_name_span.clone()));
+            env_set(&mut local_type_env, type_env, param_name, (param.type_.clone(), param_name_span.clone()));
 
             let (expr, expr_span) = &param.default;
             if let Expr::Literal(_) = expr {} else {
@@ -280,7 +280,7 @@ pub fn xs_tc_stmt<'src>(
             .push((local_type_env.unwrap(), body_span.clone()))
     },
     ASTreeNode::Return(spanned_expr) => {
-        let Some((return_type, _span)) = env_get(local_env.as_ref(), type_env, &Identifier::new("return")) else {
+        let Some((return_type, _span)) = env_get(local_env, type_env, &Identifier::new("return")) else {
             errs.push(syntax_err(
                 "`return` statement is not allowed here",
                 span
@@ -386,7 +386,7 @@ pub fn xs_tc_stmt<'src>(
         let (ASTreeNode::VarAssign { name: (name, name_span), value }, _span) = var.as_ref()
             else { return; }; // unreachable
         
-        let None = env_get(local_env.as_ref(), type_env, name) else {
+        let None = env_get(local_env, type_env, name) else {
             errs.push(name_err(
                 "Variable name already in use",
                 name_span,
@@ -398,7 +398,7 @@ pub fn xs_tc_stmt<'src>(
             type_cmp(&Type::Int, value_type, &value.1, errs, false, false);
         }
         
-        env_set(local_env.as_mut(), type_env, name, (Type::Int, name_span.clone()));
+        env_set(local_env, type_env, name, (Type::Int, name_span.clone()));
         if let Some(type_) = xs_tc_expr(condition, local_env, type_env, errs) {
             if *type_ != Type::Bool {
                 errs.push(type_err(
@@ -478,7 +478,7 @@ pub fn xs_tc_stmt<'src>(
             ))
         }
         
-        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
+        let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -498,7 +498,7 @@ pub fn xs_tc_stmt<'src>(
             ))
         }
         
-        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
+        let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -531,11 +531,11 @@ pub fn xs_tc_stmt<'src>(
                 "`label` definitions are only allowed inside a local scope", span
             ))
         }
-        let None = env_get(local_env.as_ref(), type_env, id) else {
+        let None = env_get(local_env, type_env, id) else {
             errs.push(name_err("Variable name already in use", id_span));
             return;
         };
-        env_set(local_env.as_mut(), type_env, id, (Type::Label, id_span.clone()));
+        env_set(local_env, type_env, id, (Type::Label, id_span.clone()));
     },
     ASTreeNode::Goto((id, id_span)) => {
         if is_top_level {
@@ -543,7 +543,7 @@ pub fn xs_tc_stmt<'src>(
                 "`goto` statements are only allowed inside a local scope", span
             ))
         }
-        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
+        let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -578,7 +578,7 @@ pub fn xs_tc_stmt<'src>(
                 "`dbg` statements are only allowed inside a local scope", span
             ))
         }
-        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
+        let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -608,10 +608,10 @@ pub fn xs_tc_stmt<'src>(
                 "`class` definitions are only allowed at the top level", span
             ))
         }
-        if let Some(_) = env_get(local_env.as_ref(), type_env, id) {
+        if let Some(_) = env_get(local_env, type_env, id) {
             errs.push(name_err("Variable name already in use", id_span));
         } else {
-            env_set(local_env.as_mut(), type_env, id, (Type::Class, id_span.clone()));
+            env_set(local_env, type_env, id, (Type::Class, id_span.clone()));
         }
 
         let mut mem_name: HashSet<&Identifier> = HashSet::with_capacity(member_vars.len());

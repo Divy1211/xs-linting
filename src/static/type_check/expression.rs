@@ -22,7 +22,7 @@ pub fn xs_tc_expr<'src>(
         Literal::Str(_) => { Some(&Type::Str) }
     }
     Expr::Identifier(id) => {
-        let Some((type_, _span)) = env_get(local_env.as_ref(), type_env, id) else {
+        let Some((type_, _span)) = env_get(local_env, type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), span));
             return None;
         };
@@ -36,7 +36,7 @@ pub fn xs_tc_expr<'src>(
         Some(&Type::Vec)
     }
     Expr::FnCall { name: (name, name_span), args } => {
-        let Some((type_, _span)) = env_get(local_env.as_ref(), type_env, name) else {
+        let Some((type_, _span)) = env_get(local_env, type_env, name) else {
             errs.push(name_err(&format!("Undefined name `{:}`", name.0), name_span));
             return None;
         };
