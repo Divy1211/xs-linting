@@ -15,7 +15,7 @@ pub enum Type {
     // not real types in XS
     Label,
     Rule,
-    Func { is_mutable: bool, type_sign: Vec<Type> },
+    Func { is_mutable: bool, type_sign: Vec<Type> }, // todo: locals?
     Class,
 }
 

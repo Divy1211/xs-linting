@@ -9,5 +9,6 @@ edition = "2021"
 chumsky = "1.0.0-alpha.7"
 
 [dependencies]
+ariadne = "0.4.1"
 chumsky = "1.0.0-alpha.7"
 log = "0.4.21"

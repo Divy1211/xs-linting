@@ -7,13 +7,15 @@ use crate::parsing::ast::literal::Literal;
 use crate::parsing::ast::type_::Type;
 use crate::parsing::span::{Span, Spanned};
 use crate::r#static::type_check::expression::xs_tc_expr;
-use crate::r#static::type_check::{Groups, TypeEnv};
+use crate::r#static::type_check::{env_get, env_set, Groups, LocalEnv, TypeEnv};
 use crate::r#static::type_check::util::{chk_rule_opt, type_cmp};
 use crate::r#static::xs_error::{name_err, syntax_err, type_err, warn, XSError};
 
 pub fn xs_tc_stmt<'src>(
     (stmt, span): &'src Spanned<ASTreeNode>,
+    local_env: &'src mut Option<TypeEnv>,
     type_env: &'src mut TypeEnv,
+    local_envs: &'src mut LocalEnv,
     groups: &'src mut Groups,
     errs: &mut Vec<XSError>,
     is_top_level: bool,
@@ -37,14 +39,14 @@ pub fn xs_tc_stmt<'src>(
         value
     } => {
         let (name, name_span) = spanned_name;
-        match type_env.get(name) {
+        match env_get(local_env.as_ref(), type_env, name) {
             Some(_) => {
                 errs.push(name_err(
                     "Variable name is already in use", name_span
                 ))
             }
             None => {
-                type_env.push((name.clone(), type_.clone()));
+                env_set(local_env.as_mut(), type_env, name, (type_.clone(), name_span.clone()));
             }
         };
 
@@ -83,7 +85,7 @@ pub fn xs_tc_stmt<'src>(
             }
         }
 
-        let Some(init_type) = xs_tc_expr(spanned_expr, type_env, errs) else {
+        let Some(init_type) = xs_tc_expr(spanned_expr, local_env, type_env, errs) else {
             return;
         };
 
@@ -102,14 +104,14 @@ pub fn xs_tc_stmt<'src>(
 
         let (name, name_span) = spanned_name;
 
-        let Some(type_) = type_env.get(name) else {
+        let Some((type_, _span)) = env_get(local_env.as_ref(), type_env, name) else {
             errs.push(name_err(
                 "Undefined variable", name_span
             ));
             return;
         };
 
-        let Some(init_type) = xs_tc_expr(spanned_expr, type_env, errs) else {
+        let Some(init_type) = xs_tc_expr(spanned_expr, local_env, type_env, errs) else {
             // An invalid expr will generate its own error
             return;
         };
@@ -119,7 +121,7 @@ pub fn xs_tc_stmt<'src>(
     ASTreeNode::RuleDef {
         name: (name, name_span),
         rule_opts, // todo check for dups, add grp names
-        body: (body, _body_span)
+        body: (body, body_span)
     } => {
         if !is_top_level {
             errs.push(syntax_err(
@@ -158,29 +160,36 @@ pub fn xs_tc_stmt<'src>(
             }
         }
         
-        match type_env.get(name) {
+        match env_get(local_env.as_ref(), type_env, name) {
             Some(_) => {
                 errs.push(name_err(
                     "Variable name is already in use", name_span
                 ))
             }
             None => {
-                type_env.push((name.clone(), Type::Rule));
+                env_set(local_env.as_mut(), type_env, name, (Type::Rule, name_span.clone()));
             }
         };
 
-        let mut local_type_env = type_env.clone();
-        local_type_env.push((Identifier::new("return"), Type::Void));
+        let mut local_type_env = Some(HashMap::from([
+            (Identifier::new("return"), (Type::Void, Span::new(0, 0)))
+        ]));
         for spanned_stmt in body.0.iter() {
-            xs_tc_stmt(spanned_stmt, &mut local_type_env, groups, errs, false, is_breakable, is_continuable);
+            xs_tc_stmt(
+                spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
+                false, is_breakable, is_continuable
+            );
         }
+        local_envs
+            .entry(name.clone()).or_insert(vec![])
+            .push((local_type_env.unwrap(), body_span.clone()))
     }
     ASTreeNode::FnDef {
         is_mutable,
         return_type,
         name: (name, name_span),
         params,
-        body: (body, _body_span)
+        body: (body, body_span)
     } => {
         if !is_top_level {
             errs.push(syntax_err(
@@ -188,17 +197,15 @@ pub fn xs_tc_stmt<'src>(
             ))
         }
         
-        let mut local_type_env = HashMap::with_capacity(params.len());
+        let mut local_type_env = Some(HashMap::with_capacity(params.len()));
         for param in params {
             let (param_name, param_name_span) = &param.name;
-            if let (Some(_), _) | (_, Some(_)) = (
-                type_env.get(param_name), local_type_env.get(param_name)
-            ) {
+            if let Some(_) = env_get(local_type_env.as_ref(), type_env, param_name) {
                 errs.push(name_err(
                     "Variable name is already in use", param_name_span
                 ))
             }
-            local_type_env.push((param_name.clone(), param.type_.clone()));
+            env_set(local_type_env.as_mut(), type_env, param_name, (param.type_.clone(), param_name_span.clone()));
 
             let (expr, expr_span) = &param.default;
             if let Expr::Literal(_) = expr {} else {
@@ -209,7 +216,7 @@ pub fn xs_tc_stmt<'src>(
             };
 
             // expr will generate its own error when it returns None
-            let Some(param_default_value_type) = xs_tc_expr(&param.default, type_env, errs)
+            let Some(param_default_value_type) = xs_tc_expr(&param.default, local_env, type_env, errs)
                 else { continue; };
             type_cmp(
                 &param.type_,
@@ -227,11 +234,13 @@ pub fn xs_tc_stmt<'src>(
             .collect::<Vec<Type>>();
         new_type_sign.push(return_type.clone());
         
+        // Nested fns are not allowed. If someone has accidentally defined a nested fn, pretend it
+        // exists in the global space, an error was already issued for this above.
         match type_env.get(name) {
-            Some(Type::Func {
+            Some((Type::Func {
                 is_mutable: was_mutable,
                 type_sign 
-            }) => if !was_mutable {
+            }, _span)) => if !was_mutable {
                 errs.push(name_err(
                     "This function is not mutable and cannot be redefined", name_span,
                 ))
@@ -242,7 +251,7 @@ pub fn xs_tc_stmt<'src>(
             } else {
                 type_env.push((
                     name.clone(),
-                    Type::Func { is_mutable: is_mutable.clone(), type_sign: new_type_sign }
+                    (Type::Func { is_mutable: is_mutable.clone(), type_sign: new_type_sign }, name_span.clone())
                 ));
             },
             Some(_) => errs.push(name_err(
@@ -251,21 +260,27 @@ pub fn xs_tc_stmt<'src>(
             _ => {
                 type_env.push((
                     name.clone(),
-                    Type::Func { is_mutable: is_mutable.clone(), type_sign: new_type_sign }
+                    (Type::Func { is_mutable: is_mutable.clone(), type_sign: new_type_sign }, name_span.clone())
                 ));
             }
         }
 
-        local_type_env.extend(type_env.clone());
-        local_type_env.push((Identifier::new("return"), return_type.clone()));
-
+        local_type_env.as_mut().unwrap().push((
+            Identifier::new("return"), (return_type.clone(), Span::new(0, 0))
+        ));
         // todo: figure out how to check returns on all fn paths
         for spanned_stmt in body.0.iter() {
-            xs_tc_stmt(spanned_stmt, &mut local_type_env, groups, errs, false, is_breakable, is_continuable);
+            xs_tc_stmt(
+                spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
+                false, is_breakable, is_continuable
+            );
         }
+        local_envs
+            .entry(name.clone()).or_insert(vec![])
+            .push((local_type_env.unwrap(), body_span.clone()))
     },
     ASTreeNode::Return(spanned_expr) => {
-        let Some(return_type) = type_env.get(&Identifier::new("return")) else {
+        let Some((return_type, _span)) = env_get(local_env.as_ref(), type_env, &Identifier::new("return")) else {
             errs.push(syntax_err(
                 "`return` statement is not allowed here",
                 span
@@ -296,7 +311,7 @@ pub fn xs_tc_stmt<'src>(
         };
 
         // if expr returns None, it'll generate its own error
-        let Some(return_expr_type) = xs_tc_expr(spanned_expr, type_env, errs) else {
+        let Some(return_expr_type) = xs_tc_expr(spanned_expr, local_env, type_env, errs) else {
             return;
         };
 
@@ -313,7 +328,7 @@ pub fn xs_tc_stmt<'src>(
             ))
         }
         
-        if let Some(type_) = xs_tc_expr(condition, type_env, errs) {
+        if let Some(type_) = xs_tc_expr(condition, local_env, type_env, errs) {
             if *type_ != Type::Bool {
                 errs.push(type_err(
                     "`Conditional expression must be a boolean value",
@@ -323,12 +338,18 @@ pub fn xs_tc_stmt<'src>(
         }
 
         for spanned_stmt in consequent.0.0.iter() {
-            xs_tc_stmt(spanned_stmt, type_env, groups, errs, false, is_breakable, is_continuable);
+            xs_tc_stmt(
+                spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                false, is_breakable, is_continuable
+            );
         }
 
         if let Some(alternate) = alternate {
             for spanned_stmt in alternate.0.0.iter() {
-                xs_tc_stmt(spanned_stmt, type_env, groups, errs, false, is_breakable, is_continuable);
+                xs_tc_stmt(
+                    spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                    false, is_breakable, is_continuable
+                );
             }
         }
     },
@@ -339,7 +360,7 @@ pub fn xs_tc_stmt<'src>(
             ))
         }
         
-        if let Some(type_) = xs_tc_expr(condition, type_env, errs) {
+        if let Some(type_) = xs_tc_expr(condition, local_env, type_env, errs) {
             if *type_ != Type::Bool {
                 errs.push(type_err(
                     "Conditional expression must be a boolean value",
@@ -349,7 +370,10 @@ pub fn xs_tc_stmt<'src>(
         }
 
         for spanned_stmt in body.0.0.iter() {
-            xs_tc_stmt(spanned_stmt, type_env, groups, errs, false, true, true);
+            xs_tc_stmt(
+                spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                false, true, true
+            );
         }
     },
     ASTreeNode::For { var, condition, body } => {
@@ -362,7 +386,7 @@ pub fn xs_tc_stmt<'src>(
         let (ASTreeNode::VarAssign { name: (name, name_span), value }, _span) = var.as_ref()
             else { return; }; // unreachable
         
-        let None = type_env.get(name) else {
+        let None = env_get(local_env.as_ref(), type_env, name) else {
             errs.push(name_err(
                 "Variable name already in use",
                 name_span,
@@ -370,12 +394,12 @@ pub fn xs_tc_stmt<'src>(
             return;
         };
         
-        if let Some(value_type) = xs_tc_expr(value, type_env, errs) {
+        if let Some(value_type) = xs_tc_expr(value, local_env, type_env, errs) {
             type_cmp(&Type::Int, value_type, &value.1, errs, false, false);
         }
         
-        type_env.push((name.clone(), Type::Int));
-        if let Some(type_) = xs_tc_expr(condition, type_env, errs) {
+        env_set(local_env.as_mut(), type_env, name, (Type::Int, name_span.clone()));
+        if let Some(type_) = xs_tc_expr(condition, local_env, type_env, errs) {
             if *type_ != Type::Bool {
                 errs.push(type_err(
                     "Conditional expression must be a boolean value",
@@ -385,7 +409,10 @@ pub fn xs_tc_stmt<'src>(
         }
 
         for spanned_stmt in body.0.0.iter() {
-            xs_tc_stmt(spanned_stmt, type_env, groups, errs, false, true, true);
+            xs_tc_stmt(
+                spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                false, true, true
+            );
         }
     },
     ASTreeNode::Switch { clause, cases } => {
@@ -396,7 +423,7 @@ pub fn xs_tc_stmt<'src>(
         }
         
         // expression generates its own error for a None return
-        if let Some(clause_type) = xs_tc_expr(clause, type_env, errs) {
+        if let Some(clause_type) = xs_tc_expr(clause, local_env, type_env, errs) {
             type_cmp(&Type::Int, clause_type, &clause.1, errs, false, false);
         }
 
@@ -406,7 +433,10 @@ pub fn xs_tc_stmt<'src>(
         for (case_clause, (body, body_span)) in cases {
             // expression generates its own error for a None return
             for spanned_stmt in body.0.iter() {
-                xs_tc_stmt(spanned_stmt, type_env, groups, errs, false, true, is_continuable);
+                xs_tc_stmt(
+                    spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                    false, true, is_continuable
+                );
             }
             let Some(spanned_case_expr) = case_clause else {
                 let Some(og_span) = default_span else {
@@ -424,7 +454,7 @@ pub fn xs_tc_stmt<'src>(
                 continue;
             };
             let (case_expr, case_expr_span) = spanned_case_expr;
-            if let Some(clause_type) = xs_tc_expr(spanned_case_expr, type_env, errs) {
+            if let Some(clause_type) = xs_tc_expr(spanned_case_expr, local_env, type_env, errs) {
                 type_cmp(&Type::Int, clause_type, case_expr_span, errs, false, true);
             }
             if let Some(&og_span) = case_spans.get(case_expr) {
@@ -448,7 +478,7 @@ pub fn xs_tc_stmt<'src>(
             ))
         }
         
-        let Some(id_type) = type_env.get(id) else {
+        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -468,7 +498,7 @@ pub fn xs_tc_stmt<'src>(
             ))
         }
         
-        let Some(id_type) = type_env.get(id) else {
+        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -501,11 +531,11 @@ pub fn xs_tc_stmt<'src>(
                 "`label` definitions are only allowed inside a local scope", span
             ))
         }
-        let None = type_env.get(id) else {
+        let None = env_get(local_env.as_ref(), type_env, id) else {
             errs.push(name_err("Variable name already in use", id_span));
             return;
         };
-        type_env.push((id.clone(), Type::Label));
+        env_set(local_env.as_mut(), type_env, id, (Type::Label, id_span.clone()));
     },
     ASTreeNode::Goto((id, id_span)) => {
         if is_top_level {
@@ -513,7 +543,7 @@ pub fn xs_tc_stmt<'src>(
                 "`goto` statements are only allowed inside a local scope", span
             ))
         }
-        let Some(id_type) = type_env.get(id) else {
+        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -533,7 +563,7 @@ pub fn xs_tc_stmt<'src>(
             return;
         };
 
-        let Some(return_value_type) = xs_tc_expr(spanned_expr, type_env, errs)
+        let Some(return_value_type) = xs_tc_expr(spanned_expr, local_env, type_env, errs)
             else { return; }; // unreachable
 
         if let Type::Void = return_value_type {
@@ -548,7 +578,7 @@ pub fn xs_tc_stmt<'src>(
                 "`dbg` statements are only allowed inside a local scope", span
             ))
         }
-        let Some(id_type) = type_env.get(id) else {
+        let Some((id_type, _span)) = env_get(local_env.as_ref(), type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
             return;
         };
@@ -578,10 +608,10 @@ pub fn xs_tc_stmt<'src>(
                 "`class` definitions are only allowed at the top level", span
             ))
         }
-        if let Some(_) = type_env.get(id) {
+        if let Some(_) = env_get(local_env.as_ref(), type_env, id) {
             errs.push(name_err("Variable name already in use", id_span));
         } else {
-            type_env.push((id.clone(), Type::Class));
+            env_set(local_env.as_mut(), type_env, id, (Type::Class, id_span.clone()));
         }
 
         let mut mem_name: HashSet<&Identifier> = HashSet::with_capacity(member_vars.len());
@@ -615,7 +645,7 @@ pub fn xs_tc_stmt<'src>(
                 else { continue; }; // unreachable
             let (_init_value_expr, init_value_span) = init_value;
             
-            let Some(init_value_type) = xs_tc_expr(init_value, type_env, errs) else { continue; };
+            let Some(init_value_type) = xs_tc_expr(init_value, local_env, type_env, errs) else { continue; };
             type_cmp(type_, init_value_type, init_value_span, errs, false, false);
         }
         

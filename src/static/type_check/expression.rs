@@ -2,12 +2,13 @@ use crate::parsing::ast::expr::Expr;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::ast::type_::Type;
 use crate::parsing::span::Spanned;
-use crate::r#static::type_check::TypeEnv;
+use crate::r#static::type_check::{env_get, TypeEnv};
 use crate::r#static::type_check::util::{arith_op, chk_int_lit, chk_num_lit, logical_op, reln_op, type_cmp};
 use crate::r#static::xs_error::{name_err, syntax_err, type_err, XSError};
 
 pub fn xs_tc_expr<'src>(
     (expr, span): &'src Spanned<Expr>,
+    local_env: &'src Option<TypeEnv>,
     type_env: &'src TypeEnv,
     errs: &mut Vec<XSError>
 ) -> Option<&'src Type> { match expr {
@@ -21,13 +22,13 @@ pub fn xs_tc_expr<'src>(
         Literal::Str(_) => { Some(&Type::Str) }
     }
     Expr::Identifier(id) => {
-        let Some(type_) = type_env.get(&id) else {
+        let Some((type_, _span)) = env_get(local_env.as_ref(), type_env, id) else {
             errs.push(name_err(&format!("Undefined name `{:}`", id.0), span));
             return None;
         };
         Some(type_)
     }
-    Expr::Paren(expr) => { xs_tc_expr(expr, type_env, errs) }
+    Expr::Paren(expr) => { xs_tc_expr(expr, local_env, type_env, errs) }
     Expr::Vec { x, y, z } => {
         errs.extend(chk_num_lit(x, false));
         errs.extend(chk_num_lit(y, false));
@@ -35,7 +36,7 @@ pub fn xs_tc_expr<'src>(
         Some(&Type::Vec)
     }
     Expr::FnCall { name: (name, name_span), args } => {
-        let Some(type_) = type_env.get(&name) else {
+        let Some((type_, _span)) = env_get(local_env.as_ref(), type_env, name) else {
             errs.push(name_err(&format!("Undefined name `{:}`", name.0), name_span));
             return None;
         };
@@ -48,7 +49,7 @@ pub fn xs_tc_expr<'src>(
             return None;
         };
         for (param_type, arg_expr) in type_sign[..type_sign.len()-1].iter().zip(args) {
-            let Some(arg_type) = xs_tc_expr(arg_expr, type_env, errs) else {
+            let Some(arg_type) = xs_tc_expr(arg_expr, local_env, type_env, errs) else {
                 // expr will generate its own error if the type cannot be inferred
                 continue;
             };
@@ -71,7 +72,7 @@ pub fn xs_tc_expr<'src>(
 
     Expr::Neg(expr) => {
         errs.extend(chk_num_lit(expr, true));
-        xs_tc_expr(expr, type_env, errs)
+        xs_tc_expr(expr, local_env, type_env, errs)
     }
     Expr::Not(_) => {
         errs.push(type_err("Unary not is not allowed in XS", span));
@@ -79,46 +80,46 @@ pub fn xs_tc_expr<'src>(
     }
     
     Expr::Star(expr1, expr2) => {
-        arith_op(span, expr1, expr2, type_env, errs, "multiply")
+        arith_op(span, expr1, expr2, local_env, type_env, errs, "multiply")
     }
     Expr::FSlash(expr1, expr2) => {
-        arith_op(span, expr1, expr2, type_env, errs, "divide")
+        arith_op(span, expr1, expr2, local_env, type_env, errs, "divide")
     }
     Expr::PCent(expr1, expr2) => {
-        arith_op(span, expr1, expr2, type_env, errs, "reduce modulo")
+        arith_op(span, expr1, expr2, local_env, type_env, errs, "reduce modulo")
     }
     
     Expr::Minus(expr1, expr2) => {
-        arith_op(span, expr1, expr2, type_env, errs, "subtract")
+        arith_op(span, expr1, expr2, local_env, type_env, errs, "subtract")
     }
     Expr::Plus(expr1, expr2) => {
-        arith_op(span, expr1, expr2, type_env, errs, "add")
+        arith_op(span, expr1, expr2, local_env, type_env, errs, "add")
     }
     
     Expr::Lt(expr1, expr2) => {
-        reln_op(span, expr1, expr2, type_env, errs, "lt")
+        reln_op(span, expr1, expr2, local_env, type_env, errs, "lt")
     }
     Expr::Gt(expr1, expr2) => {
-        reln_op(span, expr1, expr2, type_env, errs, "gt")
+        reln_op(span, expr1, expr2, local_env, type_env, errs, "gt")
     }
     Expr::Le(expr1, expr2) => {
-        reln_op(span, expr1, expr2, type_env, errs, "le")
+        reln_op(span, expr1, expr2, local_env, type_env, errs, "le")
     }
     Expr::Ge(expr1, expr2) => {
-        reln_op(span, expr1, expr2, type_env, errs, "ge")
+        reln_op(span, expr1, expr2, local_env, type_env, errs, "ge")
     }
     
     Expr::Eq(expr1, expr2) => {
-        reln_op(span, expr1, expr2, type_env, errs, "eq")
+        reln_op(span, expr1, expr2, local_env, type_env, errs, "eq")
     }
     Expr::Ne(expr1, expr2) => {
-        reln_op(span, expr1, expr2, type_env, errs, "ne")
+        reln_op(span, expr1, expr2, local_env, type_env, errs, "ne")
     }
     
     Expr::And(expr1, expr2) => {
-        logical_op(span, expr1, expr2, type_env, errs, "and")
+        logical_op(span, expr1, expr2, local_env, type_env, errs, "and")
     }
     Expr::Or(expr1, expr2) => {
-        logical_op(span, expr1, expr2, type_env, errs, "or")
+        logical_op(span, expr1, expr2, local_env, type_env, errs, "or")
     }
 }}

@@ -38,6 +38,7 @@ pub fn arith_op<'src>(
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
+    local_env: &'src Option<TypeEnv>,
     type_env: &'src TypeEnv,
     errs: &mut Vec<XSError>,
     op_name: &str
@@ -45,7 +46,7 @@ pub fn arith_op<'src>(
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
-        xs_tc_expr(expr1, type_env, errs), xs_tc_expr(expr2, type_env, errs)
+        xs_tc_expr(expr1, local_env, type_env, errs), xs_tc_expr(expr2, local_env, type_env, errs)
     ) else {
         return None;
     };
@@ -77,6 +78,7 @@ pub fn reln_op<'src>(
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
+    local_env: &'src Option<TypeEnv>,
     type_env: &'src TypeEnv,
     errs: &mut Vec<XSError>,
     op_name: &str
@@ -84,7 +86,7 @@ pub fn reln_op<'src>(
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
-        xs_tc_expr(expr1, type_env, errs), xs_tc_expr(expr2, type_env, errs)
+        xs_tc_expr(expr1, local_env, type_env, errs), xs_tc_expr(expr2, local_env, type_env, errs)
     ) else {
         return None;
     };
@@ -115,6 +117,7 @@ pub fn logical_op<'src>(
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
+    local_env: &'src Option<TypeEnv>,
     type_env: &'src TypeEnv,
     errs: &mut Vec<XSError>,
     op_name: &str
@@ -122,7 +125,7 @@ pub fn logical_op<'src>(
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
-        xs_tc_expr(expr1, type_env, errs), xs_tc_expr(expr2, type_env, errs)
+        xs_tc_expr(expr1, local_env, type_env, errs), xs_tc_expr(expr2, local_env, type_env, errs)
     ) else {
         return None;
     };
