@@ -75,7 +75,7 @@ pub fn xs_tc_stmt<'src>(
                         expr_span
                     ));
                 }
-                Expr::Literal(_) => {}
+                Expr::Literal(_) | Expr::Neg(_) | Expr::Vec { .. } => { }
                 _ => {
                     errs.push(syntax_err(
                         "Top level or `const` variable initializers must be literals",
@@ -208,13 +208,12 @@ pub fn xs_tc_stmt<'src>(
             env_set(&mut local_type_env, type_env, param_name, (param.type_.clone(), param_name_span.clone()));
 
             let (expr, expr_span) = &param.default;
-            if let Expr::Literal(_) = expr {} else {
-                errs.push(syntax_err(
-                    "Parameter defaults must be literals",
-                    expr_span,
-                ));
-            };
-
+            
+            match expr {
+                Expr::Literal(_)  | Expr::Neg(_) | Expr::Vec { .. } => { }
+                _ => { errs.push(syntax_err("Parameter defaults must be literals", expr_span)); }
+            }
+            
             // expr will generate its own error when it returns None
             let Some(param_default_value_type) = xs_tc_expr(&param.default, local_env, type_env, errs)
                 else { continue; };

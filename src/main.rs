@@ -47,8 +47,7 @@ fn main() {
     let a = colors.next();
     let b = colors.next();
     let out = Color::Fixed(81);
-
-    // todo: uneg literals should not give syntax errors
+    
     for error in errs {
         let (msg, span) = match error {
             XSError::TypeError((msg, span)) => { (msg, span) }
