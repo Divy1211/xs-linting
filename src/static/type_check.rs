@@ -9,7 +9,7 @@ pub mod expression;
 pub mod util;
 pub mod statements;
 
-pub type TypeEnv = HashMap<Identifier, (Type, Span)>;
+pub type TypeEnv = HashMap<Identifier, (Type, Span)>; // todo: add filepath
 pub type LocalEnv = HashMap<Identifier, Vec<(TypeEnv, Span)>>;
 pub type Groups = HashSet<String>;
 
