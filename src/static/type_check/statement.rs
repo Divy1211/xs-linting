@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
+use std::path::PathBuf;
 use chumsky::container::{Container};
+use crate::lint::gen_info_from_path::gen_info_from_path;
 use crate::parsing::ast::astree::{ASTreeNode, RuleOpt};
 use crate::parsing::ast::expr::Expr;
 use crate::parsing::ast::identifier::Identifier;
@@ -11,24 +13,35 @@ use crate::r#static::type_check::{env_get, env_set, Groups, LocalEnv, TypeEnv};
 use crate::r#static::type_check::util::{chk_rule_opt, type_cmp};
 use crate::r#static::xs_error::{name_err, syntax_err, type_err, warn, XSError};
 
-pub fn xs_tc_stmt<'src>(
-    (stmt, span): &'src Spanned<ASTreeNode>,
-    local_env: &'src mut Option<TypeEnv>,
-    type_env: &'src mut TypeEnv,
-    local_envs: &'src mut LocalEnv,
-    groups: &'src mut Groups,
+pub fn xs_tc_stmt(
+    path: &PathBuf,
+    (stmt, span): &Spanned<ASTreeNode>,
+    local_env: &mut Option<TypeEnv>,
+    type_env: &mut TypeEnv,
+    local_envs: &mut LocalEnv,
+    groups: &mut Groups,
     errs: &mut Vec<XSError>,
     is_top_level: bool,
     is_breakable: bool,
     is_continuable: bool,
 ) { match stmt {
     // an include statement is always parsed with a string literal
-    ASTreeNode::Include(_) => {
+    ASTreeNode::Include((filename, _span)) => {
         if !is_top_level {
             errs.push(syntax_err(
                 "An include statement may only appear at the top of the module", span
-            ))
+            ));
+            return;
         }
+        let mut inc_path = path.clone();
+        inc_path.pop();
+        inc_path.push(&filename[1..(filename.len()-1)]);
+        gen_info_from_path(
+            type_env,
+            local_envs,
+            groups,
+            inc_path,
+        );
     }
     ASTreeNode::VarDef {
         is_extern,
@@ -176,7 +189,7 @@ pub fn xs_tc_stmt<'src>(
         ]));
         for spanned_stmt in body.0.iter() {
             xs_tc_stmt(
-                spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
+                path, spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
                 false, is_breakable, is_continuable
             );
         }
@@ -270,7 +283,7 @@ pub fn xs_tc_stmt<'src>(
         // todo: figure out how to check returns on all fn paths
         for spanned_stmt in body.0.iter() {
             xs_tc_stmt(
-                spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
+                path, spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
                 false, is_breakable, is_continuable
             );
         }
@@ -338,7 +351,7 @@ pub fn xs_tc_stmt<'src>(
 
         for spanned_stmt in consequent.0.0.iter() {
             xs_tc_stmt(
-                spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
                 false, is_breakable, is_continuable
             );
         }
@@ -346,7 +359,7 @@ pub fn xs_tc_stmt<'src>(
         if let Some(alternate) = alternate {
             for spanned_stmt in alternate.0.0.iter() {
                 xs_tc_stmt(
-                    spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                    path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
                     false, is_breakable, is_continuable
                 );
             }
@@ -370,7 +383,7 @@ pub fn xs_tc_stmt<'src>(
 
         for spanned_stmt in body.0.0.iter() {
             xs_tc_stmt(
-                spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
                 false, true, true
             );
         }
@@ -409,7 +422,7 @@ pub fn xs_tc_stmt<'src>(
 
         for spanned_stmt in body.0.0.iter() {
             xs_tc_stmt(
-                spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
                 false, true, true
             );
         }
@@ -433,7 +446,7 @@ pub fn xs_tc_stmt<'src>(
             // expression generates its own error for a None return
             for spanned_stmt in body.0.iter() {
                 xs_tc_stmt(
-                    spanned_stmt, local_env, type_env, local_envs, groups, errs,
+                    path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
                     false, true, is_continuable
                 );
             }
