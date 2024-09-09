@@ -1,3 +1,2 @@
-pub mod gen_info_from_src;
-
-pub mod gen_info_from_path;
+pub mod gen_info;
+pub mod gen_errs;

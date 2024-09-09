@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use chumsky::container::{Container};
-use crate::lint::gen_info_from_path::gen_info_from_path;
+use crate::lint::gen_info::gen_info_from_path;
 use crate::parsing::ast::astree::{ASTreeNode, RuleOpt};
 use crate::parsing::ast::expr::Expr;
 use crate::parsing::ast::identifier::Identifier;

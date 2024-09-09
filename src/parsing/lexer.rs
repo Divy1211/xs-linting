@@ -26,7 +26,7 @@ pub fn lexer<'src>() -> impl Parser<
     ))
         .map_with(|tok, info| (tok, info.span()))
         .padded()
-        .recover_with(skip_then_retry_until(any().ignored(), end()))
+        // .recover_with(skip_then_retry_until(any().ignored(), end()))
         .repeated()
         .collect()
 }

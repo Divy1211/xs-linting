@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Clone)]
@@ -31,6 +32,17 @@ impl Hash for Literal {
             Literal::Str(val)   => val.hash(state),
         }
         state.finish();
+    }
+}
+
+impl Display for Literal {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Literal::Int(v) => { write!(f, "{}", v) }
+            Literal::Float(v) => { write!(f, "{}", v) }
+            Literal::Bool(v) => { write!(f, "{}", v) }
+            Literal::Str(v) => { write!(f, "{}", v) }
+        }
     }
 }
 
