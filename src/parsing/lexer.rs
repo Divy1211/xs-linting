@@ -3,7 +3,7 @@ pub mod literal;
 pub mod operator;
 pub mod punctuation;
 pub mod keyword;
-mod comment;
+pub mod comment;
 
 use chumsky::prelude::*;
 use token::Token;
