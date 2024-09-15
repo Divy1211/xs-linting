@@ -4,7 +4,7 @@ use crate::parsing::ast::type_::Type;
 use crate::parsing::span::Spanned;
 use crate::r#static::type_check::{env_get, TypeEnv};
 use crate::r#static::type_check::util::{arith_op, chk_int_lit, chk_num_lit, logical_op, reln_op, type_cmp};
-use crate::r#static::xs_error::{name_err, syntax_err, type_err, XSError};
+use crate::r#static::xs_error::{XSError};
 
 pub fn xs_tc_expr<'src>(
     (expr, span): &'src Spanned<Expr>,
@@ -23,7 +23,10 @@ pub fn xs_tc_expr<'src>(
     }
     Expr::Identifier(id) => {
         let Some((type_, _span)) = env_get(local_env, type_env, id) else {
-            errs.push(name_err(&format!("Undefined name `{:}`", id.0), span));
+            errs.push(XSError::undefined_name(
+                &id.0,
+                span,
+            ));
             return None;
         };
         Some(type_)
@@ -37,14 +40,17 @@ pub fn xs_tc_expr<'src>(
     }
     Expr::FnCall { name: (name, name_span), args } => {
         let Some((type_, _span)) = env_get(local_env, type_env, name) else {
-            errs.push(name_err(&format!("Undefined name `{:}`", name.0), name_span));
+            errs.push(XSError::undefined_name(
+                &name.0,
+                name_span,
+            ));
             return None;
         };
         let Type::Func { type_sign, .. } = type_ else {
-            errs.push(type_err(
-                &format!(
-                    "Variable '{:}' is of type `{:}` and is not callable", name.0, type_
-                ), name_span
+            errs.push(XSError::not_callable(
+                &name.0,
+                &type_.to_string(),
+                name_span,
             ));
             return None;
         };
@@ -57,13 +63,9 @@ pub fn xs_tc_expr<'src>(
         }
         
         for (_expr, span) in args[type_sign.len()-1..].iter() {
-            errs.push(syntax_err(
-                &format!(
-                    "Function '{:}' takes {:} arguments, but {:} were given",
-                    name.0,
-                    type_sign.len()-1,
-                    args.len(),
-                ), span
+            errs.push(XSError::extra_arg(
+                &name.0,
+                span,
             ));
         }
 
@@ -75,7 +77,11 @@ pub fn xs_tc_expr<'src>(
         xs_tc_expr(expr, local_env, type_env, errs)
     }
     Expr::Not(_) => {
-        errs.push(type_err("Unary not is not allowed in XS", span));
+        errs.push(XSError::syntax(
+            span,
+            "Unary not ({0}) is not allowed in XS. yES",
+            vec!["!"],
+        ));
         Some(&Type::Bool)
     }
     

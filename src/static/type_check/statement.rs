@@ -1,6 +1,8 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap};
 use std::path::PathBuf;
-use chumsky::container::{Container};
+
+use chumsky::container::Container;
+
 use crate::lint::gen_info::gen_info_from_path;
 use crate::parsing::ast::astree::{ASTreeNode, RuleOpt};
 use crate::parsing::ast::expr::Expr;
@@ -8,10 +10,10 @@ use crate::parsing::ast::identifier::Identifier;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::ast::type_::Type;
 use crate::parsing::span::{Span, Spanned};
-use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::type_check::{env_get, env_set, Groups, LocalEnv, TypeEnv};
+use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::type_check::util::{chk_rule_opt, type_cmp};
-use crate::r#static::xs_error::{name_err, syntax_err, type_err, warn, XSError};
+use crate::r#static::xs_error::{XSError};
 
 pub fn xs_tc_stmt(
     path: &PathBuf,
@@ -28,8 +30,10 @@ pub fn xs_tc_stmt(
     // an include statement is always parsed with a string literal
     ASTreeNode::Include((filename, _span)) => {
         if !is_top_level {
-            errs.push(syntax_err(
-                "An include statement may only appear at the top of the module", span
+            errs.push(XSError::syntax(
+                span,
+                "An {0} statement is only allowed at the top level",
+                vec!["include"],
             ));
             return;
         }
@@ -53,9 +57,12 @@ pub fn xs_tc_stmt(
     } => {
         let (name, name_span) = spanned_name;
         match env_get(local_env, type_env, name) {
-            Some(_) => {
-                errs.push(name_err(
-                    "Variable name is already in use", name_span
+            Some((_, og_span)) => {
+                errs.push(XSError::redefined_name(
+                    &name.0,
+                    name_span,
+                    og_span,
+                    None,
                 ))
             }
             None => {
@@ -64,15 +71,19 @@ pub fn xs_tc_stmt(
         };
 
         if !is_top_level && *is_extern {
-            errs.push(syntax_err(
-                "Local variables cannot be declared as `extern`", name_span
-            ))
+            errs.push(XSError::syntax(
+                name_span,
+                "Local variables cannot be declared as {0}",
+                vec!["extern"],
+            ));
         }
         let Some(spanned_expr) = value else {
             if *is_const {
-                errs.push(syntax_err(
-                    "Variable declared as `const` must be initialised with a value", name_span
-                ))
+                errs.push(XSError::syntax(
+                    name_span,
+                    "Variable declared as {0} must be initialised with a value",
+                    vec!["const"],
+                ));
             }
 
             return;
@@ -83,16 +94,18 @@ pub fn xs_tc_stmt(
         if is_top_level || *is_const {
             match expr {
                 Expr::Literal(Literal::Str(_)) if is_top_level => {
-                    errs.push(warn(
-                        "Top level string initializers do not work correctly. yES",
-                        expr_span
+                    errs.push(XSError::warning(
+                        expr_span,
+                        "Top level initialized {0} do not work correctly. yES",
+                        vec!["string"],
                     ));
                 }
                 Expr::Literal(_) | Expr::Neg(_) | Expr::Vec { .. } => { }
                 _ => {
-                    errs.push(syntax_err(
-                        "Top level or `const` variable initializers must be literals",
-                        expr_span
+                    errs.push(XSError::syntax(
+                        expr_span,
+                        "Top level or {0} variable initializers must be literals",
+                        vec!["const"],
                     ));
                 }
             }
@@ -110,16 +123,19 @@ pub fn xs_tc_stmt(
         value: spanned_expr
     } => {
         if is_top_level {
-            errs.push(syntax_err(
-                "Assignments are not allowed at the top level", span
+            errs.push(XSError::syntax(
+                span,
+                "Assignments are only allowed in a local scope",
+                vec![],
             ));
         }
 
         let (name, name_span) = spanned_name;
 
         let Some((type_, _span)) = env_get(local_env, type_env, name) else {
-            errs.push(name_err(
-                "Undefined variable", name_span
+            errs.push(XSError::undefined_name(
+                &name.0,
+                name_span,
             ));
             return;
         };
@@ -137,9 +153,11 @@ pub fn xs_tc_stmt(
         body: (body, body_span)
     } => {
         if !is_top_level {
-            errs.push(syntax_err(
-                "Rule definitions are only allowed at the top level", name_span
-            ))
+            errs.push(XSError::syntax(
+                name_span,
+                "A rule definition is only allowed at the top level",
+                vec![],
+            ));
         }
 
         let mut opt_spans: HashMap<&str, &Span> = HashMap::with_capacity(rule_opts.len());
@@ -174,9 +192,12 @@ pub fn xs_tc_stmt(
         }
         
         match env_get(local_env, type_env, name) {
-            Some(_) => {
-                errs.push(name_err(
-                    "Variable name is already in use", name_span
+            Some((_, og_span)) => {
+                errs.push(XSError::redefined_name(
+                    &name.0,
+                    name_span,
+                    og_span,
+                    None,
                 ))
             }
             None => {
@@ -205,17 +226,22 @@ pub fn xs_tc_stmt(
         body: (body, body_span)
     } => {
         if !is_top_level {
-            errs.push(syntax_err(
-                "Function definitions are only allowed at the top level", name_span
-            ))
+            errs.push(XSError::syntax(
+                name_span,
+                "A function definition is only allowed at the top level",
+                vec![],
+            ));
         }
         
         let mut local_type_env = Some(HashMap::with_capacity(params.len()));
         for param in params {
             let (param_name, param_name_span) = &param.name;
-            if let Some(_) = env_get(&local_type_env, type_env, param_name) {
-                errs.push(name_err(
-                    "Variable name is already in use", param_name_span
+            if let Some((_, og_span)) = env_get(&local_type_env, type_env, param_name) {
+                errs.push(XSError::redefined_name(
+                    &name.0,
+                    param_name_span,
+                    og_span,
+                    None,
                 ))
             }
             env_set(&mut local_type_env, type_env, param_name, (param.type_.clone(), param_name_span.clone()));
@@ -224,7 +250,13 @@ pub fn xs_tc_stmt(
             
             match expr {
                 Expr::Literal(_)  | Expr::Neg(_) | Expr::Vec { .. } => { }
-                _ => { errs.push(syntax_err("Parameter defaults must be literals", expr_span)); }
+                _ => {
+                    errs.push(XSError::syntax(
+                        expr_span,
+                        "Parameter defaults must be literals",
+                        vec![],
+                    ));
+                }
             }
             
             // expr will generate its own error when it returns None
@@ -252,13 +284,19 @@ pub fn xs_tc_stmt(
             Some((Type::Func {
                 is_mutable: was_mutable,
                 type_sign 
-            }, _span)) => if !was_mutable {
-                errs.push(name_err(
-                    "This function is not mutable and cannot be redefined", name_span,
+            }, og_span)) => if !was_mutable {
+                errs.push(XSError::redefined_name(
+                    &name.0,
+                    name_span,
+                    og_span,
+                    Some("Only mutable functions may be overridden"),
                 ))
             } else if new_type_sign != *type_sign {
-                errs.push(syntax_err(
-                    "Type signature of mutable functions must be consistent", name_span,
+                errs.push(XSError::redefined_name(
+                    &name.0,
+                    name_span,
+                    og_span,
+                    Some("Type signatures of mutable functions must be the same"),
                 ))
             } else {
                 type_env.push((
@@ -266,9 +304,14 @@ pub fn xs_tc_stmt(
                     (Type::Func { is_mutable: is_mutable.clone(), type_sign: new_type_sign }, name_span.clone())
                 ));
             },
-            Some(_) => errs.push(name_err(
-                "Variable name is already in use", name_span
-            )),
+            Some((_, og_span)) => {
+                errs.push(XSError::redefined_name(
+                    &name.0,
+                    name_span,
+                    og_span,
+                    None,
+                ))
+            },
             _ => {
                 type_env.push((
                     name.clone(),
@@ -293,32 +336,40 @@ pub fn xs_tc_stmt(
     },
     ASTreeNode::Return(spanned_expr) => {
         let Some((return_type, _span)) = env_get(local_env, type_env, &Identifier::new("return")) else {
-            errs.push(syntax_err(
-                "`return` statement is not allowed here",
-                span
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed inside functions or rules",
+                vec!["return"],
             ));
             return;
         };
 
         let Some(spanned_expr) = spanned_expr else {
             if *return_type != Type::Void {
-                errs.push(syntax_err(
-                    &format!("This function must return a value of type `{:}`", return_type),
+                errs.push(XSError::type_mismatch(
+                    "void",
+                    &return_type.to_string(),
                     span,
+                    Some(&format!("This function's return type was declared as '{}'", return_type)),
                 ));
             }
             return;
         };
         if *return_type == Type::Void {
-            errs.push(syntax_err("This function cannot return a value", span));
+            errs.push(XSError::syntax(
+                span,
+                "This function's return type was declared as {0}",
+                vec!["void"]
+            ));
             return;
         }
 
         let (expr, expr_span) = spanned_expr;
         if let Expr::Paren(_) = expr {} else {
-            errs.push(syntax_err(
-                "`return` statement expressions must be enclosed in parenthesis. yES",
+            errs.push(XSError::syntax(
                 expr_span,
+                "A {0} statement's expression must be enclosed in parenthesis. yES",
+                vec!["return"]
             ));
         };
 
@@ -335,16 +386,20 @@ pub fn xs_tc_stmt(
         alternate
     } => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`if` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "An {0} statement is only allowed in a local scope",
+                vec!["if"]
+            ));
         }
         
         if let Some(type_) = xs_tc_expr(condition, local_env, type_env, errs) {
             if *type_ != Type::Bool {
-                errs.push(type_err(
-                    "`Conditional expression must be a boolean value",
+                errs.push(XSError::type_mismatch(
+                    &type_.to_string(),
+                    "bool",
                     &condition.1,
+                    None,
                 ));
             }
         }
@@ -367,16 +422,20 @@ pub fn xs_tc_stmt(
     },
     ASTreeNode::While { condition, body } => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`while` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed in a local scope",
+                vec!["while"]
+            ));
         }
         
         if let Some(type_) = xs_tc_expr(condition, local_env, type_env, errs) {
             if *type_ != Type::Bool {
-                errs.push(type_err(
-                    "Conditional expression must be a boolean value",
+                errs.push(XSError::type_mismatch(
+                    &type_.to_string(),
+                    "bool",
                     &condition.1,
+                    None,
                 ));
             }
         }
@@ -390,20 +449,27 @@ pub fn xs_tc_stmt(
     },
     ASTreeNode::For { var, condition, body } => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`for` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed in a local scope",
+                vec!["for"]
+            ));
         }
         
         let (ASTreeNode::VarAssign { name: (name, name_span), value }, _span) = var.as_ref()
             else { return; }; // unreachable
         
-        let None = env_get(local_env, type_env, name) else {
-            errs.push(name_err(
-                "Variable name already in use",
-                name_span,
-            ));
-            return;
+        match env_get(local_env, type_env, name) {
+            Some((_, og_span)) => {
+                errs.push(XSError::redefined_name(
+                    &name.0,
+                    name_span,
+                    og_span,
+                    None,
+                ));
+                return;
+            }
+            _ => {}
         };
         
         if let Some(value_type) = xs_tc_expr(value, local_env, type_env, errs) {
@@ -413,9 +479,11 @@ pub fn xs_tc_stmt(
         env_set(local_env, type_env, name, (Type::Int, name_span.clone()));
         if let Some(type_) = xs_tc_expr(condition, local_env, type_env, errs) {
             if *type_ != Type::Bool {
-                errs.push(type_err(
-                    "Conditional expression must be a boolean value",
+                errs.push(XSError::type_mismatch(
+                    &type_.to_string(),
+                    "bool",
                     &condition.1,
+                    None,
                 ));
             }
         }
@@ -429,9 +497,11 @@ pub fn xs_tc_stmt(
     },
     ASTreeNode::Switch { clause, cases } => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`switch` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed in a local scope",
+                vec!["switch"]
+            ));
         }
         
         // expression generates its own error for a None return
@@ -455,13 +525,15 @@ pub fn xs_tc_stmt(
                     default_span = Some(body_span);
                     continue;
                 };
-                errs.push(warn(
-                    "Only the first default block will run when case matching fails",
+                errs.push(XSError::warning(
                     og_span,
-                ));
-                errs.push(warn(
                     "Only the first default block will run when case matching fails",
+                    vec![]
+                ));
+                errs.push(XSError::warning(
                     body_span,
+                    "Only the first default block will run when case matching fails",
+                    vec![]
                 ));
                 continue;
             };
@@ -470,13 +542,15 @@ pub fn xs_tc_stmt(
                 type_cmp(&Type::Int, clause_type, case_expr_span, errs, false, true);
             }
             if let Some(&og_span) = case_spans.get(case_expr) {
-                errs.push(warn(
-                    "Only the first case will run on a match",
+                errs.push(XSError::warning(
                     og_span,
-                ));
-                errs.push(warn(
                     "Only the first case will run on a match",
+                    vec![]
+                ));
+                errs.push(XSError::warning(
                     &spanned_case_expr.1,
+                    "Only the first case will run on a match",
+                    vec![]
                 ));
             } else {
                 case_spans.push((case_expr, case_expr_span));
@@ -485,78 +559,110 @@ pub fn xs_tc_stmt(
     },
     ASTreeNode::PostDPlus((id, id_span)) => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`postfix` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A postfix increment ({0}) statement is only allowed in a local scope",
+                vec!["++"]
+            ));
         }
         
         let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
-            errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
+            errs.push(XSError::undefined_name(
+                &id.0,
+                id_span,
+            ));
             return;
         };
 
         if let Type::Int | Type::Float = id_type {
             return;
         }
-        errs.push(syntax_err(
-            &format!("Postfix increment is only allowed on `int | float` values {:}", id.0),
-            span
+        errs.push(XSError::syntax(
+            span,
+            "A postfix increment ({0}) statement is only allowed on {1} values",
+            vec!["++", "int | float"]
         ));
     },
     ASTreeNode::PostDMinus((id, id_span)) => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`postfix` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A postfix decrement ({0}) statement is only allowed in a local scope",
+                vec!["--"]
+            ));
         }
         
         let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
-            errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
+            errs.push(XSError::undefined_name(
+                &id.0,
+                id_span,
+            ));
             return;
         };
 
         if let Type::Int | Type::Float = id_type {
             return;
         }
-        errs.push(syntax_err(
-            &format!("Postfix decrement is only allowed on `int | float` values {:}", id.0),
-            span
+        errs.push(XSError::syntax(
+            span,
+            "A postfix decrement ({0}) statement is only allowed on {1} values",
+            vec!["--", "int | float"]
         ));
     },
     ASTreeNode::Break => {
         if !is_breakable {
-            errs.push(syntax_err(
-                "`break` statements are only allowed inside a loop or a case block", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed inside loops or switch cases",
+                vec!["return"],
+            ));
         }
     },
     ASTreeNode::Continue => {
         if !is_continuable {
-            errs.push(syntax_err(
-                "`continue` statements are only allowed inside a loop", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed inside loops",
+                vec!["continue"],
+            ));
         }
     },
     ASTreeNode::LabelDef((id, id_span)) => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`label` definitions are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} definition is only allowed inside a local scope",
+                vec!["label"],
+            ));
         }
-        let None = env_get(local_env, type_env, id) else {
-            errs.push(name_err("Variable name already in use", id_span));
-            return;
+
+        match env_get(local_env, type_env, id) {
+            Some((_, og_span)) => {
+                errs.push(XSError::redefined_name(
+                    &id.0,
+                    id_span,
+                    og_span,
+                    None,
+                ));
+                return;
+            }
+            _ => {}
         };
         env_set(local_env, type_env, id, (Type::Label, id_span.clone()));
     },
     ASTreeNode::Goto((id, id_span)) => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`goto` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed inside functions or rules",
+                vec!["goto"],
+            ));
         }
         let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
-            errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
+            errs.push(XSError::undefined_name(
+                &id.0,
+                id_span,
+            ));
             return;
         };
 
@@ -564,14 +670,20 @@ pub fn xs_tc_stmt(
     },
     ASTreeNode::Discarded(spanned_expr) => {
         if is_top_level {
-            errs.push(syntax_err(
-                "Discarded expressions are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A discarded expression is only allowed in a local scope",
+                vec![]
+            ));
         }
         
         let (expr, expr_span) = spanned_expr;
         let Expr::FnCall { .. } = expr else {
-            errs.push(syntax_err("Only function calls may be discarded", expr_span));
+            errs.push(XSError::syntax(
+                expr_span,
+                "Only function calls can be discarded",
+                vec![],
+            ));
             return;
         };
 
@@ -581,17 +693,25 @@ pub fn xs_tc_stmt(
         if let Type::Void = return_value_type {
             return;
         }
-
-        errs.push(warn("The return value of this function call is being ignored", expr_span));
+        errs.push(XSError::warning(
+            expr_span,
+            "The return value of this function call is being ignored",
+            vec![],
+        ));
     },
     ASTreeNode::Debug((id, id_span)) => {
         if is_top_level {
-            errs.push(syntax_err(
-                "`dbg` statements are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed inside functions or rules",
+                vec!["dbg"],
+            ));
         }
         let Some((id_type, _span)) = env_get(local_env, type_env, id) else {
-            errs.push(name_err(&format!("Undefined name `{:}`", id.0), id_span));
+            errs.push(XSError::undefined_name(
+                &id.0,
+                id_span,
+            ));
             return;
         };
         
@@ -599,34 +719,47 @@ pub fn xs_tc_stmt(
             return;
         };
 
-        errs.push(syntax_err(
-            "Invalid variable name for `dbg`", id_span
-        ))
+        errs.push(XSError::syntax(
+            id_span,
+            "A {0} statement can only be given {1} values",
+            vec!["dbg", "int | float | bool | string | vector"],
+        ));
     },
     ASTreeNode::Breakpoint => {
         if is_top_level {
-            errs.push(syntax_err(
-                "Breakpoints are only allowed inside a local scope", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} statement is only allowed inside a local scope",
+                vec!["breakpoint"],
+            ));
         }
-        
-        errs.push(warn(
-            "Breakpoints cause XS execution to pause irrecoverably", span
+
+        errs.push(XSError::warning(
+            span,
+            "Breakpoints cause XS execution to pause irrecoverably",
+            vec![],
         ));
     },
     ASTreeNode::Class { name: (id, id_span), member_vars } => {
         if !is_top_level {
-            errs.push(syntax_err(
-                "`class` definitions are only allowed at the top level", span
-            ))
+            errs.push(XSError::syntax(
+                span,
+                "A {0} definition is only allowed at the top level",
+                vec!["class"],
+            ));
         }
-        if let Some(_) = env_get(local_env, type_env, id) {
-            errs.push(name_err("Variable name already in use", id_span));
+        if let Some((_, og_span)) = env_get(local_env, type_env, id) {
+            errs.push(XSError::redefined_name(
+                &id.0,
+                id_span,
+                og_span,
+                None,
+            ))
         } else {
             env_set(local_env, type_env, id, (Type::Class, id_span.clone()));
         }
 
-        let mut mem_name: HashSet<&Identifier> = HashSet::with_capacity(member_vars.len());
+        let mut mem_name: HashMap<&Identifier, &Span> = HashMap::with_capacity(member_vars.len());
         for (member_var, _var_span) in member_vars {
             let ASTreeNode::VarDef {
                 type_,
@@ -639,19 +772,36 @@ pub fn xs_tc_stmt(
                 else { continue; }; // unreachable
             
             if *is_extern {
-                errs.push(syntax_err("Member variables cannot be declared as `extern`", id_span));
+                errs.push(XSError::syntax(
+                    id_span,
+                    "Member variables cannot be declared as {0}",
+                    vec!["extern"],
+                ));
             }
             if *is_const {
-                errs.push(syntax_err("Member variables cannot be declared as `const`", id_span));
+                errs.push(XSError::syntax(
+                    id_span,
+                    "Member variables cannot be declared as {0}",
+                    vec!["const"],
+                ));
             }
             if *is_static {
-                errs.push(syntax_err("Member variables cannot be declared as `static`", id_span));
+                errs.push(XSError::syntax(
+                    id_span,
+                    "Member variables cannot be declared as {0}",
+                    vec!["static"],
+                ));
             }
             
-            if mem_name.contains(id) {
-                errs.push(name_err("Variable name already in use", id_span));
+            if let Some(og_span) = mem_name.get(id) {
+                errs.push(XSError::redefined_name(
+                    &id.0,
+                    id_span,
+                    og_span,
+                    None,
+                ))
             } else {
-                mem_name.push(id);
+                mem_name.push((id, id_span));
             }
             let Some(init_value) = value
                 else { continue; }; // unreachable
@@ -660,9 +810,11 @@ pub fn xs_tc_stmt(
             let Some(init_value_type) = xs_tc_expr(init_value, local_env, type_env, errs) else { continue; };
             type_cmp(type_, init_value_type, init_value_span, errs, false, false);
         }
-        
-        errs.push(warn(
-            "Classes are unusable in XS", span
-        ))
+
+        errs.push(XSError::warning(
+            span,
+            "Classes are unusable in XS",
+            vec![],
+        ));
     },
 }}
