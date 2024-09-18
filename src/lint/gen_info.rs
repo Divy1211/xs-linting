@@ -7,9 +7,10 @@ use chumsky::Parser;
 
 use crate::lint::gen_errs::{gen_errs, gen_xs_errs};
 use crate::parsing::lexer::lexer;
+use crate::parsing::lexer::token::Token;
 use crate::parsing::parser::parser;
-use crate::r#static::type_check::{LocalEnv, TypeEnv};
 use crate::r#static::type_check::statements::xs_tc;
+use crate::r#static::type_check::{LocalEnv, TypeEnv};
 use crate::r#static::xs_error::XSError;
 
 pub fn gen_info_from_path(
@@ -42,10 +43,14 @@ pub fn gen_info_from_src(
 
     let mut tc_errs = vec![];
     
-    let Some(tokens) = tokens else {
+    let Some(mut tokens) = tokens else {
         gen_errs("TokenizationError", &errs, path, src);
         return tc_errs;
     };
+    
+    tokens = tokens.into_iter()
+        .filter(|tok| match tok { (Token::Comment(_), _) => { false }, _ => { true } })
+        .collect();
 
     let (ast, errs) = parser()
         .map_with(|ast, e| (ast, e.span()))

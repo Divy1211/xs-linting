@@ -81,7 +81,7 @@ pub fn arith_op<'src>(
     match (type1, type2) {
         (Type::Int, Type::Int) => { Some(&Type::Int) }
         (Type::Int, Type::Float) => {
-            errs.push(XSError::syntax(
+            errs.push(XSError::warning(
                 span,
                 "This expression yields an {0}, not a {1}. The resulting type of an arithmetic operation depends on its first operand. yES",
                 vec!["int", "float"]
@@ -212,9 +212,9 @@ pub fn type_cmp(
                 actual_span,
                 "Intermediate {0} or {1} values do not get promoted to {2} in a \
                 function call, floating point operations on this parameter will not work correctly. \
-                Consider explicitly assigning this expression to a temporary {2} variable \
+                Consider explicitly assigning this expression to a temporary {3} variable \
                 before passing that as a parameter. yES",
-                vec!["int", "bool", "float"]
+                vec!["int", "bool", "float", "float"]
             ));
         }
         _ => {

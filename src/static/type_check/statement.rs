@@ -163,6 +163,7 @@ pub fn xs_tc_stmt(
         let mut opt_spans: HashMap<&str, &Span> = HashMap::with_capacity(rule_opts.len());
         
         for (opt, opt_span) in rule_opts {
+            println!("{:?}", opt);
             match opt {
                 RuleOpt::Active | RuleOpt::Inactive => {
                     chk_rule_opt("activity", opt_span, &mut opt_spans, errs);

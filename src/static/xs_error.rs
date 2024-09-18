@@ -1,3 +1,4 @@
+use ariadne::{ReportKind};
 use crate::parsing::span::{Span};
 
 pub enum XSError {
@@ -80,6 +81,55 @@ impl XSError {
             span: span.clone(),
             msg: String::from(msg),
             keywords: keywords.into_iter().map(String::from).collect(),
+        }
+    }
+    
+    pub fn code(&self) -> u32 {
+        match self {
+            XSError::ExtraArg { .. } => { 0 }
+            XSError::TypeMismatch { .. } => { 1 }
+            XSError::NotCallable { .. } => { 2 }
+            XSError::OpMismatch { .. } => { 3 }
+            XSError::UndefinedName { .. } => { 4 }
+            XSError::RedefinedName { .. } => { 5 }
+            XSError::Syntax { .. } => { 6 }
+            XSError::Warning { .. } => { 7 }
+        }
+    }
+
+    pub fn span(&self) -> &Span {
+        match self {
+            XSError::ExtraArg { span, .. } => { span }
+            XSError::TypeMismatch { span, .. } => { span }
+            XSError::NotCallable { span, .. } => { span }
+            XSError::OpMismatch { span, .. } => { span }
+            XSError::UndefinedName { span, .. } => { span }
+            XSError::RedefinedName { span, .. } => { span }
+            XSError::Syntax { span, .. } => { span }
+            XSError::Warning { span, .. } => { span }
+        }
+    }
+    
+    pub fn kind(&self) -> ReportKind {
+        match self {
+            XSError::Warning { .. } => { ReportKind::Warning }
+            _ => { ReportKind::Error }
+        }
+    }
+    
+    pub fn msg(&self) -> &str {
+        match self {
+            XSError::ExtraArg { .. } => { "TypeError" }
+            XSError::TypeMismatch { .. } => { "TypeError" }
+            XSError::NotCallable { .. } => { "TypeError" }
+            XSError::OpMismatch { .. } => { "TypeError" }
+            
+            XSError::UndefinedName { .. } => { "NameError" }
+            XSError::RedefinedName { .. } => { "NameError" }
+            
+            XSError::Syntax { .. } => { "SyntaxError" }
+            
+            XSError::Warning { .. } => { "PotentialBug" }
         }
     }
 }

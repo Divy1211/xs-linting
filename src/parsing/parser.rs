@@ -16,7 +16,7 @@ pub fn parser<'tokens>() -> impl Parser<
     extra::Err<Rich<'tokens, Token, Span>>,
 > + Clone {
     statement()
-        .recover_with(skip_then_retry_until(any().ignored(), end()))
+        // .recover_with(skip_then_retry_until(any().ignored(), end()))
         .repeated()
         .collect()
 }
