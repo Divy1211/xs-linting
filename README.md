@@ -14,6 +14,46 @@ cargo install --git https://github.com/Divy1211/xs-check
 
 This is recommended, as it will automatically add the binary to your system's path variable.
 
+## Usage
+
+Suppose you have an XS file like so:
+
+`test.xs`
+```cpp
+void test(float f = 0.0) {
+    int cp = xsGetContextPlayer();
+    xsChatData("cp: %d", cp);
+}
+
+void test(float f = 0.0) {
+    int b = "Oops";
+}
+
+void main() {
+    test(1);
+
+    float c = 4 + 5.5;
+}
+```
+
+Invoke the binary on the file:
+
+```sh
+xs-check ./test.xs 
+```
+
+And it will generate an output with all the errors it finds:
+
+![test.png](./imgs/test.png)
+
+You may also tell it to ignore warnings (errors cannot be ignored) with a comma separated list:
+
+```sh
+xs-check file.xs --ignores warning1,warning2
+```
+
+The name used to ignore the warning is the same name that is printed in the first line of the warning. Ignoring the `DiscardedFn` warning may be useful at times
+
 ## Cool Maths
 
 Note: GitHub does not render all the latex correctly, read these docs here: https://divy1211.github.io/xs-check/
