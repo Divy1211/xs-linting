@@ -1,6 +1,18 @@
 # XS Check
 
-This tool is a linter  for AoE2:DE's flavour of XS.
+A linter  for AoE2:DE's flavour of XS.
+
+## Installation
+
+You may download and use the prebuilt binaries from [here](https://github.com/Divy1211/xs-check/releases/latest)
+
+Or instead, if you have rust installed and prefer to build it from source, you can simply run:
+
+```sh
+cargo install --git https://github.com/Divy1211/xs-check
+```
+
+This is recommended, as it will automatically add the binary to your system's path variable.
 
 ## Cool Maths
 

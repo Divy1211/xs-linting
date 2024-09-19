@@ -11,13 +11,14 @@ use crate::parsing::lexer::token::Token;
 use crate::parsing::parser::parser;
 use crate::r#static::type_check::{LocalEnv, TypeEnv};
 use crate::r#static::type_check::statements::xs_tc;
-use crate::r#static::xs_error::XSError;
+use crate::r#static::xs_error::{XSError};
 
 pub fn gen_info_from_path(
     type_env: &mut TypeEnv,
     local_envs: &mut LocalEnv,
     groups: &mut HashSet<String>,
-    path: PathBuf
+    path: PathBuf,
+    ignores: &HashSet<u32>,
 ) {
     let src = match fs::read_to_string(&path) {
         Ok(src) => {src}
@@ -31,10 +32,11 @@ pub fn gen_info_from_path(
     
     let errs = gen_info_from_src(
         type_env, local_envs, groups,
-        &path, &src
+        &path, &src, ignores
     );
 
-    gen_xs_errs(&errs, filename, &src);
+    gen_xs_errs(&errs, filename, &src, ignores);
+    
     if errs.len() == 0 {
         println!("No errors found in file '{filename}'! Your code is free of the pitfalls of XS' quirks =)");
     }
@@ -46,7 +48,8 @@ pub fn gen_info_from_src(
     local_envs: &mut LocalEnv,
     groups: &mut HashSet<String>,
     path: &PathBuf,
-    src: &str
+    src: &str,
+    ignores: &HashSet<u32>,
 ) -> Vec<XSError> {
     let (tokens, errs) = lexer()
         .parse(src)
@@ -73,7 +76,7 @@ pub fn gen_info_from_src(
         return tc_errs;
     };
     
-    xs_tc(path, &ast, &mut None, type_env, local_envs, groups, &mut tc_errs);
+    xs_tc(path, &ast, &mut None, type_env, local_envs, groups, &mut tc_errs, ignores);
     
     tc_errs
 }

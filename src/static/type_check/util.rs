@@ -6,7 +6,7 @@ use crate::parsing::ast::type_::Type;
 use crate::parsing::span::{Span, Spanned};
 use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::type_check::TypeEnv;
-use crate::r#static::xs_error::{XSError};
+use crate::r#static::xs_error::{WarningKind, XSError};
 
 pub fn chk_int_lit(val: &i64, span: &Span) -> Vec<XSError> {
     if *val < -999_999_999 || 999_999_999 < *val {
@@ -84,7 +84,8 @@ pub fn arith_op<'src>(
             errs.push(XSError::warning(
                 span,
                 "This expression yields an {0}, not a {1}. The resulting type of an arithmetic operation depends on its first operand. yES",
-                vec!["int", "float"]
+                vec!["int", "float"],
+                WarningKind::FirstOprArith,
             ));
             Some(&Type::Int)
         }
@@ -127,11 +128,12 @@ pub fn reln_op<'src>(
         (Type::Int | Type::Float, Type::Int | Type::Float) => { Some(&Type::Bool) }
         (Type::Str, Type::Str) => { Some(&Type::Bool) }
         (Type::Vec, Type::Vec) | (Type::Bool, Type::Bool) => {
-            if op_name != "eq" || op_name != "ne" {
+            if op_name != "eq" && op_name != "ne" {
                 errs.push(XSError::warning(
                     span,
                     "This comparison will cause a silent XS crash",
-                    vec![]
+                    vec![],
+                    WarningKind::CmpSilentCrash,
                 ));
             }
             Some(&Type::Bool)
@@ -196,7 +198,8 @@ pub fn type_cmp(
             errs.push(XSError::warning(
                 actual_span,
                 "Using booleans in a case's expression will cause a silent XS crash",
-                vec![]
+                vec![],
+                WarningKind::BoolCaseSilentCrash,
             ));
         }
         (Type::Int, Type::Bool) => {} // yES
@@ -204,7 +207,8 @@ pub fn type_cmp(
             errs.push(XSError::warning(
                 actual_span,
                 "Possible loss of precision due to downcast from a {0} to an {1}",
-                vec!["float", "int"]
+                vec!["float", "int"],
+                WarningKind::NumDownCast,
             ));
         }
         (Type::Float, Type::Int | Type::Bool) => if is_fn_call {
@@ -214,7 +218,8 @@ pub fn type_cmp(
                 function call, floating point operations on this parameter will not work correctly. \
                 Consider explicitly assigning this expression to a temporary {3} variable \
                 before passing that as a parameter. yES",
-                vec!["int", "bool", "float", "float"]
+                vec!["int", "bool", "float", "float"],
+                WarningKind::NoNumPromo,
             ));
         }
         _ => {

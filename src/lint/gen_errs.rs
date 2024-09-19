@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fmt::Display;
 use std::path::PathBuf;
 
@@ -23,16 +24,19 @@ fn msg_fmt(mut msg: &str, keywords: &[String], color: &Color) -> String {
 }
 
 
-pub fn gen_xs_errs(errs: &Vec<XSError>, filename: &str, src: &str) {
+pub fn gen_xs_errs(errs: &Vec<XSError>, filename: &str, src: &str, ignores: &HashSet<u32>) {
     let kwds = Color::Fixed(5);
     let highlight = Color::Fixed(12);
     let names = Color::Fixed(13);
     let types = Color::Fixed(14);
 
     for error in errs.iter() {
-        let report = Report::build(error.kind(), filename, error.span().start)
+        if ignores.contains(&error.code()) {
+            continue;
+        }
+        let report = Report::build(error.report_kind(), filename, error.span().start)
             .with_code(error.code())
-            .with_message(error.msg());
+            .with_message(error.kind());
         let report = match error {
             XSError::ExtraArg { fn_name, span } => {
                 report.with_label(
@@ -102,7 +106,7 @@ pub fn gen_xs_errs(errs: &Vec<XSError>, filename: &str, src: &str) {
                     )
             }
 
-            XSError::Warning { span, msg, keywords } => {
+            XSError::Warning { span, msg, keywords, .. } => {
                 report.with_label(
                         Label::new((filename, span.start..span.end))
                             .with_message(msg_fmt(msg, keywords, &types))

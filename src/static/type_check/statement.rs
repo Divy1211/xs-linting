@@ -1,4 +1,4 @@
-use std::collections::{HashMap};
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 use chumsky::container::Container;
@@ -13,7 +13,7 @@ use crate::parsing::span::{Span, Spanned};
 use crate::r#static::type_check::{env_get, env_set, Groups, LocalEnv, TypeEnv};
 use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::type_check::util::{chk_rule_opt, type_cmp};
-use crate::r#static::xs_error::{XSError};
+use crate::r#static::xs_error::{WarningKind, XSError};
 
 pub fn xs_tc_stmt(
     path: &PathBuf,
@@ -26,6 +26,7 @@ pub fn xs_tc_stmt(
     is_top_level: bool,
     is_breakable: bool,
     is_continuable: bool,
+    ignores: &HashSet<u32>,
 ) { match stmt {
     // an include statement is always parsed with a string literal
     ASTreeNode::Include((filename, _span)) => {
@@ -45,6 +46,7 @@ pub fn xs_tc_stmt(
             local_envs,
             groups,
             inc_path,
+            ignores,
         );
     }
     ASTreeNode::VarDef {
@@ -98,6 +100,7 @@ pub fn xs_tc_stmt(
                         expr_span,
                         "Top level initialized {0} do not work correctly. yES",
                         vec!["string"],
+                        WarningKind::TopStrInit,
                     ));
                 }
                 Expr::Literal(_) | Expr::Neg(_) | Expr::Vec { .. } => { }
@@ -163,7 +166,6 @@ pub fn xs_tc_stmt(
         let mut opt_spans: HashMap<&str, &Span> = HashMap::with_capacity(rule_opts.len());
         
         for (opt, opt_span) in rule_opts {
-            println!("{:?}", opt);
             match opt {
                 RuleOpt::Active | RuleOpt::Inactive => {
                     chk_rule_opt("activity", opt_span, &mut opt_spans, errs);
@@ -212,7 +214,8 @@ pub fn xs_tc_stmt(
         for spanned_stmt in body.0.iter() {
             xs_tc_stmt(
                 path, spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
-                false, is_breakable, is_continuable
+                false, is_breakable, is_continuable,
+                ignores,
             );
         }
         local_envs
@@ -328,7 +331,8 @@ pub fn xs_tc_stmt(
         for spanned_stmt in body.0.iter() {
             xs_tc_stmt(
                 path, spanned_stmt, &mut local_type_env, type_env, local_envs, groups, errs,
-                false, is_breakable, is_continuable
+                false, is_breakable, is_continuable,
+                ignores
             );
         }
         local_envs
@@ -408,7 +412,8 @@ pub fn xs_tc_stmt(
         for spanned_stmt in consequent.0.0.iter() {
             xs_tc_stmt(
                 path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
-                false, is_breakable, is_continuable
+                false, is_breakable, is_continuable,
+                ignores
             );
         }
 
@@ -416,7 +421,8 @@ pub fn xs_tc_stmt(
             for spanned_stmt in alternate.0.0.iter() {
                 xs_tc_stmt(
                     path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
-                    false, is_breakable, is_continuable
+                    false, is_breakable, is_continuable,
+                    ignores
                 );
             }
         }
@@ -444,7 +450,8 @@ pub fn xs_tc_stmt(
         for spanned_stmt in body.0.0.iter() {
             xs_tc_stmt(
                 path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
-                false, true, true
+                false, true, true,
+                ignores
             );
         }
     },
@@ -492,7 +499,8 @@ pub fn xs_tc_stmt(
         for spanned_stmt in body.0.0.iter() {
             xs_tc_stmt(
                 path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
-                false, true, true
+                false, true, true,
+                ignores
             );
         }
     },
@@ -518,7 +526,8 @@ pub fn xs_tc_stmt(
             for spanned_stmt in body.0.iter() {
                 xs_tc_stmt(
                     path, spanned_stmt, local_env, type_env, local_envs, groups, errs,
-                    false, true, is_continuable
+                    false, true, is_continuable,
+                    ignores
                 );
             }
             let Some(spanned_case_expr) = case_clause else {
@@ -529,12 +538,14 @@ pub fn xs_tc_stmt(
                 errs.push(XSError::warning(
                     og_span,
                     "Only the first default block will run when case matching fails",
-                    vec![]
+                    vec![],
+                    WarningKind::DupCase,
                 ));
                 errs.push(XSError::warning(
                     body_span,
                     "Only the first default block will run when case matching fails",
-                    vec![]
+                    vec![],
+                    WarningKind::DupCase,
                 ));
                 continue;
             };
@@ -546,12 +557,14 @@ pub fn xs_tc_stmt(
                 errs.push(XSError::warning(
                     og_span,
                     "Only the first case will run on a match",
-                    vec![]
+                    vec![],
+                    WarningKind::DupCase,
                 ));
                 errs.push(XSError::warning(
                     &spanned_case_expr.1,
                     "Only the first case will run on a match",
-                    vec![]
+                    vec![],
+                    WarningKind::DupCase,
                 ));
             } else {
                 case_spans.push((case_expr, case_expr_span));
@@ -698,6 +711,7 @@ pub fn xs_tc_stmt(
             expr_span,
             "The return value of this function call is being ignored",
             vec![],
+            WarningKind::DiscardedFn,
         ));
     },
     ASTreeNode::Debug((id, id_span)) => {
@@ -739,6 +753,7 @@ pub fn xs_tc_stmt(
             span,
             "Breakpoints cause XS execution to pause irrecoverably",
             vec![],
+            WarningKind::BreakPt,
         ));
     },
     ASTreeNode::Class { name: (id, id_span), member_vars } => {
@@ -816,6 +831,7 @@ pub fn xs_tc_stmt(
             span,
             "Classes are unusable in XS",
             vec![],
+            WarningKind::UnusableClasses,
         ));
     },
 }}

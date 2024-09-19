@@ -61,12 +61,13 @@ pub fn xs_tc_expr<'src>(
             };
             type_cmp(param_type, arg_type, &arg_expr.1, errs, true, false);
         }
-        
-        for (_expr, span) in args[type_sign.len()-1..].iter() {
-            errs.push(XSError::extra_arg(
-                &name.0,
-                span,
-            ));
+        if args.len() > type_sign.len() {
+            for (_expr, span) in args[type_sign.len() - 1..].iter() {
+                errs.push(XSError::extra_arg(
+                    &name.0,
+                    span,
+                ));
+            }
         }
 
         type_sign.last()

@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::PathBuf;
 use crate::parsing::ast::astree::ASTreeNode;
 use crate::parsing::span::Spanned;
@@ -13,11 +14,12 @@ pub fn xs_tc(
     local_envs: &mut LocalEnv,
     groups: &mut Groups,
     errs: &mut Vec<XSError>,
+    ignores: &HashSet<u32>
 ) {
     for stmt in stmts {
         xs_tc_stmt(
             path, stmt, local_env, type_env, local_envs, groups, errs,
-            true, false, false
+            true, false, false, ignores
         );
     }
 }
