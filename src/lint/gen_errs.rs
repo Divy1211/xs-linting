@@ -1,8 +1,10 @@
-use crate::r#static::xs_error::XSError;
-use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
-use chumsky::error::Rich;
 use std::fmt::Display;
 use std::path::PathBuf;
+
+use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
+use chumsky::error::Rich;
+
+use crate::r#static::xs_error::XSError;
 
 fn msg_fmt(mut msg: &str, keywords: &[String], color: &Color) -> String {
     let mut result = String::new();

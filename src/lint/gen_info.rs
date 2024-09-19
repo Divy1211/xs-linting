@@ -9,8 +9,8 @@ use crate::lint::gen_errs::{gen_errs, gen_xs_errs};
 use crate::parsing::lexer::lexer;
 use crate::parsing::lexer::token::Token;
 use crate::parsing::parser::parser;
-use crate::r#static::type_check::statements::xs_tc;
 use crate::r#static::type_check::{LocalEnv, TypeEnv};
+use crate::r#static::type_check::statements::xs_tc;
 use crate::r#static::xs_error::XSError;
 
 pub fn gen_info_from_path(
@@ -19,7 +19,14 @@ pub fn gen_info_from_path(
     groups: &mut HashSet<String>,
     path: PathBuf
 ) {
-    let src = fs::read_to_string(&path).expect("Failed to read file");
+    let src = match fs::read_to_string(&path) {
+        Ok(src) => {src}
+        Err(err) => {
+            let path = path.to_str().unwrap();
+            eprintln!("Failed to read path {path}, details: {err}");
+            return;
+        }
+    };
     let filename = path.to_str().unwrap();
     
     let errs = gen_info_from_src(
@@ -27,7 +34,11 @@ pub fn gen_info_from_path(
         &path, &src
     );
 
-    gen_xs_errs(&errs, filename, &src)
+    gen_xs_errs(&errs, filename, &src);
+    if errs.len() == 0 {
+        println!("No errors found in file '{filename}'! Your code is free of the pitfalls of XS' quirks =)");
+    }
+    println!("Finished analysing '{filename}'.")
 }
 
 pub fn gen_info_from_src(

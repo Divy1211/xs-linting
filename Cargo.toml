@@ -1,14 +1,20 @@
 [package]
 name = "xs-check"
 version = "0.1.0"
+authors = ["Alian713"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-chumsky = "1.0.0-alpha.7"
+chrono = "0.4.38"
 
 [dependencies]
 ariadne = "0.4.1"
 chumsky = "1.0.0-alpha.7"
 log = "0.4.21"
+
+[[bin]]
+name = "xs-check"
+path = "src/main.rs"
+bench = false
