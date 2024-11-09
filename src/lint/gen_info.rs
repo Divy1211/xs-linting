@@ -30,14 +30,14 @@ pub fn gen_info_from_path(
     };
     let filename = path.to_str().unwrap();
     
-    let errs = gen_info_from_src(
+    let (tc_errs, other_errs) = gen_info_from_src(
         type_env, local_envs, groups,
         &path, &src, ignores
     );
 
-    gen_xs_errs(&errs, filename, &src, ignores);
+    gen_xs_errs(&tc_errs, filename, &src, ignores);
     
-    if errs.len() == 0 {
+    if tc_errs.len() == 0 && !other_errs {
         println!("No errors found in file '{filename}'! Your code is free of the pitfalls of XS' quirks =)");
     }
     println!("Finished analysing '{filename}'.")
@@ -50,7 +50,7 @@ pub fn gen_info_from_src(
     path: &PathBuf,
     src: &str,
     ignores: &HashSet<u32>,
-) -> Vec<XSError> {
+) -> (Vec<XSError>, bool) {
     let (tokens, errs) = lexer()
         .parse(src)
         .into_output_errors();
@@ -59,7 +59,7 @@ pub fn gen_info_from_src(
     
     let Some(mut tokens) = tokens else {
         gen_errs("TokenizationError", &errs, path, src);
-        return tc_errs;
+        return (tc_errs, true);
     };
     
     tokens = tokens.into_iter()
@@ -73,10 +73,10 @@ pub fn gen_info_from_src(
 
     let Some((ast, _span)) = ast else {
         gen_errs("ParsingError", &errs, path, src);
-        return tc_errs;
+        return (tc_errs, true);
     };
     
     xs_tc(path, &ast, &mut None, type_env, local_envs, groups, &mut tc_errs, ignores);
     
-    tc_errs
+    (tc_errs, false)
 }

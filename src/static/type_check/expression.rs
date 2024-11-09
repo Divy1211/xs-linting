@@ -74,7 +74,17 @@ pub fn xs_tc_expr<'src>(
     }
 
     Expr::Neg(expr) => {
+        let (_, inner_span): &Spanned<Expr> = expr;
         errs.extend(chk_num_lit(expr, true));
+        
+        if inner_span.start - span.start > 1 {
+            errs.push(XSError::syntax(
+                span,
+                "Spaces are not allowed between unary negative ({0}) and {1} literals",
+                vec!["-", "int | float"]
+            ))
+        }
+        
         xs_tc_expr(expr, local_env, type_env, errs)
     }
     Expr::Not(_) => {
