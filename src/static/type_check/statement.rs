@@ -51,7 +51,7 @@ pub fn xs_tc_stmt(
     }
     ASTreeNode::VarDef {
         is_extern,
-        is_static: _is_static,
+        is_static,
         is_const,
         type_,
         name: spanned_name,
@@ -87,7 +87,6 @@ pub fn xs_tc_stmt(
                     vec!["const"],
                 ));
             }
-
             return;
         };
 
@@ -109,6 +108,19 @@ pub fn xs_tc_stmt(
                         expr_span,
                         "Top level or {0} variable initializers must be literals",
                         vec!["const"],
+                    ));
+                }
+            }
+        }
+        
+        if *is_static {
+            match expr {
+                Expr::Literal(_) | Expr::Neg(_) | Expr::Vec { .. } => { }
+                _ => {
+                    errs.push(XSError::syntax(
+                        expr_span,
+                        "{0} variable initializers must be literals",
+                        vec!["static"],
                     ));
                 }
             }
