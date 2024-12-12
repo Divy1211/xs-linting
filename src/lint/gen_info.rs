@@ -51,8 +51,11 @@ pub fn gen_info_from_src(
     src: &str,
     ignores: &HashSet<u32>,
 ) -> (Vec<XSError>, bool) {
+    if src.trim().len() == 0 {
+        return (vec![], false);
+    }
     let (tokens, errs) = lexer()
-        .parse(src.trim())
+        .parse(src)
         .into_output_errors();
 
     let mut tc_errs = vec![];
