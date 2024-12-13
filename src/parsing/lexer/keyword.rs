@@ -7,7 +7,6 @@ pub fn keyword<'src>() -> impl Parser<
     'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>
 > {
     text::ascii::ident().map(|ident| match ident {
-        "vector"                 => Token::Vector,
         "include"                => Token::Include,
         "switch"                 => Token::Switch,
         "case"                   => Token::Case,
@@ -24,10 +23,6 @@ pub fn keyword<'src>() -> impl Parser<
         "dbg"                    => Token::Dbg,
         "return"                 => Token::Return,
         "void"                   => Token::Void,
-        "int"                    => Token::Int,
-        "bool"                   => Token::Bool,
-        "float"                  => Token::Float,
-        "string"                 => Token::String,
         "const"                  => Token::Const,
         "priority"               => Token::Priority,
         "minInterval"            => Token::MinInterval,
@@ -46,6 +41,12 @@ pub fn keyword<'src>() -> impl Parser<
         "runImmediately"         => Token::RunImmediately,
         "mutable"                => Token::Mutable,
         "class"                  => Token::Class,
-        _                        => Token::Identifier(Identifier::new(ident))
+        
+        _ if ident.eq_ignore_ascii_case("int")     => Token::Int, // yES
+        _ if ident.eq_ignore_ascii_case("bool")    => Token::Bool,
+        _ if ident.eq_ignore_ascii_case("float")   => Token::Float,
+        _ if ident.eq_ignore_ascii_case("string")  => Token::String,
+        _ if ident.eq_ignore_ascii_case("vector")  => Token::Vector,
+        _                                          => Token::Identifier(Identifier::new(ident))
     })
 }
