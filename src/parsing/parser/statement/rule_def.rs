@@ -1,5 +1,6 @@
 use chumsky::prelude::*;
 use crate::parsing::ast::astree::{ASTreeNode, RuleOpt};
+use crate::parsing::ast::identifier::Identifier;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::lexer::token::Token;
 use crate::parsing::parser::parser_input::ParserInput;
@@ -39,10 +40,11 @@ pub fn rule_def<'tokens>(
         }, info.span()));
     
     let grp = just(Token::Group)
-        .ignore_then(
-            select! { Token::Literal(Literal::Str(val)) => val }
-                .map_with(|val, info| (val, info.span()))
-        ).map_with(|val, info| (RuleOpt::Group(val), info.span()));
+        .ignore_then(choice((
+            select! { Token::Literal(Literal::Str(val)) => val },
+            select! { Token::Identifier(Identifier(val)) => val },
+        )))
+        .map_with(|val, info| (RuleOpt::Group((val, info.span())), info.span()));
     
     let rule_opt = choice((no_args, int_arg, grp));
     
