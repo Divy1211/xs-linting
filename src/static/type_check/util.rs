@@ -239,15 +239,15 @@ pub fn chk_rule_opt<'src>(
     opt_spans: &mut HashMap<&'static str, &'src Span>,
     errs: &mut Vec<XSError>,
 ) -> bool {
-    return if let Some(&og_span) = opt_spans.get(opt_type) {
+    if let Some(&og_span) = opt_spans.get(opt_type) {
         errs.push(XSError::syntax(
             og_span,
-            "Cannot set {0}, twice",
+            "Cannot set {0} twice",
             vec![opt_type]
         ));
         errs.push(XSError::syntax(
             opt_span,
-            "Cannot set {0}, twice",
+            "Cannot set {0} twice",
             vec![opt_type]
         ));
         true
