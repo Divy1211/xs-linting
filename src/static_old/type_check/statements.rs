@@ -2,9 +2,9 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 use crate::parsing::ast::astree::ASTreeNode;
 use crate::parsing::span::Spanned;
-use crate::r#static::type_check::{Groups, LocalEnv, TypeEnv};
-use crate::r#static::type_check::statement::xs_tc_stmt;
-use crate::r#static::xs_error::XSError;
+use crate::static_old::type_check::{Groups, LocalEnv, TypeEnv};
+use crate::static_old::type_check::statement::xs_tc_stmt;
+use crate::static_old::xs_error::XSError;
 
 pub fn xs_tc(
     path: &PathBuf,

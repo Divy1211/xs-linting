@@ -1,2 +1,2 @@
-pub mod type_check;
-pub mod xs_error;
+pub mod info;
+mod type_check;

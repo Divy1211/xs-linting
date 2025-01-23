@@ -1,13 +1,12 @@
 use std::collections::HashMap;
-use std::path::PathBuf;
 use chumsky::container::{Container};
 use crate::parsing::ast::expr::Expr;
 use crate::parsing::ast::literal::Literal;
 use crate::parsing::ast::type_::Type;
 use crate::parsing::span::{Span, Spanned};
-use crate::r#static::type_check::expression::xs_tc_expr;
-use crate::r#static::info::type_env::TypeEnv;
-use crate::r#static::info::xs_error::{WarningKind, XSError};
+use crate::static_old::type_check::expression::xs_tc_expr;
+use crate::static_old::type_check::TypeEnv;
+use crate::static_old::xs_error::{WarningKind, XSError};
 
 pub fn chk_int_lit(val: &i64, span: &Span) -> Vec<XSError> {
     if *val < -999_999_999 || 999_999_999 < *val {
@@ -63,17 +62,18 @@ pub fn chk_num_lit((expr, span): &Spanned<Expr>, is_neg: bool) -> Vec<XSError> {
 }
 
 pub fn arith_op<'src>(
-    path: &PathBuf,
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
-    type_env: &'src mut TypeEnv,
+    local_env: &'src Option<TypeEnv>,
+    type_env: &'src TypeEnv,
+    errs: &mut Vec<XSError>,
     op_name: &str
 ) -> Option<&'src Type> {
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
-        xs_tc_expr(path, expr1, type_env), xs_tc_expr(path, expr2, type_env)
+        xs_tc_expr(expr1, local_env, type_env, errs), xs_tc_expr(expr2, local_env, type_env, errs)
     ) else {
         return None;
     };
@@ -81,7 +81,7 @@ pub fn arith_op<'src>(
     match (type1, type2) {
         (Type::Int, Type::Int) => { Some(&Type::Int) }
         (Type::Int, Type::Float) => {
-            type_env.add_err(path, XSError::warning(
+            errs.push(XSError::warning(
                 span,
                 "This expression yields an {0}, not a {1}. The resulting type of an arithmetic operation depends on its first operand. yES",
                 vec!["int", "float"],
@@ -95,7 +95,7 @@ pub fn arith_op<'src>(
         (Type::Str, _) | (_, Type::Str) if op_name == "add" => { Some(&Type::Str) }
 
         _ => {
-            type_env.add_err(path, XSError::op_mismatch(
+            errs.push(XSError::op_mismatch(
                 op_name,
                 &type1.to_string(),
                 &type2.to_string(),
@@ -108,17 +108,18 @@ pub fn arith_op<'src>(
 }
 
 pub fn reln_op<'src>(
-    path: &PathBuf,
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
-    type_env: &'src mut TypeEnv,
+    local_env: &'src Option<TypeEnv>,
+    type_env: &'src TypeEnv,
+    errs: &mut Vec<XSError>,
     op_name: &str
 ) -> Option<&'src Type> {
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
-        xs_tc_expr(path, expr1, type_env), xs_tc_expr(path, expr2, type_env)
+        xs_tc_expr(expr1, local_env, type_env, errs), xs_tc_expr(expr2, local_env, type_env, errs)
     ) else {
         return None;
     };
@@ -128,7 +129,7 @@ pub fn reln_op<'src>(
         (Type::Str, Type::Str) => { Some(&Type::Bool) }
         (Type::Vec, Type::Vec) | (Type::Bool, Type::Bool) => {
             if op_name != "eq" && op_name != "ne" {
-                type_env.add_err(path, XSError::warning(
+                errs.push(XSError::warning(
                     span,
                     "This comparison will cause a silent XS crash",
                     vec![],
@@ -139,7 +140,7 @@ pub fn reln_op<'src>(
         }
 
         _ => {
-            type_env.add_err(path, XSError::op_mismatch(
+            errs.push(XSError::op_mismatch(
                 "compare",
                 &type1.to_string(),
                 &type2.to_string(),
@@ -152,17 +153,18 @@ pub fn reln_op<'src>(
 }
 
 pub fn logical_op<'src>(
-    path: &PathBuf,
     span: &'src Span,
     expr1: &'src Spanned<Expr>,
     expr2: &'src Spanned<Expr>,
-    type_env: &'src mut TypeEnv,
+    local_env: &'src Option<TypeEnv>,
+    type_env: &'src TypeEnv,
+    errs: &mut Vec<XSError>,
     op_name: &str
 ) -> Option<&'src Type> {
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
-        xs_tc_expr(path, expr1, type_env), xs_tc_expr(path, expr2, type_env)
+        xs_tc_expr(expr1, local_env, type_env, errs), xs_tc_expr(expr2, local_env, type_env, errs)
     ) else {
         return None;
     };
@@ -170,7 +172,7 @@ pub fn logical_op<'src>(
     match (type1, type2) {
         (Type::Bool, Type::Bool) => { Some(&Type::Bool) }
         _ => {
-            type_env.add_err(path, XSError::op_mismatch(
+            errs.push(XSError::op_mismatch(
                 op_name,
                 &type1.to_string(),
                 &type2.to_string(),
@@ -186,10 +188,10 @@ pub fn type_cmp(
     expected: &Type,
     actual: &Type,
     actual_span: &Span,
+    errs: &mut Vec<XSError>,
     is_fn_call: bool,
     is_case_expr: bool,
-) -> Vec<XSError> {
-    let mut errs = Vec::new();
+) {
     match (expected, actual) {
         (_, _) if *expected == *actual => {},
         (Type::Int, Type::Bool) if is_case_expr => {
@@ -228,8 +230,7 @@ pub fn type_cmp(
                 None,
             ))
         }
-    };
-    errs
+    }
 }
 
 pub fn chk_rule_opt<'src>(

@@ -5,13 +5,13 @@ use std::path::PathBuf;
 use chumsky::input::Input;
 use chumsky::Parser;
 
-use crate::lint::gen_errs::{gen_errs, gen_xs_errs};
+use crate::lint_old::gen_errs::{gen_errs, gen_xs_errs};
 use crate::parsing::lexer::lexer;
 use crate::parsing::lexer::token::Token;
 use crate::parsing::parser::parser;
-use crate::r#static::type_check::{LocalEnv, TypeEnv};
-use crate::r#static::type_check::statements::xs_tc;
-use crate::r#static::xs_error::{XSError};
+use crate::static_old::type_check::{LocalEnv, TypeEnv};
+use crate::static_old::type_check::statements::xs_tc;
+use crate::static_old::xs_error::{XSError};
 
 pub fn gen_info_from_path(
     type_env: &mut TypeEnv,

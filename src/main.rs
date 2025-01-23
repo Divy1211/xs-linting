@@ -1,12 +1,14 @@
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use crate::cli::parse_args;
-use crate::lint::gen_info::{gen_info_from_path, gen_info_from_src};
+use crate::lint_old::gen_info::{gen_info_from_path, gen_info_from_src};
 
 pub mod parsing;
-pub mod r#static;
-pub mod lint;
+pub mod static_old;
+pub mod lint_old;
 pub mod cli;
+pub mod lint;
+pub mod r#static;
 
 fn main() {
     let (filepath, ignores) = match parse_args() {
