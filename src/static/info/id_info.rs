@@ -8,7 +8,15 @@ pub struct IdInfo {
 }
 
 impl IdInfo {
+    pub fn from(type_: &Type, src_loc: SrcLoc) -> Self {
+        Self { type_: type_.clone(), src_loc }
+    }
+
     pub fn new(type_: Type, src_loc: SrcLoc) -> Self {
         Self { type_, src_loc }
+    }
+    
+    pub fn dummy(type_: Type) -> Self {
+        Self { type_, src_loc: Default::default() }
     }
 }

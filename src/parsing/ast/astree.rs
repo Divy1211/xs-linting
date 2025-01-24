@@ -4,8 +4,7 @@ use crate::parsing::ast::param::Param;
 use crate::parsing::ast::type_::Type;
 use crate::parsing::span::Spanned;
 
-#[derive(Debug, Clone)]
-pub struct Body(pub Vec<Spanned<ASTreeNode>>);
+pub type Body = Vec<Spanned<ASTreeNode>>;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum RuleOpt {

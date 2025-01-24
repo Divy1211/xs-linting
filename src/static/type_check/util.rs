@@ -189,7 +189,7 @@ pub fn type_cmp(
     is_fn_call: bool,
     is_case_expr: bool,
 ) -> Vec<XSError> {
-    let mut errs = Vec::new();
+    let mut errs = vec![];
     match (expected, actual) {
         (_, _) if *expected == *actual => {},
         (Type::Int, Type::Bool) if is_case_expr => {
@@ -236,22 +236,23 @@ pub fn chk_rule_opt<'src>(
     opt_type: &'static str,
     opt_span: &'src Span,
     opt_spans: &mut HashMap<&'static str, &'src Span>,
-    errs: &mut Vec<XSError>,
+    path: &PathBuf,
+    type_env: &mut TypeEnv,
 ) -> bool {
     if let Some(&og_span) = opt_spans.get(opt_type) {
-        errs.push(XSError::syntax(
-            og_span,
-            "Cannot set {0} twice",
-            vec![opt_type]
+        type_env.add_err(path, XSError::syntax(
+                og_span,
+                "Cannot set {0} twice",
+                vec![opt_type]
         ));
-        errs.push(XSError::syntax(
-            opt_span,
-            "Cannot set {0} twice",
-            vec![opt_type]
+        type_env.add_err(path, XSError::syntax(
+                opt_span,
+                "Cannot set {0} twice",
+                vec![opt_type]
         ));
-        true
+        false
     } else {
         opt_spans.push((opt_type, opt_span));
-        false
+        true
     }
 }

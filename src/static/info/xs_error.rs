@@ -1,5 +1,7 @@
 use ariadne::{ReportKind};
+use crate::parsing::ast::identifier::Identifier;
 use crate::parsing::span::{Span};
+use crate::r#static::info::src_loc::SrcLoc;
 
 #[derive(Debug)]
 pub enum XSError {
@@ -11,7 +13,7 @@ pub enum XSError {
 
     // name errors
     UndefinedName { name: String, span: Span },
-    RedefinedName { name: String, span: Span, og_span: Span, note: Option<String> },
+    RedefinedName { name: String, span: Span, og_src_loc: SrcLoc, note: Option<String> },
 
     Syntax { span: Span, msg: String, keywords: Vec<String> },
 
@@ -49,9 +51,9 @@ impl XSError {
         }
     }
 
-    pub fn not_callable(name: &str, actual: &str, span: &Span) -> XSError {
+    pub fn not_callable(name: &Identifier, actual: &str, span: &Span) -> XSError {
         XSError::NotCallable {
-            name: String::from(name),
+            name: String::from(&name.0),
             actual: String::from(actual),
             span: span.clone(),
         }
@@ -67,18 +69,18 @@ impl XSError {
         }
     }
 
-    pub fn undefined_name(name: &str, span: &Span) -> XSError {
+    pub fn undefined_name(name: &Identifier, span: &Span) -> XSError {
         XSError::UndefinedName {
-            name: String::from(name),
+            name: String::from(&name.0),
             span: span.clone(),
         }
     }
 
-    pub fn redefined_name(name: &str, span: &Span, og_span: &Span, note: Option<&str>) -> XSError {
+    pub fn redefined_name(name: &Identifier, span: &Span, og_src_loc: &SrcLoc, note: Option<&str>) -> XSError {
         XSError::RedefinedName {
-            name: String::from(name),
+            name: String::from(&name.0),
             span: span.clone(),
-            og_span: og_span.clone(),
+            og_src_loc: og_src_loc.clone(),
             note: note.map(String::from),
         }
     }

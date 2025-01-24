@@ -24,11 +24,8 @@ pub fn xs_tc_expr(
         Literal::Str(_) => { Some(Type::Str) }
     }
     Expr::Identifier(id) => {
-        let Some(IdInfo {type_, src_loc: _src_loc }) = type_env.get(id) else {
-            type_env.add_err(path, XSError::undefined_name(
-                &id.0,
-                span,
-            ));
+        let Some(IdInfo { type_, ..}) = type_env.get(id) else {
+            type_env.add_err(path, XSError::undefined_name(id, span));
             return None;
         };
         Some(type_)
@@ -41,16 +38,13 @@ pub fn xs_tc_expr(
         Some(Type::Vec)
     }
     Expr::FnCall { name: (name, name_span), args } => {
-        let Some(IdInfo { type_, src_loc: _src_loc }) = type_env.get(name) else {
-            type_env.add_err(path, XSError::undefined_name(
-                &name.0,
-                name_span,
-            ));
+        let Some(IdInfo { type_, .. }) = type_env.get(name) else {
+            type_env.add_err(path, XSError::undefined_name(name, name_span));
             return None;
         };
         let Type::Func { type_sign, .. } = type_ else {
             type_env.add_err(path, XSError::not_callable(
-                &name.0,
+                name,
                 &type_.to_string(),
                 name_span,
             ));

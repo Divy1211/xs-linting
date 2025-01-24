@@ -13,7 +13,7 @@ pub struct TypeEnv {
     
     errs: HashMap<PathBuf, Vec<XSError>>,
     
-    current_local_env: Option<FnInfo>, // mmm...
+    current_fnv_env: Option<FnInfo>, // mmm...
 }
 
 impl TypeEnv {
@@ -24,22 +24,28 @@ impl TypeEnv {
             fn_envs: HashMap::new(),
             errs: HashMap::new(),
             
-            current_local_env: None,
+            current_fnv_env: None,
         }
     }
     
     pub fn get(&self, id: &Identifier) -> Option<IdInfo> {
-        match &self.current_local_env {
+        match &self.current_fnv_env {
             None =>              self.identifiers.get(id),
             Some(env) => env.get(id),
         }.map(|val| val.clone())
     }
     
     pub fn set(&mut self, id: &Identifier, info: IdInfo) {
-        match &mut self.current_local_env {
+        match &mut self.current_fnv_env {
             None =>                 self.identifiers.push((id.clone(), info)),
             Some(env) => env.set(id.clone(), info),
         }
+    }
+    
+    pub fn get_return(&self) -> Option<IdInfo> {
+        self.current_fnv_env.as_ref()
+            .and_then(|env| env.get(&Identifier::new("return")))
+            .map(|val| val.clone())
     }
     
     pub fn add_group(&mut self, group: &String) {
@@ -49,14 +55,30 @@ impl TypeEnv {
     pub fn add_err(&mut self, path: &PathBuf, err: XSError) {
         self.errs
             .entry(path.clone())
-            .or_insert(Vec::new())
+            .or_insert(vec![])
             .push(err);
     }
     
     pub fn add_errs(&mut self, path: &PathBuf, errs: Vec<XSError>) {
         self.errs
             .entry(path.clone())
-            .or_insert(Vec::new())
+            .or_insert(vec![])
             .extend(errs);
+    }
+    
+    pub fn set_fn_env(&mut self, fn_info: FnInfo) {
+        self.current_fnv_env = Some(fn_info)
+    }
+    
+    pub fn get_fn_env(&mut self) -> Option<FnInfo> {
+        self.current_fnv_env.take()
+    }
+    
+    pub fn save_fn_env(&mut self, name: &Identifier) {
+        let fn_env = self.current_fnv_env.take().expect("No current fn env - Bugged call");
+        self.fn_envs
+            .entry(name.clone())
+            .or_insert(vec![])
+            .push(fn_env);
     }
 }

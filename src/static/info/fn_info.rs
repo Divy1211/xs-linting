@@ -9,8 +9,8 @@ pub struct FnInfo {
 }
 
 impl FnInfo {
-    pub fn new(identifiers: HashMap<Identifier, IdInfo>, src_loc: SrcLoc) -> Self {
-        Self { identifiers, src_loc }
+    pub fn new(src_loc: SrcLoc) -> Self {
+        Self { identifiers: HashMap::new(), src_loc }
     }
     
     pub fn get(&self, id: &Identifier) -> Option<&IdInfo> {
