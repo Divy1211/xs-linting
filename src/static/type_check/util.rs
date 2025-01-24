@@ -62,14 +62,14 @@ pub fn chk_num_lit((expr, span): &Spanned<Expr>, is_neg: bool) -> Vec<XSError> {
     }
 }
 
-pub fn arith_op<'src>(
+pub fn arith_op(
     path: &PathBuf,
-    span: &'src Span,
-    expr1: &'src Spanned<Expr>,
-    expr2: &'src Spanned<Expr>,
-    type_env: &'src mut TypeEnv,
+    span: &Span,
+    expr1: &Spanned<Expr>,
+    expr2: &Spanned<Expr>,
+    type_env: &mut TypeEnv,
     op_name: &str
-) -> Option<&'src Type> {
+) -> Option<Type> {
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
@@ -79,7 +79,7 @@ pub fn arith_op<'src>(
     };
 
     match (type1, type2) {
-        (Type::Int, Type::Int) => { Some(&Type::Int) }
+        (Type::Int, Type::Int) => { Some(Type::Int) }
         (Type::Int, Type::Float) => {
             type_env.add_err(path, XSError::warning(
                 span,
@@ -87,14 +87,14 @@ pub fn arith_op<'src>(
                 vec!["int", "float"],
                 WarningKind::FirstOprArith,
             ));
-            Some(&Type::Int)
+            Some(Type::Int)
         }
 
-        (Type::Float, Type::Int | Type::Float) => { Some(&Type::Float) }
+        (Type::Float, Type::Int | Type::Float) => { Some(Type::Float) }
 
-        (Type::Str, _) | (_, Type::Str) if op_name == "add" => { Some(&Type::Str) }
+        (Type::Str, _) | (_, Type::Str) if op_name == "add" => { Some(Type::Str) }
 
-        _ => {
+        (type1, type2) => {
             type_env.add_err(path, XSError::op_mismatch(
                 op_name,
                 &type1.to_string(),
@@ -107,14 +107,14 @@ pub fn arith_op<'src>(
     }
 }
 
-pub fn reln_op<'src>(
+pub fn reln_op(
     path: &PathBuf,
-    span: &'src Span,
-    expr1: &'src Spanned<Expr>,
-    expr2: &'src Spanned<Expr>,
-    type_env: &'src mut TypeEnv,
+    span: &Span,
+    expr1: &Spanned<Expr>,
+    expr2: &Spanned<Expr>,
+    type_env: &mut TypeEnv,
     op_name: &str
-) -> Option<&'src Type> {
+) -> Option<Type> {
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
@@ -124,8 +124,8 @@ pub fn reln_op<'src>(
     };
 
     match (type1, type2) {
-        (Type::Int | Type::Float, Type::Int | Type::Float) => { Some(&Type::Bool) }
-        (Type::Str, Type::Str) => { Some(&Type::Bool) }
+        (Type::Int | Type::Float, Type::Int | Type::Float) => { Some(Type::Bool) }
+        (Type::Str, Type::Str) => { Some(Type::Bool) }
         (Type::Vec, Type::Vec) | (Type::Bool, Type::Bool) => {
             if op_name != "eq" && op_name != "ne" {
                 type_env.add_err(path, XSError::warning(
@@ -135,10 +135,10 @@ pub fn reln_op<'src>(
                     WarningKind::CmpSilentCrash,
                 ));
             }
-            Some(&Type::Bool)
+            Some(Type::Bool)
         }
 
-        _ => {
+        (type1, type2) => {
             type_env.add_err(path, XSError::op_mismatch(
                 "compare",
                 &type1.to_string(),
@@ -151,14 +151,14 @@ pub fn reln_op<'src>(
     }
 }
 
-pub fn logical_op<'src>(
+pub fn logical_op(
     path: &PathBuf,
-    span: &'src Span,
-    expr1: &'src Spanned<Expr>,
-    expr2: &'src Spanned<Expr>,
-    type_env: &'src mut TypeEnv,
+    span: &Span,
+    expr1: &Spanned<Expr>,
+    expr2: &Spanned<Expr>,
+    type_env: &mut TypeEnv,
     op_name: &str
-) -> Option<&'src Type> {
+) -> Option<Type> {
     // no error is returned specifically because if None is returned, an error will have
     // been generated already
     let (Some(type1), Some(type2)) = (
@@ -168,8 +168,8 @@ pub fn logical_op<'src>(
     };
 
     match (type1, type2) {
-        (Type::Bool, Type::Bool) => { Some(&Type::Bool) }
-        _ => {
+        (Type::Bool, Type::Bool) => { Some(Type::Bool) }
+        (type1, type2) => {
             type_env.add_err(path, XSError::op_mismatch(
                 op_name,
                 &type1.to_string(),

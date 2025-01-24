@@ -10,6 +10,7 @@ pub struct TypeEnv {
     groups: HashSet<String>,
     identifiers: HashMap<Identifier, IdInfo>,
     fn_envs: HashMap<Identifier, Vec<FnInfo>>,
+    
     errs: HashMap<PathBuf, Vec<XSError>>,
     
     current_local_env: Option<FnInfo>, // mmm...
@@ -27,11 +28,11 @@ impl TypeEnv {
         }
     }
     
-    pub fn get(&self, id: &Identifier) -> Option<&IdInfo> {
+    pub fn get(&self, id: &Identifier) -> Option<IdInfo> {
         match &self.current_local_env {
             None =>              self.identifiers.get(id),
             Some(env) => env.get(id),
-        }
+        }.map(|val| val.clone())
     }
     
     pub fn set(&mut self, id: &Identifier, info: IdInfo) {

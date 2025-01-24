@@ -1,2 +1,2 @@
 pub mod info;
-mod type_check;
+pub(crate) mod type_check;

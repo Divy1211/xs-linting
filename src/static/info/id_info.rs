@@ -3,8 +3,8 @@ use crate::r#static::info::src_loc::SrcLoc;
 
 #[derive(Clone)]
 pub struct IdInfo {
-    type_: Type,
-    src_loc: SrcLoc,
+    pub type_: Type,
+    pub src_loc: SrcLoc,
 }
 
 impl IdInfo {

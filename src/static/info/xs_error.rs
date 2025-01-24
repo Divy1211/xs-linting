@@ -1,6 +1,7 @@
 use ariadne::{ReportKind};
 use crate::parsing::span::{Span};
 
+#[derive(Debug)]
 pub enum XSError {
     // type errors
     ExtraArg { fn_name: String, span: Span },

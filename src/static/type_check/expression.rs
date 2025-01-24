@@ -9,19 +9,19 @@ use crate::r#static::info::type_env::TypeEnv;
 use crate::r#static::type_check::util::{chk_int_lit, chk_num_lit, type_cmp};
 use crate::r#static::info::xs_error::XSError;
 
-pub fn xs_tc_expr<'src>(
+pub fn xs_tc_expr(
     path: &PathBuf,
-    (expr, span): &'src Spanned<Expr>,
-    type_env: &'src mut TypeEnv,
-) -> Option<&'src Type> { match expr {
+    (expr, span): &Spanned<Expr>,
+    type_env: &mut TypeEnv,
+) -> Option<Type> { match expr {
     Expr::Literal(lit) => match lit {
         Literal::Int(val) => {
             type_env.add_errs(path, chk_int_lit(&val, &span));
-            Some(&Type::Int)
+            Some(Type::Int)
         }
-        Literal::Float(_) => { Some(&Type::Float) }
-        Literal::Bool(_) => { Some(&Type::Bool) }
-        Literal::Str(_) => { Some(&Type::Str) }
+        Literal::Float(_) => { Some(Type::Float) }
+        Literal::Bool(_) => { Some(Type::Bool) }
+        Literal::Str(_) => { Some(Type::Str) }
     }
     Expr::Identifier(id) => {
         let Some(IdInfo {type_, src_loc: _src_loc }) = type_env.get(id) else {
@@ -38,7 +38,7 @@ pub fn xs_tc_expr<'src>(
         type_env.add_errs(path, chk_num_lit(x, false));
         type_env.add_errs(path, chk_num_lit(y, false));
         type_env.add_errs(path, chk_num_lit(z, false));
-        Some(&Type::Vec)
+        Some(Type::Vec)
     }
     Expr::FnCall { name: (name, name_span), args } => {
         let Some(IdInfo { type_, src_loc: _src_loc }) = type_env.get(name) else {
@@ -61,7 +61,7 @@ pub fn xs_tc_expr<'src>(
                 // expr will generate its own error if the type cannot be inferred
                 continue;
             };
-            type_env.add_errs(path, type_cmp(param_type, arg_type, &arg_expr.1, true, false));
+            type_env.add_errs(path, type_cmp(param_type, &arg_type, &arg_expr.1, true, false));
         }
         if args.len() > type_sign.len() {
             for (_expr, span) in args[type_sign.len() - 1..].iter() {
@@ -72,7 +72,7 @@ pub fn xs_tc_expr<'src>(
             }
         }
 
-        type_sign.last()
+        type_sign.last().map(|val| val.clone())
     }
 
     Expr::Neg(expr) => {
@@ -95,7 +95,7 @@ pub fn xs_tc_expr<'src>(
             "Unary not ({0}) is not allowed in XS. yES",
             vec!["!"],
         ));
-        Some(&Type::Bool)
+        Some(Type::Bool)
     }
 
     Expr::Star(expr1, expr2) => {
