@@ -2,7 +2,7 @@ use std::collections::{HashMap};
 use std::path::PathBuf;
 
 use chumsky::container::Container;
-
+use crate::lint::gen_errs::gen_errs_from_path;
 use crate::parsing::ast::astree::{ASTreeNode, RuleOpt};
 use crate::parsing::ast::expr::Expr;
 use crate::parsing::ast::identifier::Identifier;
@@ -38,13 +38,7 @@ pub fn xs_tc_stmt(
         let mut inc_path = path.clone();
         inc_path.pop();
         inc_path.push(&filename[1..(filename.len()-1)]);
-        // gen_info_from_path(
-        //     type_env,
-        //     local_envs,
-        //     groups,
-        //     inc_path,
-        //     ignores,
-        // );
+        gen_errs_from_path(&inc_path, type_env);
     }
     ASTreeNode::VarDef {
         is_extern,

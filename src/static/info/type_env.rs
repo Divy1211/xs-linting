@@ -17,6 +17,11 @@ pub struct TypeEnv {
 }
 
 impl TypeEnv {
+    
+    pub fn errs(&self) -> &HashMap<PathBuf, Vec<XSError>> {
+        &self.errs
+    }
+    
     pub fn new() -> Self {
         Self {
             groups: HashSet::new(),
