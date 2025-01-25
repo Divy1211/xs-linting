@@ -8,6 +8,27 @@ use crate::parsing::span::{Span, Spanned};
 use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::info::{WarningKind, XSError, TypeEnv};
 
+pub fn combine_results<T>(results: impl IntoIterator<Item = Result<(), Vec<T>>>) -> Result<(), Vec<T>>  {
+    let mut num_errs = 0;
+    let errs = results.into_iter()
+        .filter_map(|result| match result {
+            Ok(()) => { None }
+            Err(errs) => { num_errs += errs.len(); Some(errs) }
+        }).collect::<Vec<_>>();
+    
+    if num_errs == 0 {
+        return Ok(())
+    }
+    
+    Err(errs.into_iter()
+        .fold(Vec::with_capacity(num_errs), |mut acc, res| {
+            acc.extend(res);
+            acc
+        })
+    )
+}
+
+
 pub fn chk_int_lit(val: &i64, span: &Span) -> Vec<XSError> {
     if *val < -999_999_999 || 999_999_999 < *val {
         vec![XSError::syntax(

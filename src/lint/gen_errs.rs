@@ -6,41 +6,41 @@ use chumsky::Parser;
 
 use crate::parsing::lexer::{lexer, Token};
 use crate::parsing::parser::parser;
-use crate::r#static::info::{TypeEnv, Error, ParseError};
+use crate::r#static::info::{Error, ParseError, TypeEnv};
 use crate::r#static::type_check::xs_tc;
 
 
 pub fn gen_errs_from_path(
     path: &PathBuf,
     type_env: &mut TypeEnv,
-) -> Result<(), Error> {
+) -> Result<(), Vec<Error>> {
     let src = match fs::read_to_string(&path) {
         Ok(src) => {src}
         Err(err) => {
             let path = path.to_str().unwrap();
-            return Err(Error::FileErr(format!("Failed to read path {path}, details: {err}")))
+            return Err(vec![Error::FileErr(format!("Failed to read path {path}, details: {err}"))])
         }
     };
 
     gen_errs_from_src(path, &src, type_env)
-        .map_err(Error::ParseErrs)
 }
 
 pub fn gen_errs_from_src(
     path: &PathBuf,
     src: &str,
     type_env: &mut TypeEnv,
-) -> Result<(), Vec<ParseError>> {
+) -> Result<(), Vec<Error>> {
     let (tokens, errs) = lexer()
         .parse(src)
         .into_output_errors();
 
     let Some(mut tokens) = tokens else {
-        return Err(
+        return Err(vec![Error::parse_errs(
+            path,
             errs.iter()
                 .map(ParseError::lex_err)
                 .collect()
-        );
+        )]);
     };
 
     tokens = tokens.into_iter()
@@ -53,14 +53,13 @@ pub fn gen_errs_from_src(
         .into_output_errors();
 
     let Some((ast, _span)) = ast else {
-        return Err(
+        return Err(vec![Error::parse_errs(
+            path,
             errs.iter()
                 .map(ParseError::parse_err)
                 .collect()
-        );
+        )]);
     };
 
-    xs_tc(path, &ast, type_env);
-    
-    Ok(())
+    xs_tc(path, &ast, type_env)
 }

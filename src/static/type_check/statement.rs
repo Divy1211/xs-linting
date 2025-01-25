@@ -5,9 +5,9 @@ use chumsky::container::Container;
 use crate::lint::{gen_errs_from_path};
 use crate::parsing::ast::{ASTreeNode, RuleOpt, Expr, Identifier, Literal, Type};
 use crate::parsing::span::{Span, Spanned};
-use crate::r#static::info::{FnInfo, IdInfo, SrcLoc, TypeEnv, WarningKind, XSError};
+use crate::r#static::info::{Error, FnInfo, IdInfo, SrcLoc, TypeEnv, WarningKind, XSError};
 use crate::r#static::type_check::expression::xs_tc_expr;
-use crate::r#static::type_check::util::{chk_rule_opt, type_cmp};
+use crate::r#static::type_check::util::{chk_rule_opt, combine_results, type_cmp};
 
 pub fn xs_tc_stmt(
     path: &PathBuf,
@@ -16,7 +16,7 @@ pub fn xs_tc_stmt(
     is_top_level: bool,
     is_breakable: bool,
     is_continuable: bool,
-) { match stmt {
+) -> Result<(), Vec<Error>> { match stmt {
     // an include statement is always parsed with a string literal
     ASTreeNode::Include((filename, _span)) => {
         if !is_top_level {
@@ -25,12 +25,12 @@ pub fn xs_tc_stmt(
                 "An {0} statement is only allowed at the top level",
                 vec!["include"],
             ));
-            return;
+            return Ok(());
         }
         let mut inc_path = path.clone();
         inc_path.pop();
         inc_path.push(&filename[1..(filename.len()-1)]);
-        gen_errs_from_path(&inc_path, type_env);
+        gen_errs_from_path(&inc_path, type_env)
     }
     ASTreeNode::VarDef {
         is_extern,
@@ -70,7 +70,7 @@ pub fn xs_tc_stmt(
                     vec!["const"],
                 ));
             }
-            return;
+            return Ok(());
         };
 
         let (expr, expr_span) = spanned_expr;
@@ -110,10 +110,12 @@ pub fn xs_tc_stmt(
         }
 
         let Some(init_type) = xs_tc_expr(path, spanned_expr, type_env) else {
-            return;
+            return Ok(());
         };
 
         type_env.add_errs(path, type_cmp(type_, &init_type, expr_span, false, false));
+        
+        Ok(())
 
     }
     ASTreeNode::VarAssign {
@@ -135,15 +137,17 @@ pub fn xs_tc_stmt(
                 name,
                 name_span,
             ));
-            return;
+            return Ok(());
         };
 
         let Some(init_type) = xs_tc_expr(path, spanned_expr, type_env) else {
             // An invalid expr will generate its own error
-            return;
+            return Ok(());
         };
 
         type_env.add_errs(path, type_cmp(&type_, &init_type, &spanned_expr.1, false, false));
+        
+        Ok(())
     },
     ASTreeNode::RuleDef {
         name: (name, name_span),
@@ -212,12 +216,14 @@ pub fn xs_tc_stmt(
         // nested fns aren't allowed in XS so this is fine because we
         // can't close over values
         
-        for spanned_stmt in body.iter() {
-            xs_tc_stmt(
-                path, spanned_stmt, type_env,
-                false, is_breakable, is_continuable,
-            );
-        }
+        let results = combine_results(body.iter()
+            .map(|spanned_stmt| {
+                xs_tc_stmt(
+                    path, spanned_stmt, type_env,
+                    false, is_breakable, is_continuable,
+                )
+            })
+        );
         
         type_env.save_fn_env(name);
         
@@ -225,6 +231,8 @@ pub fn xs_tc_stmt(
         if let Some(env) = old_env {
             type_env.set_fn_env(env);
         };
+
+        results
     }
     ASTreeNode::FnDef {
         is_mutable,
@@ -336,13 +344,15 @@ pub fn xs_tc_stmt(
                 ))
             }
         }
-        
-        for spanned_stmt in body.iter() {
-            xs_tc_stmt(
-                path, spanned_stmt, type_env,
-                false, is_breakable, is_continuable,
-            );
-        }
+
+        let results = combine_results(body.iter()
+            .map(|spanned_stmt| {
+                xs_tc_stmt(
+                    path, spanned_stmt, type_env,
+                    false, is_breakable, is_continuable,
+                )
+            })
+        );
         
         type_env.save_fn_env(name);
 
@@ -350,6 +360,8 @@ pub fn xs_tc_stmt(
         if let Some(env) = old_env {
             type_env.set_fn_env(env);
         };
+        
+        results
     },
     ASTreeNode::Return(spanned_expr) => {
         let Some(IdInfo { type_: return_type, .. }) = type_env.get_return() else {
@@ -358,7 +370,7 @@ pub fn xs_tc_stmt(
                 "A {0} statement is only allowed inside functions or rules",
                 vec!["return"],
             ));
-            return;
+            return Ok(());
         };
 
         let Some(spanned_expr) = spanned_expr else {
@@ -370,7 +382,7 @@ pub fn xs_tc_stmt(
                     Some(&format!("This function's return type was declared as '{}'", return_type)),
                 ));
             }
-            return;
+            return Ok(());
         };
         if return_type == Type::Void {
             type_env.add_err(path, XSError::syntax(
@@ -378,7 +390,7 @@ pub fn xs_tc_stmt(
                 "This function's return type was declared as {0}",
                 vec!["void"]
             ));
-            return;
+            return Ok(());
         }
 
         let (expr, expr_span) = spanned_expr;
@@ -392,10 +404,12 @@ pub fn xs_tc_stmt(
 
         // if expr returns None, it'll generate its own error
         let Some(return_expr_type) = xs_tc_expr(path, spanned_expr, type_env) else {
-            return;
+            return Ok(());
         };
 
         type_env.add_errs(path, type_cmp(&return_type, &return_expr_type, expr_span, false, false));
+
+        Ok(())
     },
     ASTreeNode::IfElse {
         condition,
@@ -421,21 +435,28 @@ pub fn xs_tc_stmt(
             }
         }
 
-        for spanned_stmt in consequent.0.iter() {
-            xs_tc_stmt(
-                path, spanned_stmt, type_env,
-                false, is_breakable, is_continuable,
-            );
-        }
-
-        if let Some(alternate) = alternate {
-            for spanned_stmt in alternate.0.iter() {
+        let results = consequent.0.iter()
+            .map(|spanned_stmt| {
                 xs_tc_stmt(
                     path, spanned_stmt, type_env,
                     false, is_breakable, is_continuable,
-                );
-            }
+                )
+            })
+            .collect::<Vec<_>>();
+
+        if alternate.is_none() {
+            return combine_results(results)
         }
+        let alternate = alternate.as_ref().expect("infallible");
+
+        combine_results(results.into_iter().chain(alternate.0.iter()
+            .map(|spanned_stmt| {
+                xs_tc_stmt(
+                    path, spanned_stmt, type_env,
+                    false, is_breakable, is_continuable,
+                )
+            })
+        ))
     },
     ASTreeNode::While { condition, body } => {
         if is_top_level {
@@ -456,13 +477,15 @@ pub fn xs_tc_stmt(
                 ));
             }
         }
-
-        for spanned_stmt in body.0.iter() {
-            xs_tc_stmt(
-                path, spanned_stmt, type_env,
-                false, true, true,
-            );
-        }
+        
+        combine_results(body.0.iter()
+            .map(|spanned_stmt| {
+                xs_tc_stmt(
+                    path, spanned_stmt, type_env,
+                    false, true, true,
+                )
+            })
+        )
     },
     ASTreeNode::For { var, condition, body } => {
         if is_top_level {
@@ -474,7 +497,7 @@ pub fn xs_tc_stmt(
         }
 
         let (ASTreeNode::VarAssign { name: (name, name_span), value }, _span) = var.as_ref()
-        else { return; }; // unreachable
+        else { return Ok(()); }; // unreachable
 
         match type_env.get(name) {
             Some(IdInfo { src_loc: og_src_loc, .. }) => {
@@ -484,7 +507,7 @@ pub fn xs_tc_stmt(
                     &og_src_loc,
                     None,
                 ));
-                return;
+                return Ok(());
             }
             _ => {}
         };
@@ -505,12 +528,14 @@ pub fn xs_tc_stmt(
             }
         }
 
-        for spanned_stmt in body.0.iter() {
-            xs_tc_stmt(
-                path, spanned_stmt, type_env,
-                false, true, true,
-            );
-        }
+        combine_results(body.0.iter()
+            .map(|spanned_stmt| {
+                xs_tc_stmt(
+                    path, spanned_stmt, type_env,
+                    false, true, true,
+                )
+            })
+        )
     },
     ASTreeNode::Switch { clause, cases } => {
         if is_top_level {
@@ -529,14 +554,18 @@ pub fn xs_tc_stmt(
         let mut default_span: Option<&Span> = None;
         let mut case_spans: HashMap<&Expr, &Span> = HashMap::with_capacity(cases.len());
 
+        let mut results = Vec::with_capacity(cases.len());
+        
         for (case_clause, (body, body_span)) in cases {
             // expression generates its own error for a None return
-            for spanned_stmt in body.iter() {
-                xs_tc_stmt(
-                    path, spanned_stmt, type_env,
-                    false, true, is_continuable,
-                );
-            }
+            results.push(combine_results(body.iter()
+                .map(|spanned_stmt| {
+                    xs_tc_stmt(
+                        path, spanned_stmt, type_env,
+                        false, true, is_continuable,
+                    )
+                })
+            ));
             let Some(spanned_case_expr) = case_clause else {
                 let Some(og_span) = default_span else {
                     default_span = Some(body_span);
@@ -576,7 +605,9 @@ pub fn xs_tc_stmt(
             } else {
                 case_spans.push((case_expr, case_expr_span));
             }
-        }
+        };
+        
+        combine_results(results)
     },
     ASTreeNode::PostDPlus((id, id_span)) => {
         if is_top_level {
@@ -589,17 +620,19 @@ pub fn xs_tc_stmt(
 
         let Some(IdInfo { type_: id_type, .. }) = type_env.get(id) else {
             type_env.add_err(path, XSError::undefined_name(id, id_span));
-            return;
+            return Ok(());
         };
 
         if let Type::Int | Type::Float = id_type {
-            return;
+            return Ok(());
         }
         type_env.add_err(path, XSError::syntax(
             span,
             "A postfix increment ({0}) statement is only allowed on {1} values",
             vec!["++", "int | float"]
         ));
+        
+        Ok(())
     },
     ASTreeNode::PostDMinus((id, id_span)) => {
         if is_top_level {
@@ -612,17 +645,19 @@ pub fn xs_tc_stmt(
 
         let Some(IdInfo { type_: id_type, .. }) = type_env.get(id) else {
             type_env.add_err(path, XSError::undefined_name(id, id_span));
-            return;
+            return Ok(());
         };
 
         if let Type::Int | Type::Float = id_type {
-            return;
+            return Ok(());
         }
         type_env.add_err(path, XSError::syntax(
             span,
             "A postfix decrement ({0}) statement is only allowed on {1} values",
             vec!["--", "int | float"]
         ));
+        
+        Ok(())
     },
     ASTreeNode::Break => {
         if !is_breakable {
@@ -632,6 +667,8 @@ pub fn xs_tc_stmt(
                 vec!["return"],
             ));
         }
+        
+        Ok(())
     },
     ASTreeNode::Continue => {
         if !is_continuable {
@@ -641,6 +678,8 @@ pub fn xs_tc_stmt(
                 vec!["continue"],
             ));
         }
+
+        Ok(())
     },
     ASTreeNode::LabelDef((id, id_span)) => {
         if is_top_level {
@@ -659,11 +698,13 @@ pub fn xs_tc_stmt(
                     &og_src_loc,
                     None,
                 ));
-                return;
+                return Ok(());
             }
             _ => {}
         };
         type_env.set(id, IdInfo::new(Type::Label, SrcLoc::from(path, id_span)));
+
+        Ok(())
     },
     ASTreeNode::Goto((id, id_span)) => {
         if is_top_level {
@@ -675,10 +716,12 @@ pub fn xs_tc_stmt(
         }
         let Some(IdInfo { type_: id_type, .. }) = type_env.get(id) else {
             type_env.add_err(path, XSError::undefined_name(id, id_span));
-            return;
+            return Ok(());
         };
 
         type_env.add_errs(path, type_cmp(&Type::Label, &id_type, id_span, false, false));
+
+        Ok(())
     },
     ASTreeNode::Discarded(spanned_expr) => {
         if is_top_level {
@@ -696,14 +739,14 @@ pub fn xs_tc_stmt(
                 "Only function calls can be discarded",
                 vec![],
             ));
-            return;
+            return Ok(());
         };
 
         let Some(return_value_type) = xs_tc_expr(path, spanned_expr, type_env)
-        else { return; }; // unreachable
+        else { return Ok(()); }; // unreachable
 
         if let Type::Void = return_value_type {
-            return;
+            return Ok(());
         }
         type_env.add_err(path, XSError::warning(
             expr_span,
@@ -711,6 +754,8 @@ pub fn xs_tc_stmt(
             vec![],
             WarningKind::DiscardedFn,
         ));
+
+        Ok(())
     },
     ASTreeNode::Debug((id, id_span)) => {
         if is_top_level {
@@ -722,11 +767,11 @@ pub fn xs_tc_stmt(
         }
         let Some(IdInfo { type_: id_type, .. }) = type_env.get(id) else {
             type_env.add_err(path, XSError::undefined_name(id, id_span));
-            return;
+            return Ok(());
         };
 
         let (Type::Func { .. } | Type::Rule | Type::Class | Type::Label) = id_type else {
-            return;
+            return Ok(());
         };
 
         type_env.add_err(path, XSError::syntax(
@@ -734,6 +779,8 @@ pub fn xs_tc_stmt(
             "A {0} statement can only be given {1} values",
             vec!["dbg", "int | float | bool | string | vector"],
         ));
+
+        Ok(())
     },
     ASTreeNode::Breakpoint => {
         if is_top_level {
@@ -750,6 +797,8 @@ pub fn xs_tc_stmt(
             vec![],
             WarningKind::BreakPt,
         ));
+
+        Ok(())
     },
     ASTreeNode::Class { name: (id, id_span), member_vars } => {
         if !is_top_level {
@@ -829,5 +878,6 @@ pub fn xs_tc_stmt(
             vec![],
             WarningKind::UnusableClasses,
         ));
+        Ok(())
     },
 }}
