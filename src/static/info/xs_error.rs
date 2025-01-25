@@ -1,6 +1,7 @@
-use ariadne::{ReportKind};
-use crate::parsing::ast::identifier::Identifier;
-use crate::parsing::span::{Span};
+use ariadne::ReportKind;
+
+use crate::parsing::ast::Identifier;
+use crate::parsing::span::Span;
 use crate::r#static::info::src_loc::SrcLoc;
 
 #[derive(Debug)]

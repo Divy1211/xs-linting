@@ -1,8 +1,9 @@
-use crate::parsing::ast::astree::ASTreeNode;
+use std::path::PathBuf;
+
+use crate::parsing::ast::ASTreeNode;
 use crate::parsing::span::Spanned;
 use crate::r#static::type_check::statement::xs_tc_stmt;
-use std::path::PathBuf;
-use crate::r#static::info::type_env::TypeEnv;
+use crate::r#static::info::TypeEnv;
 
 pub fn xs_tc(
     path: &PathBuf,

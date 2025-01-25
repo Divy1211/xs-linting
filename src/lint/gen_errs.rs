@@ -4,12 +4,10 @@ use std::fs;
 use chumsky::input::Input;
 use chumsky::Parser;
 
-use crate::parsing::lexer::lexer;
-use crate::parsing::lexer::token::Token;
+use crate::parsing::lexer::{lexer, Token};
 use crate::parsing::parser::parser;
-use crate::r#static::info::type_env::TypeEnv;
-use crate::r#static::info::error::{Error, ParseError};
-use crate::r#static::type_check::statements::xs_tc;
+use crate::r#static::info::{TypeEnv, Error, ParseError};
+use crate::r#static::type_check::xs_tc;
 
 
 pub fn gen_errs_from_path(

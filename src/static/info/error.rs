@@ -1,5 +1,6 @@
 use std::fmt::Display;
 use chumsky::error::Rich;
+
 use crate::parsing::span::Span;
 
 #[derive(Debug)]

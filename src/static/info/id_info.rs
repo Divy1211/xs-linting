@@ -1,4 +1,4 @@
-use crate::parsing::ast::type_::Type;
+use crate::parsing::ast::Type;
 use crate::r#static::info::src_loc::SrcLoc;
 
 #[derive(Clone)]

@@ -1,13 +1,12 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
+
 use chumsky::container::{Container};
-use crate::parsing::ast::expr::Expr;
-use crate::parsing::ast::literal::Literal;
-use crate::parsing::ast::type_::Type;
+
+use crate::parsing::ast::{Expr, Literal, Type};
 use crate::parsing::span::{Span, Spanned};
 use crate::r#static::type_check::expression::xs_tc_expr;
-use crate::r#static::info::type_env::TypeEnv;
-use crate::r#static::info::xs_error::{WarningKind, XSError};
+use crate::r#static::info::{WarningKind, XSError, TypeEnv};
 
 pub fn chk_int_lit(val: &i64, span: &Span) -> Vec<XSError> {
     if *val < -999_999_999 || 999_999_999 < *val {

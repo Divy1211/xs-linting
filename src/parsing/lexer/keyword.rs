@@ -1,7 +1,8 @@
 use chumsky::prelude::*;
-use crate::parsing::ast::identifier::Identifier;
-use crate::parsing::span::{Span};
+
+use crate::parsing::ast::Identifier;
 use crate::parsing::lexer::token::Token;
+use crate::parsing::span::Span;
 
 pub fn keyword<'src>() -> impl Parser<
     'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>

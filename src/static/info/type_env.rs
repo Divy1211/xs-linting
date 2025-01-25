@@ -1,7 +1,9 @@
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
+
 use chumsky::container::Container;
-use crate::parsing::ast::identifier::Identifier;
+
+use crate::parsing::ast::Identifier;
 use crate::r#static::info::fn_info::FnInfo;
 use crate::r#static::info::id_info::IdInfo;
 use crate::r#static::info::xs_error::XSError;

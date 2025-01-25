@@ -1,7 +1,8 @@
-use crate::parsing::ast::identifier::Identifier;
+use std::collections::HashMap;
+
+use crate::parsing::ast::Identifier;
 use crate::r#static::info::id_info::IdInfo;
 use crate::r#static::info::src_loc::SrcLoc;
-use std::collections::HashMap;
 
 pub struct FnInfo {
     identifiers: HashMap<Identifier, IdInfo>,

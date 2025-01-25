@@ -2,10 +2,9 @@ use std::collections::HashSet;
 use std::path::PathBuf;
 
 use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
-use crate::lint::fmt::msg_fmt;
-use crate::r#static::info::error::ParseError;
-use crate::r#static::info::xs_error::XSError;
 
+use crate::lint::fmt::msg_fmt;
+use crate::r#static::info::{ParseError, XSError};
 
 pub fn print_xs_errs(errs: &Vec<XSError>, filename: &str, src: &str, ignores: &HashSet<u32>) {
     let kwds = Color::Fixed(5);

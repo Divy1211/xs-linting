@@ -1,7 +1,7 @@
 use chumsky::prelude::*;
-use crate::parsing::ast::astree::ASTreeNode;
-use crate::parsing::ast::literal::Literal;
-use crate::parsing::lexer::token::Token;
+
+use crate::parsing::ast::{ASTreeNode, Literal};
+use crate::parsing::lexer::Token;
 use crate::parsing::parser::parser_input::ParserInput;
 use crate::parsing::span::{Span, Spanned};
 

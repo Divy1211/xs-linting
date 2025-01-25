@@ -1,7 +1,7 @@
-use std::fmt;
-use crate::parsing::lexer::token::Token;
-use fmt::Display;
+use std::fmt::Display;
 use std::fmt::Formatter;
+
+use crate::parsing::lexer::Token;
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub enum Type {
@@ -34,7 +34,7 @@ impl Type {
 }
 
 impl Display for Type {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Type::Int => write!(f, "int"),
             Type::Float => write!(f, "float"),

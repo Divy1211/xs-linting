@@ -1,18 +1,21 @@
-pub mod token;
-pub mod literal;
-pub mod operator;
-pub mod punctuation;
-pub mod keyword;
-pub mod comment;
+mod token;
+mod literal;
+mod operator;
+mod punctuation;
+mod keyword;
+mod comment;
+
+pub use token::Token;
 
 use chumsky::prelude::*;
-use token::Token;
-use crate::parsing::lexer::comment::comment;
-use crate::parsing::lexer::keyword::keyword;
-use crate::parsing::lexer::literal::literal;
-use crate::parsing::lexer::operator::operator;
-use crate::parsing::lexer::punctuation::punctuation;
+
 use crate::parsing::span::{Span, Spanned};
+
+use comment::comment;
+use keyword::keyword;
+use literal::literal;
+use operator::operator;
+use punctuation::punctuation;
 
 pub fn lexer<'src>() -> impl Parser<
     'src, &'src str, Vec<Spanned<Token>>, extra::Err<Rich<'src, char, Span>>

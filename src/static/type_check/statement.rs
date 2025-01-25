@@ -2,20 +2,12 @@ use std::collections::{HashMap};
 use std::path::PathBuf;
 
 use chumsky::container::Container;
-use crate::lint::gen_errs::gen_errs_from_path;
-use crate::parsing::ast::astree::{ASTreeNode, RuleOpt};
-use crate::parsing::ast::expr::Expr;
-use crate::parsing::ast::identifier::Identifier;
-use crate::parsing::ast::literal::Literal;
-use crate::parsing::ast::type_::Type;
+use crate::lint::{gen_errs_from_path};
+use crate::parsing::ast::{ASTreeNode, RuleOpt, Expr, Identifier, Literal, Type};
 use crate::parsing::span::{Span, Spanned};
-use crate::r#static::info::fn_info::FnInfo;
-use crate::r#static::info::id_info::IdInfo;
-use crate::r#static::info::src_loc::SrcLoc;
-use crate::r#static::info::type_env::TypeEnv;
+use crate::r#static::info::{FnInfo, IdInfo, SrcLoc, TypeEnv, WarningKind, XSError};
 use crate::r#static::type_check::expression::xs_tc_expr;
 use crate::r#static::type_check::util::{chk_rule_opt, type_cmp};
-use crate::r#static::info::xs_error::{WarningKind, XSError};
 
 pub fn xs_tc_stmt(
     path: &PathBuf,

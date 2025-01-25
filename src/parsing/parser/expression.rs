@@ -1,6 +1,6 @@
 use chumsky::prelude::*;
-use crate::parsing::ast::expr::Expr;
-use crate::parsing::lexer::token::Token;
+use crate::parsing::ast::Expr;
+use crate::parsing::lexer::Token;
 use crate::parsing::parser::parser_input::ParserInput;
 use crate::parsing::span::{Span, Spanned};
 

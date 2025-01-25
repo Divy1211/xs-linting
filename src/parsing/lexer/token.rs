@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
-use crate::parsing::ast::identifier::Identifier;
-use crate::parsing::ast::literal::Literal;
+
+use crate::parsing::ast::{Identifier, Literal};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Token {

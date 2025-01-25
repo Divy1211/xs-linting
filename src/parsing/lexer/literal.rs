@@ -1,7 +1,8 @@
 use chumsky::prelude::*;
-use crate::parsing::ast::literal::Literal;
+
+use crate::parsing::ast::Literal;
 use crate::parsing::lexer::token::Token;
-use crate::parsing::span::{Span};
+use crate::parsing::span::Span;
 
 pub fn literal<'src>() -> impl Parser<
     'src, &'src str, Token, extra::Err<Rich<'src, char, Span>>

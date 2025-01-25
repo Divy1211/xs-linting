@@ -1,13 +1,9 @@
 use std::path::PathBuf;
-use crate::parsing::ast::expr::Expr;
-use crate::parsing::ast::literal::Literal;
-use crate::parsing::ast::type_::Type;
+
+use crate::parsing::ast::{Expr, Literal, Type};
 use crate::parsing::span::Spanned;
-use crate::r#static::info::id_info::IdInfo;
-use crate::r#static::type_check::util::{arith_op, logical_op, reln_op};
-use crate::r#static::info::type_env::TypeEnv;
-use crate::r#static::type_check::util::{chk_int_lit, chk_num_lit, type_cmp};
-use crate::r#static::info::xs_error::XSError;
+use crate::r#static::info::{IdInfo, TypeEnv, XSError};
+use crate::r#static::type_check::util::{arith_op, logical_op, reln_op, chk_int_lit, chk_num_lit, type_cmp};
 
 pub fn xs_tc_expr(
     path: &PathBuf,

@@ -1,7 +1,9 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
+
 use structopt::StructOpt;
-use crate::static_old::xs_error::WarningKind;
+
+use crate::r#static::info::WarningKind;
 
 fn from_str(ignores: &str) -> Result<HashSet<u32>, &str> {
     ignores
