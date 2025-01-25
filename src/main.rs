@@ -1,12 +1,11 @@
-use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
+
 use crate::cli::parse_args;
-use crate::lint_old::gen_info::{gen_info_from_path, gen_info_from_src};
+use crate::lint::{gen_errs_from_path, gen_errs_from_src, print_parse_errs, print_xs_errs};
+use crate::r#static::info::{Error, TypeEnv};
 
 pub mod parsing;
-pub mod static_old;
-pub mod lint_old;
-pub mod cli;
+mod cli;
 pub mod lint;
 pub mod r#static;
 
@@ -16,14 +15,19 @@ fn main() {
         None => { return; },
     };
     
-    let mut type_env= HashMap::new();
-    let mut local_envs = HashMap::new();
-    let mut groups = HashSet::new();
+    let mut type_env= TypeEnv::new();
     
     let path = PathBuf::from(r"prelude.xs");
     let prelude = include_str!(r"./prelude.xs");
     
-    gen_info_from_src(&mut type_env, &mut local_envs, &mut groups, &path, prelude, &ignores);
-    
-    gen_info_from_path(&mut type_env, &mut local_envs, &mut groups, filepath, &ignores);
+    gen_errs_from_src(&path, prelude, &mut type_env).expect("Prelude can't produce parse errors");
+
+    gen_errs_from_path(&filepath, &mut type_env).expect("test");
+    // match gen_errs_from_path(&filepath, &mut type_env) {
+    //     Err(Error::FileErr(msg)) => {},
+    //     Err(Error::ParseErrs(errs)) => { print_parse_errs(  ) },
+    //     Ok(()) => {
+    //         print_xs_errs(type_env.errs());
+    //     },
+    // };
 }
