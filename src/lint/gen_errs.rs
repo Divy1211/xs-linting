@@ -17,7 +17,7 @@ pub fn gen_errs_from_path(
     let src = match fs::read_to_string(&path) {
         Ok(src) => {src}
         Err(err) => {
-            let path = path.to_str().unwrap();
+            let path = path.display();
             return Err(vec![Error::FileErr(format!("Failed to read path {path}, details: {err}"))])
         }
     };

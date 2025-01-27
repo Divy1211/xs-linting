@@ -1,7 +1,7 @@
 use crate::parsing::ast::Type;
 use crate::r#static::info::src_loc::SrcLoc;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct IdInfo {
     pub type_: Type,
     pub src_loc: SrcLoc,

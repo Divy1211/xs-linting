@@ -4,6 +4,8 @@ use crate::parsing::ast::Identifier;
 use crate::r#static::info::id_info::IdInfo;
 use crate::r#static::info::src_loc::SrcLoc;
 
+#[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct FnInfo {
     identifiers: HashMap<Identifier, IdInfo>,
     src_loc: SrcLoc

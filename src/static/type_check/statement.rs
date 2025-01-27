@@ -203,7 +203,7 @@ pub fn xs_tc_stmt(
                 ))
             }
             None => {
-                type_env.set(name, IdInfo::new(Type::Rule, SrcLoc::from(path, name_span)));
+                type_env.set_global(name, IdInfo::new(Type::Rule, SrcLoc::from(path, name_span)));
             }
         };
 
@@ -324,7 +324,7 @@ pub fn xs_tc_stmt(
                     Some("Type signatures of mutable functions must be the same"),
                 ))
             } else {
-                type_env.set(name, IdInfo::new(
+                type_env.set_global(name, IdInfo::new(
                      Type::Func { is_mutable: *is_mutable, type_sign: new_type_sign },
                      SrcLoc::from(path, name_span)
                 ))
@@ -338,7 +338,7 @@ pub fn xs_tc_stmt(
                 ))
             },
             _ => {
-                type_env.set(name, IdInfo::new(
+                type_env.set_global(name, IdInfo::new(
                     Type::Func { is_mutable: *is_mutable, type_sign: new_type_sign },
                     SrcLoc::from(path, name_span)
                 ))
@@ -447,7 +447,7 @@ pub fn xs_tc_stmt(
         if alternate.is_none() {
             return combine_results(results)
         }
-        let alternate = alternate.as_ref().expect("infallible");
+        let alternate = alternate.as_ref().expect("Infallible: see above");
 
         combine_results(results.into_iter().chain(alternate.0.iter()
             .map(|spanned_stmt| {

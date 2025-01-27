@@ -8,14 +8,15 @@ use crate::r#static::info::fn_info::FnInfo;
 use crate::r#static::info::id_info::IdInfo;
 use crate::r#static::info::xs_error::XSError;
 
+#[derive(Debug)]
 pub struct TypeEnv {
-    groups: HashSet<String>,
-    identifiers: HashMap<Identifier, IdInfo>,
-    fn_envs: HashMap<Identifier, Vec<FnInfo>>,
+    pub groups: HashSet<String>,
+    pub identifiers: HashMap<Identifier, IdInfo>,
+    pub fn_envs: HashMap<Identifier, Vec<FnInfo>>,
     
-    errs: HashMap<PathBuf, Vec<XSError>>,
+    pub errs: HashMap<PathBuf, Vec<XSError>>,
     
-    current_fnv_env: Option<FnInfo>, // mmm...
+    pub current_fnv_env: Option<FnInfo>, // mmm...
 }
 
 impl TypeEnv {
@@ -36,17 +37,21 @@ impl TypeEnv {
     }
     
     pub fn get(&self, id: &Identifier) -> Option<IdInfo> {
-        match &self.current_fnv_env {
-            None =>              self.identifiers.get(id),
-            Some(env) => env.get(id),
-        }.map(|val| val.clone())
+        self.current_fnv_env.as_ref()
+            .and_then(|env| env.get(id))
+            .or_else(|| self.identifiers.get(id))
+            .map(|val| val.clone())
     }
     
     pub fn set(&mut self, id: &Identifier, info: IdInfo) {
         match &mut self.current_fnv_env {
-            None =>                 self.identifiers.push((id.clone(), info)),
             Some(env) => env.set(id.clone(), info),
+            None => self.identifiers.push((id.clone(), info)),
         }
+    }
+
+    pub fn set_global(&mut self, id: &Identifier, info: IdInfo) {
+        self.identifiers.push((id.clone(), info))
     }
     
     pub fn get_return(&self) -> Option<IdInfo> {

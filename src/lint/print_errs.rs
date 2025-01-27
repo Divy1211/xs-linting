@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fs;
 use std::path::PathBuf;
 
 use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
@@ -6,7 +7,10 @@ use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use crate::lint::fmt::msg_fmt;
 use crate::r#static::info::{ParseError, XSError};
 
-pub fn print_xs_errs(errs: &Vec<XSError>, filename: &str, src: &str, ignores: &HashSet<u32>) {
+pub fn print_xs_errs(path: &PathBuf, errs: &Vec<XSError>, ignores: &HashSet<u32>) {
+    let filename = &path.display().to_string();
+    let src = &fs::read_to_string(&path).expect("Infallible: If we are here, the file was read previously");
+    
     let kwds = Color::Fixed(5);
     let highlight = Color::Fixed(12);
     let names = Color::Fixed(13);
@@ -103,13 +107,14 @@ pub fn print_xs_errs(errs: &Vec<XSError>, filename: &str, src: &str, ignores: &H
     }
 }
 
-pub fn print_parse_errs(errs: &Vec<ParseError>, path: &PathBuf, src: &str) {
-    let filename = path.to_str().unwrap();
+pub fn print_parse_errs(path: &PathBuf, errs: &Vec<ParseError>) {
+    let src = fs::read_to_string(&path).expect("Infallible: If we are here, the file was read previously");
+    let filename = &path.display().to_string();
     let highlight = Color::Fixed(12);
     
-    for err in errs {
-        let kind = err.kind();
-        let (span, msg) = (err.span(), err.msg());
+    for error in errs {
+        let kind = error.kind();
+        let (span, msg) = (error.span(), error.msg());
         
         Report::build(ReportKind::Error, filename, span.start)
             .with_message(kind)
@@ -119,7 +124,7 @@ pub fn print_parse_errs(errs: &Vec<ParseError>, path: &PathBuf, src: &str) {
                     .with_color(highlight)
             )
             .finish()
-            .print((filename, Source::from(src)))
+            .print((filename, Source::from(&src)))
             .unwrap();
     }
 }
