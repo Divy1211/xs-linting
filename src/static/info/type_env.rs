@@ -8,7 +8,7 @@ use crate::r#static::info::fn_info::FnInfo;
 use crate::r#static::info::id_info::IdInfo;
 use crate::r#static::info::xs_error::XSError;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TypeEnv {
     pub groups: HashSet<String>,
     pub identifiers: HashMap<Identifier, IdInfo>,

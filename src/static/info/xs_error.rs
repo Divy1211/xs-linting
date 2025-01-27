@@ -4,7 +4,7 @@ use crate::parsing::ast::Identifier;
 use crate::parsing::span::Span;
 use crate::r#static::info::src_loc::SrcLoc;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum XSError {
     // type errors
     ExtraArg { fn_name: String, span: Span },
