@@ -12,7 +12,7 @@ chrono = "0.4.38"
 
 [dependencies]
 ariadne = "0.4.1"
-chumsky = "1.0.0-alpha.7"
+chumsky = "=1.0.0-alpha.7"
 log = "0.4.21"
 structopt = "0.3.26"
 

@@ -13,9 +13,9 @@ fn main() {
         Some(filepath) => { filepath }
         None => { return; },
     };
-    
+
     let mut type_env= TypeEnv::new();
-    
+
     let prelude_path = PathBuf::from(r"prelude.xs");
     let prelude = include_str!(r"./prelude.xs");
 
@@ -35,7 +35,7 @@ fn main() {
             }
         }
     };
-    
+
     for (filepath, errs) in type_env.errs() {
         if errs.len() == 0 {
             continue;
@@ -45,7 +45,7 @@ fn main() {
         has_errors = true;
         print_xs_errs(filepath, errs, &ignores);
     }
-    
+
     if !has_errors {
         println!(
             "No errors found in file '{}'! Your code is free of the pitfalls of XS' quirks =)",
